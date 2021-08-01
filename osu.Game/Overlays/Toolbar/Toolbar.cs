@@ -14,6 +14,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets;
 using osu.Framework.Input.Bindings;
+using osu.Game.Graphics.Containers;
 using osu.Game.Input.Bindings;
 
 namespace osu.Game.Overlays.Toolbar
@@ -27,7 +28,7 @@ namespace osu.Game.Overlays.Toolbar
         /// Whether the user hid this <see cref="Toolbar"/> with <see cref="GlobalAction.ToggleToolbar"/>.
         /// In this state, automatic toggles should not occur, respecting the user's preference to have no toolbar.
         /// </summary>
-        private bool hiddenByUser;
+        private readonly Bindable<bool> hiddenByUser = new Bindable<bool>();
 
         public Action OnHome;
 
@@ -36,10 +37,12 @@ namespace osu.Game.Overlays.Toolbar
 
         private const double transition_time = 500;
 
-        protected readonly IBindable<OverlayActivation> OverlayActivationMode = new Bindable<OverlayActivation>(OverlayActivation.All);
-
         // Toolbar and its components need keyboard input even when hidden.
         public override bool PropagateNonPositionalInputSubTree => true;
+
+        public override Bindable<Visibility> State { get; } = new ToolbarVisibilityBindable();
+
+        protected ToolbarVisibilityBindable ToolbarState => (ToolbarVisibilityBindable)State;
 
         public Toolbar()
         {
@@ -108,7 +111,9 @@ namespace osu.Game.Overlays.Toolbar
             rulesetSelector.Current.BindTo(parentRuleset);
 
             if (osuGame != null)
-                OverlayActivationMode.BindTo(osuGame.OverlayActivationMode);
+                ToolbarState.OverlayActivationMode.BindTo(osuGame.OverlayActivationMode);
+
+            ToolbarState.HiddenByUser.BindTo(hiddenByUser);
         }
 
         public class ToolbarBackground : Container
@@ -149,19 +154,6 @@ namespace osu.Game.Overlays.Toolbar
             }
         }
 
-        protected override void UpdateState(ValueChangedEvent<Visibility> state)
-        {
-            bool blockShow = hiddenByUser || OverlayActivationMode.Value == OverlayActivation.Disabled;
-
-            if (state.NewValue == Visibility.Visible && blockShow)
-            {
-                State.Value = Visibility.Hidden;
-                return;
-            }
-
-            base.UpdateState(state);
-        }
-
         protected override void PopIn()
         {
             this.MoveToY(0, transition_time, Easing.OutQuint);
@@ -178,13 +170,13 @@ namespace osu.Game.Overlays.Toolbar
 
         public bool OnPressed(GlobalAction action)
         {
-            if (OverlayActivationMode.Value == OverlayActivation.Disabled)
+            if (ToolbarState?.OverlayActivationMode.Value == OverlayActivation.Disabled)
                 return false;
 
             switch (action)
             {
                 case GlobalAction.ToggleToolbar:
-                    hiddenByUser = State.Value == Visibility.Visible; // set before toggling to allow the operation to always succeed.
+                    hiddenByUser.Value = State.Value == Visibility.Visible; // set before toggling to allow the operation to always succeed.
                     ToggleVisibility();
                     return true;
             }
@@ -194,6 +186,23 @@ namespace osu.Game.Overlays.Toolbar
 
         public void OnReleased(GlobalAction action)
         {
+        }
+
+        protected class ToolbarVisibilityBindable : OverlayVisibilityBindable
+        {
+            public readonly Bindable<bool> HiddenByUser = new Bindable<bool>();
+
+            public override Visibility Value
+            {
+                get => base.Value;
+                set
+                {
+                    if (value == Visibility.Visible && HiddenByUser.Value)
+                        return;
+
+                    base.Value = value;
+                }
+            }
         }
     }
 }
