@@ -11,7 +11,6 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Audio;
 using osu.Game.Input.Bindings;
-using osu.Game.Overlays;
 
 namespace osu.Game.Graphics.Containers
 {
@@ -39,27 +38,18 @@ namespace osu.Game.Graphics.Containers
         [Resolved]
         private PreviewTrackManager previewTrackManager { get; set; }
 
-        protected readonly IBindable<OverlayActivation> OverlayActivationMode = new Bindable<OverlayActivation>(OverlayActivation.All);
+        public override Bindable<Visibility> State { get; } = new OverlayVisibilityBindable();
+
+        protected OverlayVisibilityBindable OverlayState => (OverlayVisibilityBindable)State;
 
         [BackgroundDependencyLoader(true)]
         private void load(AudioManager audio)
         {
             samplePopIn = audio.Samples.Get(PopInSampleName);
             samplePopOut = audio.Samples.Get(PopOutSampleName);
-        }
 
-        protected override void LoadComplete()
-        {
             if (game != null)
-                OverlayActivationMode.BindTo(game.OverlayActivationMode);
-
-            OverlayActivationMode.BindValueChanged(mode =>
-            {
-                if (mode.NewValue == OverlayActivation.Disabled)
-                    State.Value = Visibility.Hidden;
-            }, true);
-
-            base.LoadComplete();
+                OverlayState.OverlayActivationMode.BindTo(game.OverlayActivationMode);
         }
 
         /// <summary>
@@ -114,13 +104,6 @@ namespace osu.Game.Graphics.Containers
             switch (state.NewValue)
             {
                 case Visibility.Visible:
-                    if (OverlayActivationMode.Value == OverlayActivation.Disabled)
-                    {
-                        // todo: visual/audible feedback that this operation could not complete.
-                        State.Value = Visibility.Hidden;
-                        return;
-                    }
-
                     if (didChange)
                         samplePopIn?.Play();
 

@@ -80,7 +80,7 @@ namespace osu.Game.Overlays
 
         private void updateProcessingMode()
         {
-            bool enabled = OverlayActivationMode.Value == OverlayActivation.All || State.Value == Visibility.Visible;
+            bool enabled = OverlayState.OverlayActivationMode.Value == OverlayActivation.All || State.Value == Visibility.Visible;
 
             notificationsEnabler?.Cancel();
 
@@ -96,7 +96,7 @@ namespace osu.Game.Overlays
             base.LoadComplete();
 
             State.ValueChanged += _ => updateProcessingMode();
-            OverlayActivationMode.BindValueChanged(_ => updateProcessingMode(), true);
+            OverlayState.OverlayActivationMode.BindValueChanged(_ => updateProcessingMode(), true);
         }
 
         public readonly BindableInt UnreadCount = new BindableInt();
