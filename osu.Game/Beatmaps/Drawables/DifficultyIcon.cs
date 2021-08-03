@@ -52,7 +52,7 @@ namespace osu.Game.Beatmaps.Drawables
 
         private readonly Bindable<StarDifficulty> difficultyBindable = new Bindable<StarDifficulty>();
 
-        private Drawable background;
+        private Drawable icon;
 
         /// <summary>
         /// Creates a new <see cref="DifficultyIcon"/> with a given <see cref="RulesetInfo"/> and <see cref="Mod"/> combination.
@@ -90,32 +90,14 @@ namespace osu.Game.Beatmaps.Drawables
         {
             iconContainer.Children = new Drawable[]
             {
-                new CircularContainer
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Scale = new Vector2(0.84f),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Masking = true,
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Colour = Color4.Black.Opacity(0.08f),
-                        Type = EdgeEffectType.Shadow,
-                        Radius = 5,
-                    },
-                    Child = background = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = colours.ForDifficultyRating(beatmap.DifficultyRating) // Default value that will be re-populated once difficulty calculation completes
-                    },
-                },
-                new ConstrainedIconContainer
+                icon = new ConstrainedIconContainer
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
                     // the null coalesce here is only present to make unit tests work (ruleset dlls aren't copied correctly for testing at the moment)
-                    Icon = (ruleset ?? beatmap.Ruleset)?.CreateInstance()?.CreateIcon() ?? new SpriteIcon { Icon = FontAwesome.Regular.QuestionCircle }
+                    Icon = (ruleset ?? beatmap.Ruleset)?.CreateInstance()?.CreateIcon() ?? new SpriteIcon { Icon = FontAwesome.Regular.QuestionCircle },
+                    Colour = colours.ForStarDifficulty(beatmap.StarDifficulty) // Default value that will be re-populated once difficulty calculation completes
                 },
             };
 
@@ -124,7 +106,7 @@ namespace osu.Game.Beatmaps.Drawables
             else
                 difficultyBindable.Value = new StarDifficulty(beatmap.StarDifficulty, 0);
 
-            difficultyBindable.BindValueChanged(difficulty => background.Colour = colours.ForDifficultyRating(difficulty.NewValue.DifficultyRating));
+            difficultyBindable.BindValueChanged(difficulty => icon.Colour = colours.ForStarDifficulty(difficulty.NewValue.Stars));
         }
 
         public ITooltip GetCustomTooltip() => new DifficultyIconTooltip();
@@ -271,7 +253,7 @@ namespace osu.Game.Beatmaps.Drawables
                 starDifficulty.BindValueChanged(difficulty =>
                 {
                     starRating.Text = $"{difficulty.NewValue.Stars:0.##}";
-                    difficultyFlow.Colour = colours.ForDifficultyRating(difficulty.NewValue.DifficultyRating, true);
+                    difficultyFlow.Colour = colours.ForStarDifficulty(difficulty.NewValue.Stars);
                 }, true);
 
                 return true;

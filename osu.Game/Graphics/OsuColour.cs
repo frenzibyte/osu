@@ -22,23 +22,25 @@ namespace osu.Game.Graphics
             switch (difficulty)
             {
                 case DifficultyRating.Easy:
-                    return Green;
+                    return Color4Extensions.FromHex("4ebfff");
 
-                default:
                 case DifficultyRating.Normal:
-                    return Blue;
+                    return Color4Extensions.FromHex("66ff91");
 
                 case DifficultyRating.Hard:
-                    return Yellow;
+                    return Color4Extensions.FromHex("f7e75d");
 
                 case DifficultyRating.Insane:
-                    return Pink;
+                    return Color4Extensions.FromHex("ff7e68");
 
                 case DifficultyRating.Expert:
-                    return PurpleLight;
+                    return Color4Extensions.FromHex("fe3c71");
 
                 case DifficultyRating.ExpertPlus:
-                    return useLighterColour ? Gray9 : Color4Extensions.FromHex("#121415");
+                    return Color4Extensions.FromHex("6662dd");
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(difficulty));
             }
         }
 
