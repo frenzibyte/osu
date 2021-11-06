@@ -35,6 +35,12 @@ namespace osu.Game.Beatmaps.Drawables
             }
         }
 
+        public float BackgroundAlpha
+        {
+            get => background.Alpha;
+            set => background.Alpha = value;
+        }
+
         public float TextSize
         {
             get => statusText.Font.Size;

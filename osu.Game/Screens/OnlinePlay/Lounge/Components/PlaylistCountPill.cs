@@ -8,6 +8,7 @@ using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
+using osu.Game.Graphics.UserInterfaceV2;
 
 namespace osu.Game.Screens.OnlinePlay.Lounge.Components
 {
@@ -26,7 +27,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChild = new PillContainer
+            InternalChild = new PillContainer(true)
             {
                 Child = count = new OsuTextFlowContainer(s => s.Font = OsuFont.GetFont(size: 12))
                 {

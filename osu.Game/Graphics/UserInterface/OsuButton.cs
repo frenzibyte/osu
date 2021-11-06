@@ -13,6 +13,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Overlays;
 using osuTK.Graphics;
 
 namespace osu.Game.Graphics.UserInterface
@@ -43,6 +44,14 @@ namespace osu.Game.Graphics.UserInterface
                 Background.FadeColour(value);
             }
         }
+
+        [Resolved(canBeNull: true)]
+        protected OverlayColourProvider ColourProvider { get; private set; }
+
+        [Resolved]
+        protected OsuColour Colours { get; private set; }
+
+        protected virtual Color4 DefaultBackgroundColour => Colours.BlueDark;
 
         protected override Container<Drawable> Content { get; }
 
@@ -90,13 +99,16 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
+        private void load()
         {
             if (backgroundColour == null)
-                BackgroundColour = colours.BlueDark;
+                BackgroundColour = DefaultBackgroundColour;
 
             Enabled.ValueChanged += enabledChanged;
             Enabled.TriggerChange();
+
+            Content.RelativeSizeAxes = (Axes.Both & ~AutoSizeAxes);
+            Content.AutoSizeAxes = AutoSizeAxes;
         }
 
         protected override bool OnClick(ClickEvent e)

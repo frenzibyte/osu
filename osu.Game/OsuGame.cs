@@ -53,6 +53,7 @@ using osu.Game.Database;
 using osu.Game.Extensions;
 using osu.Game.IO;
 using osu.Game.Localisation;
+using osu.Game.Overlays.BeatmapSetV2;
 using osu.Game.Performance;
 using osu.Game.Skinning.Editor;
 
@@ -86,7 +87,7 @@ namespace osu.Game
 
         private UserProfileOverlay userProfile;
 
-        private BeatmapSetOverlay beatmapSetOverlay;
+        private BeatmapInfoOverlay beatmapInfoOverlay;
 
         private WikiOverlay wikiOverlay;
 
@@ -378,7 +379,7 @@ namespace osu.Game
         /// Show a beatmap set as an overlay.
         /// </summary>
         /// <param name="setId">The set to display.</param>
-        public void ShowBeatmapSet(int setId) => waitForReady(() => beatmapSetOverlay, _ => beatmapSetOverlay.FetchAndShowBeatmapSet(setId));
+        public void ShowBeatmapSet(int setId) => waitForReady(() => beatmapInfoOverlay, _ => beatmapInfoOverlay.FetchAndShowBeatmapSet(setId));
 
         /// <summary>
         /// Show a user's profile as an overlay.
@@ -396,7 +397,7 @@ namespace osu.Game
         /// Show a beatmap's set as an overlay, displaying the given beatmap.
         /// </summary>
         /// <param name="beatmapId">The beatmap to show.</param>
-        public void ShowBeatmap(int beatmapId) => waitForReady(() => beatmapSetOverlay, _ => beatmapSetOverlay.FetchAndShowBeatmap(beatmapId));
+        public void ShowBeatmap(int beatmapId) => waitForReady(() => beatmapInfoOverlay, _ => beatmapInfoOverlay.FetchAndShowBeatmap(beatmapId));
 
         /// <summary>
         /// Shows the beatmap listing overlay, with the given <paramref name="query"/> in the search box.
@@ -797,7 +798,7 @@ namespace osu.Game
             loadComponentSingleFile(Settings = new SettingsOverlay(), leftFloatingOverlayContent.Add, true);
             loadComponentSingleFile(changelogOverlay = new ChangelogOverlay(), overlayContent.Add, true);
             loadComponentSingleFile(userProfile = new UserProfileOverlay(), overlayContent.Add, true);
-            loadComponentSingleFile(beatmapSetOverlay = new BeatmapSetOverlay(), overlayContent.Add, true);
+            loadComponentSingleFile(beatmapInfoOverlay = new BeatmapInfoOverlay(), overlayContent.Add, true);
             loadComponentSingleFile(wikiOverlay = new WikiOverlay(), overlayContent.Add, true);
             loadComponentSingleFile(skinEditor = new SkinEditorOverlay(screenContainer), overlayContent.Add, true);
 
@@ -838,7 +839,7 @@ namespace osu.Game
             }
 
             // eventually informational overlays should be displayed in a stack, but for now let's only allow one to stay open at a time.
-            var informationalOverlays = new OverlayContainer[] { beatmapSetOverlay, userProfile };
+            var informationalOverlays = new OverlayContainer[] { beatmapInfoOverlay, userProfile };
 
             foreach (var overlay in informationalOverlays)
             {

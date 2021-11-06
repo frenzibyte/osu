@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
+using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Screens.OnlinePlay.Multiplayer;
 using osuTK;
 
@@ -25,7 +26,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChild = new PillContainer
+            InternalChild = new PillContainer(true)
             {
                 Child = new FillFlowContainer
                 {

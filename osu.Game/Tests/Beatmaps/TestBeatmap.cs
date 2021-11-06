@@ -4,13 +4,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using osu.Framework.Extensions;
+using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.IO;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Rulesets;
+using osu.Game.Rulesets.Objects.Legacy.Osu;
 using Decoder = osu.Game.Beatmaps.Formats.Decoder;
 
 namespace osu.Game.Tests.Beatmaps
@@ -37,7 +40,19 @@ namespace osu.Game.Tests.Beatmaps
             BeatmapInfo.BeatmapSet.Beatmaps = new List<BeatmapInfo> { BeatmapInfo };
             BeatmapInfo.BeatmapSet.OnlineBeatmapSetID = Interlocked.Increment(ref onlineSetID);
             BeatmapInfo.Length = 75000;
-            BeatmapInfo.OnlineInfo = new APIBeatmap();
+            BeatmapInfo.StarDifficulty = 2.62;
+            BeatmapInfo.OnlineInfo = new APIBeatmap
+            {
+                FailTimes = new APIFailTimes
+                {
+                    Fails = Enumerable.Range(2000, 2100).OrderBy(_ => RNG.Next()).ToArray(),
+                    Retries = Enumerable.Range(1000, 1100).OrderBy(_ => RNG.Next()).ToArray(),
+                },
+                CircleCount = HitObjects.Count(o => o is ConvertHit),
+                SliderCount = HitObjects.Count(o => o is ConvertSlider),
+                PlayCount = 1234567,
+                PassCount = 124680,
+            };
             BeatmapInfo.OnlineBeatmapID = Interlocked.Increment(ref onlineBeatmapID);
         }
 

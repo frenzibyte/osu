@@ -6,31 +6,50 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK.Graphics;
 
-namespace osu.Game.Screens.OnlinePlay.Lounge.Components
+namespace osu.Game.Graphics.UserInterfaceV2
 {
     /// <summary>
     /// Displays contents in a "pill".
     /// </summary>
     public class PillContainer : Container
     {
-        private const float padding = 8;
+        private readonly bool autoSize;
 
         public readonly Drawable Background;
 
         protected override Container<Drawable> Content => content;
         private readonly Container content;
 
-        public PillContainer()
-        {
-            AutoSizeAxes = Axes.X;
-            Height = 16;
+        private readonly Container gridContainer;
+        private readonly GridContainer grid;
 
-            InternalChild = new CircularContainer
+        public MarginPadding ContentPadding
+        {
+            get => gridContainer.Padding;
+            set
+            {
+                gridContainer.Padding = value;
+
+                if (autoSize)
+                {
+                    grid.ColumnDimensions = new[]
+                    {
+                        new Dimension(GridSizeMode.AutoSize, minSize: 80 - value.TotalHorizontal)
+                    };
+                }
+            }
+        }
+
+        public PillContainer(bool autoSize)
+        {
+            this.autoSize = autoSize;
+
+            Container circularContainer, contentContainer;
+
+            InternalChild = circularContainer = new CircularContainer
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                AutoSizeAxes = Axes.X,
-                RelativeSizeAxes = Axes.Y,
                 Masking = true,
                 Children = new[]
                 {
@@ -40,32 +59,23 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
                         Colour = Color4.Black,
                         Alpha = 0.5f
                     },
-                    new Container
+                    gridContainer = new Container
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        AutoSizeAxes = Axes.Both,
-                        Padding = new MarginPadding { Horizontal = padding },
-                        Child = new GridContainer
+                        Child = grid = new GridContainer
                         {
-                            AutoSizeAxes = Axes.Both,
-                            ColumnDimensions = new[]
-                            {
-                                new Dimension(GridSizeMode.AutoSize, minSize: 80 - 2 * padding)
-                            },
                             Content = new[]
                             {
                                 new[]
                                 {
-                                    new Container
+                                    contentContainer = new Container
                                     {
-                                        AutoSizeAxes = Axes.Both,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Padding = new MarginPadding { Bottom = 2 },
                                         Child = content = new Container
                                         {
-                                            AutoSizeAxes = Axes.Both,
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                         }
@@ -76,6 +86,31 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
                     }
                 }
             };
+
+            if (autoSize)
+            {
+                AutoSizeAxes = Axes.X;
+                Height = 16;
+
+                circularContainer.AutoSizeAxes = Axes.X;
+                circularContainer.RelativeSizeAxes = Axes.Y;
+
+                gridContainer.AutoSizeAxes = Axes.Both;
+                grid.AutoSizeAxes = Axes.Both;
+                contentContainer.AutoSizeAxes = Axes.Both;
+            }
+            else
+            {
+                RelativeSizeAxes = Axes.Both;
+
+                circularContainer.RelativeSizeAxes = Axes.Both;
+
+                gridContainer.RelativeSizeAxes = Axes.Both;
+                grid.RelativeSizeAxes = Axes.Both;
+                contentContainer.RelativeSizeAxes = Axes.Both;
+            }
+
+            ContentPadding = new MarginPadding { Horizontal = 8f };
         }
     }
 }

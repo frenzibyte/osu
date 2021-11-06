@@ -24,6 +24,7 @@ using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Online.API.Requests.Responses;
+using osu.Game.Overlays.BeatmapSetV2;
 using osuTK;
 using osuTK.Graphics;
 
@@ -75,7 +76,7 @@ namespace osu.Game.Overlays.BeatmapListing.Panels
         };
 
         [BackgroundDependencyLoader(permitNulls: true)]
-        private void load(BeatmapManager beatmaps, OsuColour colours, BeatmapSetOverlay beatmapSetOverlay)
+        private void load(BeatmapManager beatmaps, OsuColour colours, BeatmapInfoOverlay beatmapInfoOverlay)
         {
             AddInternal(content = new Container
             {
@@ -97,7 +98,7 @@ namespace osu.Game.Overlays.BeatmapListing.Panels
             Action = ViewBeatmap = () =>
             {
                 Debug.Assert(SetInfo.OnlineID > 0);
-                beatmapSetOverlay?.FetchAndShowBeatmapSet(SetInfo.OnlineID);
+                beatmapInfoOverlay?.FetchAndShowBeatmapSet(SetInfo.OnlineID);
             };
         }
 

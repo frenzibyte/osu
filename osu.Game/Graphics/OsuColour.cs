@@ -288,6 +288,11 @@ namespace osu.Game.Graphics
         /// </summary>
         public readonly Color4 Orange1 = Color4Extensions.FromHex(@"ffd966");
 
+        /// <summary>
+        /// Equivalent to <see cref="OverlayColourProvider.Orange"/>'s <see cref="OverlayColourProvider.Colour3"/>.
+        /// </summary>
+        public readonly Color4 Orange3 = Color4Extensions.FromHex(@"cca633");
+
         // Content Background
         public readonly Color4 B5 = Color4Extensions.FromHex(@"222a28");
 

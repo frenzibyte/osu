@@ -69,7 +69,6 @@ namespace osu.Game.Tests.Online
             var converted = (TestModTimeRamp)deserialised?.ToMod(new TestRuleset());
 
             Assert.That(converted, Is.Not.Null);
-
             Assert.That(converted.AdjustPitch.Value, Is.EqualTo(false));
             Assert.That(converted.InitialRate.Value, Is.EqualTo(1.25));
             Assert.That(converted.FinalRate.Value, Is.EqualTo(0.25));

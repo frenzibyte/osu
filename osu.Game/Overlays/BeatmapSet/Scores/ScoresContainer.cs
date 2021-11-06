@@ -188,7 +188,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                         }
                     },
                 },
-                loading = new LoadingLayer()
+                loading = new LoadingLayer(),
             });
         }
 

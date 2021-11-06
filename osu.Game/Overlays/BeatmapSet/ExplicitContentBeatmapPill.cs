@@ -38,7 +38,6 @@ namespace osu.Game.Overlays.BeatmapSet
                         Margin = new MarginPadding { Horizontal = 10f, Vertical = 2f },
                         Text = BeatmapsetsStrings.NsfwBadgeLabel.ToUpper(),
                         Font = OsuFont.GetFont(size: 10, weight: FontWeight.SemiBold),
-                        Colour = OverlayColourProvider.Orange.Colour2,
                     }
                 }
             };

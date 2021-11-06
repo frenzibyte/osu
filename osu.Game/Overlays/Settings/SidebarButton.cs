@@ -11,9 +11,6 @@ namespace osu.Game.Overlays.Settings
     {
         protected const double FADE_DURATION = 500;
 
-        [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; }
-
         [BackgroundDependencyLoader]
         private void load()
         {

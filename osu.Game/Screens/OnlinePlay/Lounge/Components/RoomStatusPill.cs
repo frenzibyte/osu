@@ -7,6 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Online.Rooms;
 using osu.Game.Online.Rooms.RoomStatuses;
 using osuTK.Graphics;
@@ -32,7 +33,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChild = pill = new PillContainer
+            InternalChild = pill = new PillContainer(true)
             {
                 Child = statusText = new OsuSpriteText
                 {

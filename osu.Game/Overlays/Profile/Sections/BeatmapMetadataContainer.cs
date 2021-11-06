@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Overlays.BeatmapSetV2;
 
 namespace osu.Game.Overlays.Profile.Sections
 {
@@ -26,11 +27,11 @@ namespace osu.Game.Overlays.Profile.Sections
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(BeatmapSetOverlay beatmapSetOverlay)
+        private void load(BeatmapInfoOverlay beatmapInfoOverlay)
         {
             Action = () =>
             {
-                beatmapSetOverlay?.FetchAndShowBeatmap(beatmapInfo.OnlineID);
+                beatmapInfoOverlay?.FetchAndShowBeatmap(beatmapInfo.OnlineID);
             };
 
             Child = new FillFlowContainer

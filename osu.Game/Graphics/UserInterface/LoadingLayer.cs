@@ -21,6 +21,13 @@ namespace osu.Game.Graphics.UserInterface
         [CanBeNull]
         protected Box BackgroundDimLayer { get; }
 
+        private Vector2? iconSize;
+
+        public Vector2 IconSize
+        {
+            set => iconSize = MainContents.Size = value;
+        }
+
         /// <summary>
         /// Construct a new loading spinner.
         /// </summary>
@@ -81,7 +88,8 @@ namespace osu.Game.Graphics.UserInterface
         {
             base.Update();
 
-            MainContents.Size = new Vector2(Math.Clamp(Math.Min(DrawWidth, DrawHeight) * 0.25f, 30, 100));
+            if (iconSize == null)
+                MainContents.Size = new Vector2(Math.Clamp(Math.Min(DrawWidth, DrawHeight) * 0.25f, 30, 100));
         }
     }
 }

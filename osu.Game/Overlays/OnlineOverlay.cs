@@ -18,7 +18,8 @@ namespace osu.Game.Overlays
         protected readonly OverlayScrollContainer ScrollFlow;
 
         protected readonly LoadingLayer Loading;
-        private readonly Container content;
+
+        private Container content;
 
         protected OnlineOverlay(OverlayColourScheme colourScheme, bool requiresSignIn = true)
             : base(colourScheme)
@@ -35,26 +36,33 @@ namespace osu.Game.Overlays
                 {
                     RelativeSizeAxes = Axes.Both,
                     ScrollbarVisible = false,
-                    Child = new FillFlowContainer
+                    Child = CreateOverlayContainer().With(c =>
                     {
-                        AutoSizeAxes = Axes.Y,
-                        RelativeSizeAxes = Axes.X,
-                        Direction = FillDirection.Vertical,
-                        Children = new Drawable[]
+                        c.AutoSizeAxes = Axes.Y;
+                        c.RelativeSizeAxes = Axes.X;
+                        c.Child = new FillFlowContainer
                         {
-                            Header.With(h => h.Depth = float.MinValue),
-                            content = new Container
+                            AutoSizeAxes = Axes.Y,
+                            RelativeSizeAxes = Axes.X,
+                            Direction = FillDirection.Vertical,
+                            Children = new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.X,
-                                AutoSizeAxes = Axes.Y
+                                Header.With(h => h.Depth = float.MinValue),
+                                content = new Container
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y
+                                }
                             }
-                        }
-                    }
+                        };
+                    }),
                 },
                 Loading = new LoadingLayer(true)
             });
 
             base.Content.Add(mainContent);
         }
+
+        protected virtual Container CreateOverlayContainer() => new Container();
     }
 }

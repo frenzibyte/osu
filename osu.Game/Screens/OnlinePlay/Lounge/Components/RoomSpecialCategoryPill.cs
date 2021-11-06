@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterfaceV2;
 using osuTK.Graphics;
 
 namespace osu.Game.Screens.OnlinePlay.Lounge.Components
@@ -22,7 +23,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
         {
-            InternalChild = new PillContainer
+            InternalChild = new PillContainer(true)
             {
                 Background =
                 {

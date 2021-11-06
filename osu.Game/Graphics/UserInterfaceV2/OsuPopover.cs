@@ -17,7 +17,8 @@ namespace osu.Game.Graphics.UserInterfaceV2
 {
     public class OsuPopover : Popover, IKeyBindingHandler<GlobalAction>
     {
-        private const float fade_duration = 250;
+        public const float FADE_DURATION = 250;
+
         private const double scale_duration = 500;
 
         public OsuPopover(bool withPadding = true)
@@ -47,13 +48,13 @@ namespace osu.Game.Graphics.UserInterfaceV2
         protected override void PopIn()
         {
             this.ScaleTo(1, scale_duration, Easing.OutElasticHalf);
-            this.FadeIn(fade_duration, Easing.OutQuint);
+            this.FadeIn(FADE_DURATION, Easing.OutQuint);
         }
 
         protected override void PopOut()
         {
             this.ScaleTo(0.7f, scale_duration, Easing.OutQuint);
-            this.FadeOut(fade_duration, Easing.OutQuint);
+            this.FadeOut(FADE_DURATION, Easing.OutQuint);
         }
 
         public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)

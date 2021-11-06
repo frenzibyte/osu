@@ -17,6 +17,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Collections;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
+using osu.Game.Overlays.BeatmapSetV2;
 
 namespace osu.Game.Screens.Select.Carousel
 {
@@ -59,7 +60,7 @@ namespace osu.Game.Screens.Select.Carousel
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(BeatmapSetOverlay beatmapOverlay)
+        private void load(BeatmapInfoOverlay beatmapOverlay)
         {
             restoreHiddenRequested = s => s.Beatmaps.ForEach(manager.Restore);
 

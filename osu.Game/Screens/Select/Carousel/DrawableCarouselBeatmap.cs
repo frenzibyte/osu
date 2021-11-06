@@ -23,7 +23,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Backgrounds;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
-using osu.Game.Overlays;
+using osu.Game.Overlays.BeatmapSetV2;
 using osuTK;
 using osuTK.Graphics;
 
@@ -52,7 +52,7 @@ namespace osu.Game.Screens.Select.Carousel
         private StarCounter starCounter;
 
         [Resolved(CanBeNull = true)]
-        private BeatmapSetOverlay beatmapOverlay { get; set; }
+        private BeatmapInfoOverlay beatmapOverlay { get; set; }
 
         [Resolved]
         private BeatmapDifficultyCache difficultyCache { get; set; }

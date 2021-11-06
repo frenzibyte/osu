@@ -13,11 +13,10 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -112,13 +111,11 @@ namespace osu.Game.Beatmaps.Drawables
                         Colour = colours.ForStarDifficulty(beatmapInfo.StarRating) // Default value that will be re-populated once difficulty calculation completes
                     },
                 },
-                new ConstrainedIconContainer
+                new RulesetIcon(ruleset ?? beatmapInfo.Ruleset)
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    // the null coalesce here is only present to make unit tests work (ruleset dlls aren't copied correctly for testing at the moment)
-                    Icon = getRulesetIcon()
                 },
             };
 
@@ -128,16 +125,6 @@ namespace osu.Game.Beatmaps.Drawables
                 difficultyBindable.Value = new StarDifficulty(beatmapInfo.StarRating, 0);
 
             difficultyBindable.BindValueChanged(difficulty => background.Colour = colours.ForStarDifficulty(difficulty.NewValue.Stars));
-        }
-
-        private Drawable getRulesetIcon()
-        {
-            int? onlineID = (ruleset ?? beatmapInfo.Ruleset).OnlineID;
-
-            if (onlineID >= 0 && rulesets.GetRuleset(onlineID.Value)?.CreateInstance() is Ruleset rulesetInstance)
-                return rulesetInstance.CreateIcon();
-
-            return new SpriteIcon { Icon = FontAwesome.Regular.QuestionCircle };
         }
 
         ITooltip<DifficultyIconTooltipContent> IHasCustomTooltip<DifficultyIconTooltipContent>.GetCustomTooltip() => new DifficultyIconTooltip();

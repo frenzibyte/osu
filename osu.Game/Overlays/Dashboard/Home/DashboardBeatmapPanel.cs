@@ -12,6 +12,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Online.API.Requests.Responses;
+using osu.Game.Overlays.BeatmapSetV2;
 using osuTK;
 
 namespace osu.Game.Overlays.Dashboard.Home
@@ -22,7 +23,7 @@ namespace osu.Game.Overlays.Dashboard.Home
         protected OverlayColourProvider ColourProvider { get; private set; }
 
         [Resolved(canBeNull: true)]
-        private BeatmapSetOverlay beatmapOverlay { get; set; }
+        private BeatmapInfoOverlay beatmapOverlay { get; set; }
 
         protected readonly APIBeatmapSet BeatmapSet;
 
