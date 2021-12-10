@@ -14,6 +14,7 @@ using osu.Game.Scoring;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Ranking;
 using osu.Game.Users;
+using osu.Game.Utils;
 using osuTK.Input;
 
 namespace osu.Game.Screens.Select
@@ -95,11 +96,11 @@ namespace osu.Game.Screens.Select
                     return false;
                 }
 
-                var mods = Mods.Value;
+                var newMods = Mods.Value.Append(autoInstance).ToArray();
 
-                if (mods.All(m => m.GetType() != autoInstance.GetType()))
+                if (ModUtils.CheckCompatibleSet(newMods))
                 {
-                    Mods.Value = mods.Append(autoInstance).ToArray();
+                    Mods.Value = newMods;
                     removeAutoModOnResume = true;
                 }
             }
