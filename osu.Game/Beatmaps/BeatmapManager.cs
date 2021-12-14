@@ -42,21 +42,18 @@ namespace osu.Game.Beatmaps
 
         public BeatmapManager(Storage storage, RealmContextFactory contextFactory, RulesetStore rulesets, IAPIProvider api, [NotNull] AudioManager audioManager, IResourceStore<byte[]> gameResources, GameHost host = null, WorkingBeatmap defaultBeatmap = null, bool performOnlineLookups = false)
         {
+            if (performOnlineLookups)
+                onlineBeatmapLookupQueue = new BeatmapOnlineLookupQueue(api, storage);
+
             var userResources = new RealmFileStore(contextFactory, storage).Store;
 
             BeatmapTrackStore = audioManager.GetTrackStore(userResources);
 
-            beatmapModelManager = CreateBeatmapModelManager(storage, contextFactory, rulesets, api, host);
+            beatmapModelManager = CreateBeatmapModelManager(storage, contextFactory, rulesets, onlineBeatmapLookupQueue);
             workingBeatmapCache = CreateWorkingBeatmapCache(audioManager, gameResources, userResources, defaultBeatmap, host);
 
             workingBeatmapCache.BeatmapManager = beatmapModelManager;
             beatmapModelManager.WorkingBeatmapCache = workingBeatmapCache;
-
-            if (performOnlineLookups)
-            {
-                onlineBeatmapLookupQueue = new BeatmapOnlineLookupQueue(api, storage);
-                beatmapModelManager.OnlineLookupQueue = onlineBeatmapLookupQueue;
-            }
         }
 
         protected virtual WorkingBeatmapCache CreateWorkingBeatmapCache(AudioManager audioManager, IResourceStore<byte[]> resources, IResourceStore<byte[]> storage, WorkingBeatmap defaultBeatmap, GameHost host)
@@ -64,8 +61,8 @@ namespace osu.Game.Beatmaps
             return new WorkingBeatmapCache(BeatmapTrackStore, audioManager, resources, storage, defaultBeatmap, host);
         }
 
-        protected virtual BeatmapModelManager CreateBeatmapModelManager(Storage storage, RealmContextFactory contextFactory, RulesetStore rulesets, IAPIProvider api, GameHost host) =>
-            new BeatmapModelManager(storage, contextFactory, rulesets, host);
+        protected virtual BeatmapModelManager CreateBeatmapModelManager(Storage storage, RealmContextFactory contextFactory, RulesetStore rulesets, [CanBeNull] BeatmapOnlineLookupQueue onlineLookupQueue) =>
+            new BeatmapModelManager(storage, contextFactory, rulesets, onlineLookupQueue);
 
         /// <summary>
         /// Create a new <see cref="WorkingBeatmap"/>.
