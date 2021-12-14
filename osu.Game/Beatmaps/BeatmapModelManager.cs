@@ -3,12 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using osu.Framework.Extensions;
 using osu.Framework.Platform;
@@ -16,11 +15,8 @@ using osu.Framework.Testing;
 using osu.Game.Beatmaps.Formats;
 using osu.Game.Database;
 using osu.Game.Extensions;
-using osu.Game.IO.Archives;
-using osu.Game.Rulesets;
 using osu.Game.Skinning;
 using osu.Game.Stores;
-using Realms;
 
 #nullable enable
 
@@ -51,52 +47,12 @@ namespace osu.Game.Beatmaps
 
         protected override string[] HashableFileTypes => new[] { ".osu" };
 
-        private readonly RulesetStore rulesets;
-
-        public BeatmapModelManager(Storage storage, RealmContextFactory contextFactory, RulesetStore rulesets, BeatmapOnlineLookupQueue? onlineLookupQueue = null)
+        public BeatmapModelManager(RealmContextFactory contextFactory, Storage storage, BeatmapOnlineLookupQueue? onlineLookupQueue = null)
             : base(contextFactory, storage, onlineLookupQueue)
         {
-            this.rulesets = rulesets;
         }
 
         protected override bool ShouldDeleteArchive(string path) => Path.GetExtension(path)?.ToLowerInvariant() == ".osz";
-
-        protected override BeatmapSetInfo? CreateModel(ArchiveReader archive)
-        {
-            return importer.CreateModel(archive);
-        }
-
-        protected override async Task Populate(BeatmapSetInfo beatmapSet, ArchiveReader? archive, Realm realm, CancellationToken cancellationToken)
-        {
-            if (archive != null)
-                beatmapSet.Beatmaps.AddRange(createBeatmapDifficulties(beatmapSet.Files));
-
-            foreach (BeatmapInfo b in beatmapSet.Beatmaps)
-            {
-                // remove metadata from difficulties where it matches the set
-                if (beatmapSet.Metadata.Equals(b.Metadata))
-                    b.Metadata = null;
-
-                b.BeatmapSet = beatmapSet;
-            }
-
-            validateOnlineIds(beatmapSet);
-
-            bool hadOnlineIDs = beatmapSet.Beatmaps.Any(b => b.OnlineID > 0);
-
-            if (OnlineLookupQueue != null)
-                await OnlineLookupQueue.UpdateAsync(beatmapSet, cancellationToken).ConfigureAwait(false);
-
-            // ensure at least one beatmap was able to retrieve or keep an online ID, else drop the set ID.
-            if (hadOnlineIDs && !beatmapSet.Beatmaps.Any(b => b.OnlineID > 0))
-            {
-                if (beatmapSet.OnlineID != null)
-                {
-                    beatmapSet.OnlineID = -1;
-                    LogForModel(beatmapSet, "Disassociating beatmap set ID due to loss of all beatmap IDs");
-                }
-            }
-        }
 
         /// <summary>
         /// Delete a beatmap difficulty.
@@ -116,9 +72,11 @@ namespace osu.Game.Beatmaps
         /// <param name="beatmapInfo">The <see cref="BeatmapInfo"/> to save the content against. The file referenced by <see cref="BeatmapInfo.Path"/> will be replaced.</param>
         /// <param name="beatmapContent">The <see cref="IBeatmap"/> content to write.</param>
         /// <param name="beatmapSkin">The beatmap <see cref="ISkin"/> content to write, null if to be omitted.</param>
-        public virtual void Save(BeatmapInfo beatmapInfo, IBeatmap beatmapContent, ISkin beatmapSkin = null)
+        public virtual void Save(BeatmapInfo beatmapInfo, IBeatmap beatmapContent, ISkin? beatmapSkin = null)
         {
             var setInfo = beatmapInfo.BeatmapSet;
+
+            Debug.Assert(setInfo != null);
 
             // Difficulty settings must be copied first due to the clone in `Beatmap<>.BeatmapInfo_Set`.
             // This should hopefully be temporary, assuming said clone is eventually removed.
@@ -138,25 +96,30 @@ namespace osu.Game.Beatmaps
 
                 stream.Seek(0, SeekOrigin.Begin);
 
-                using (ContextFactory.GetForWrite())
+                using (var realm = ContextFactory.CreateContext())
+                using (var transaction = realm.BeginWrite())
                 {
                     beatmapInfo = setInfo.Beatmaps.Single(b => b.Equals(beatmapInfo));
 
                     var metadata = beatmapInfo.Metadata ?? setInfo.Metadata;
 
                     // grab the original file (or create a new one if not found).
-                    var fileInfo = setInfo.Files.SingleOrDefault(f => string.Equals(f.Filename, beatmapInfo.Path, StringComparison.OrdinalIgnoreCase)) ?? new BeatmapSetFileInfo();
+                    var existingFileInfo = setInfo.Files.SingleOrDefault(f => string.Equals(f.Filename, beatmapInfo.Path, StringComparison.OrdinalIgnoreCase));
+
+                    if (existingFileInfo != null)
+                    {
+                        DeleteFile(setInfo, existingFileInfo);
+                    }
 
                     // metadata may have changed; update the path with the standard format.
-                    beatmapInfo.Path = $"{metadata.Artist} - {metadata.Title} ({metadata.Author}) [{beatmapInfo.DifficultyName}].osu".GetValidArchiveContentFilename();
+                    string filename = $"{metadata.Artist} - {metadata.Title} ({metadata.Author}) [{beatmapInfo.DifficultyName}].osu".GetValidArchiveContentFilename();
 
                     beatmapInfo.MD5Hash = stream.ComputeMD5Hash();
 
-                    // update existing or populate new file's filename.
-                    fileInfo.Filename = beatmapInfo.Path;
-
                     stream.Seek(0, SeekOrigin.Begin);
-                    ReplaceFile(setInfo, fileInfo, stream);
+                    AddFile(setInfo, stream, filename, realm);
+
+                    transaction.Commit();
                 }
             }
 
@@ -169,26 +132,6 @@ namespace osu.Game.Beatmaps
         /// <param name="query">The query.</param>
         /// <returns>The first result for the provided query, or null if no results were found.</returns>
         public BeatmapSetInfo QueryBeatmapSet(Expression<Func<BeatmapSetInfo, bool>> query) => beatmaps.ConsumableItems.AsNoTracking().FirstOrDefault(query);
-
-        protected override bool CanSkipImport(BeatmapSetInfo existing, BeatmapSetInfo import)
-        {
-            if (!base.CanSkipImport(existing, import))
-                return false;
-
-            return existing.Beatmaps.Any(b => b.OnlineID != null);
-        }
-
-        protected override bool CanReuseExisting(BeatmapSetInfo existing, BeatmapSetInfo import)
-        {
-            if (!base.CanReuseExisting(existing, import))
-                return false;
-
-            var existingIds = existing.Beatmaps.Select(b => b.OnlineID).OrderBy(i => i);
-            var importIds = import.Beatmaps.Select(b => b.OnlineID).OrderBy(i => i);
-
-            // force re-import if we are not in a sane state.
-            return existing.OnlineID == import.OnlineID && existingIds.SequenceEqual(importIds);
-        }
 
         /// <summary>
         /// Returns a list of all usable <see cref="BeatmapSetInfo"/>s.
@@ -205,26 +148,7 @@ namespace osu.Game.Beatmaps
         /// <returns>A list of available <see cref="BeatmapSetInfo"/>.</returns>
         public IEnumerable<BeatmapSetInfo> GetAllUsableBeatmapSetsEnumerable(IncludedDetails includes, bool includeProtected = false)
         {
-            IQueryable<BeatmapSetInfo> queryable;
-
-            switch (includes)
-            {
-                case IncludedDetails.Minimal:
-                    queryable = beatmaps.BeatmapSetsOverview;
-                    break;
-
-                case IncludedDetails.AllButRuleset:
-                    queryable = beatmaps.BeatmapSetsWithoutRuleset;
-                    break;
-
-                case IncludedDetails.AllButFiles:
-                    queryable = beatmaps.BeatmapSetsWithoutFiles;
-                    break;
-
-                default:
-                    queryable = beatmaps.ConsumableItems;
-                    break;
-            }
+            IQueryable<BeatmapSetInfo> queryable = beatmaps.BeatmapSetsOverview;
 
             // AsEnumerable used here to avoid applying the WHERE in sql. When done so, ef core 2.x uses an incorrect ORDER BY
             // clause which causes queries to take 5-10x longer.
@@ -240,26 +164,7 @@ namespace osu.Game.Beatmaps
         /// <returns>Results from the provided query.</returns>
         public IEnumerable<BeatmapSetInfo> QueryBeatmapSets(Expression<Func<BeatmapSetInfo, bool>> query, IncludedDetails includes = IncludedDetails.All)
         {
-            IQueryable<BeatmapSetInfo> queryable;
-
-            switch (includes)
-            {
-                case IncludedDetails.Minimal:
-                    queryable = beatmaps.BeatmapSetsOverview;
-                    break;
-
-                case IncludedDetails.AllButRuleset:
-                    queryable = beatmaps.BeatmapSetsWithoutRuleset;
-                    break;
-
-                case IncludedDetails.AllButFiles:
-                    queryable = beatmaps.BeatmapSetsWithoutFiles;
-                    break;
-
-                default:
-                    queryable = beatmaps.ConsumableItems;
-                    break;
-            }
+            IQueryable<BeatmapSetInfo> queryable = beatmaps.BeatmapSetsOverview;
 
             return queryable.AsNoTracking().Where(query);
         }

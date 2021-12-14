@@ -149,7 +149,7 @@ namespace osu.Game.Tests.Visual
             internal class TestBeatmapModelManager : BeatmapModelManager
             {
                 public TestBeatmapModelManager(Storage storage, RealmContextFactory databaseContextFactory, RulesetStore rulesetStore, BeatmapOnlineLookupQueue beatmapOnlineLookupQueue)
-                    : base(storage, databaseContextFactory, rulesetStore, beatmapOnlineLookupQueue)
+                    : base(databaseContextFactory, storage, beatmapOnlineLookupQueue)
                 {
                 }
 

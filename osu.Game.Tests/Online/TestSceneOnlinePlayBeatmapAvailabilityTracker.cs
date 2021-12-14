@@ -182,7 +182,7 @@ namespace osu.Game.Tests.Online
                 private readonly TestBeatmapManager testBeatmapManager;
 
                 public TestBeatmapModelManager(TestBeatmapManager testBeatmapManager, Storage storage, RealmContextFactory databaseContextFactory, RulesetStore rulesetStore, BeatmapOnlineLookupQueue beatmapOnlineLookupQueue)
-                    : base(storage, databaseContextFactory, rulesetStore, beatmapOnlineLookupQueue)
+                    : base(databaseContextFactory, storage, beatmapOnlineLookupQueue)
                 {
                     this.testBeatmapManager = testBeatmapManager;
                 }
