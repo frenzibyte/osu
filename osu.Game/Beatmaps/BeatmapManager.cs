@@ -16,7 +16,6 @@ using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
 using osu.Game.Database;
-using osu.Game.IO;
 using osu.Game.IO.Archives;
 using osu.Game.Models;
 using osu.Game.Online.API;
@@ -65,7 +64,7 @@ namespace osu.Game.Beatmaps
             return new WorkingBeatmapCache(BeatmapTrackStore, audioManager, resources, storage, defaultBeatmap, host);
         }
 
-        protected virtual BeatmapModelManager CreateBeatmapModelManager(Storage storage, IDatabaseContextFactory contextFactory, RulesetStore rulesets, IAPIProvider api, GameHost host) =>
+        protected virtual BeatmapModelManager CreateBeatmapModelManager(Storage storage, RealmContextFactory contextFactory, RulesetStore rulesets, IAPIProvider api, GameHost host) =>
             new BeatmapModelManager(storage, contextFactory, rulesets, host);
 
         /// <summary>
