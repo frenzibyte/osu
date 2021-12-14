@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 using osu.Framework.Extensions;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
@@ -58,13 +57,33 @@ namespace osu.Game.Beatmaps
         /// Delete a beatmap difficulty.
         /// </summary>
         /// <param name="beatmapInfo">The beatmap difficulty to hide.</param>
-        public void Hide(BeatmapInfo beatmapInfo) => beatmaps.Hide(beatmapInfo);
+        public void Hide(BeatmapInfo beatmapInfo)
+        {
+            using (var realm = ContextFactory.CreateContext())
+            using (var transaction = realm.BeginWrite())
+            {
+                beatmapInfo.Hidden = true;
+                transaction.Commit();
+
+                BeatmapHidden?.Invoke(beatmapInfo);
+            }
+        }
 
         /// <summary>
         /// Restore a beatmap difficulty.
         /// </summary>
         /// <param name="beatmapInfo">The beatmap difficulty to restore.</param>
-        public void Restore(BeatmapInfo beatmapInfo) => beatmaps.Restore(beatmapInfo);
+        public void Restore(BeatmapInfo beatmapInfo)
+        {
+            using (var realm = ContextFactory.CreateContext())
+            using (var transaction = realm.BeginWrite())
+            {
+                beatmapInfo.Hidden = false;
+                transaction.Commit();
+
+                BeatmapRestored?.Invoke(beatmapInfo);
+            }
+        }
 
         /// <summary>
         /// Saves an <see cref="IBeatmap"/> file against a given <see cref="BeatmapInfo"/>.
@@ -101,8 +120,6 @@ namespace osu.Game.Beatmaps
                 {
                     beatmapInfo = setInfo.Beatmaps.Single(b => b.Equals(beatmapInfo));
 
-                    var metadata = beatmapInfo.Metadata ?? setInfo.Metadata;
-
                     // grab the original file (or create a new one if not found).
                     var existingFileInfo = setInfo.Files.SingleOrDefault(f => string.Equals(f.Filename, beatmapInfo.Path, StringComparison.OrdinalIgnoreCase));
 
@@ -112,6 +129,7 @@ namespace osu.Game.Beatmaps
                     }
 
                     // metadata may have changed; update the path with the standard format.
+                    var metadata = beatmapInfo.Metadata;
                     string filename = $"{metadata.Artist} - {metadata.Title} ({metadata.Author}) [{beatmapInfo.DifficultyName}].osu".GetValidArchiveContentFilename();
 
                     beatmapInfo.MD5Hash = stream.ComputeMD5Hash();
@@ -131,42 +149,43 @@ namespace osu.Game.Beatmaps
         /// </summary>
         /// <param name="query">The query.</param>
         /// <returns>The first result for the provided query, or null if no results were found.</returns>
-        public BeatmapSetInfo QueryBeatmapSet(Expression<Func<BeatmapSetInfo, bool>> query) => beatmaps.ConsumableItems.AsNoTracking().FirstOrDefault(query);
+        public BeatmapSetInfo? QueryBeatmapSet(Expression<Func<BeatmapSetInfo, bool>> query)
+        {
+            using (var context = ContextFactory.CreateContext())
+                return context.All<BeatmapSetInfo>().FirstOrDefault(query); // TODO: ?.ToLive();
+        }
 
         /// <summary>
         /// Returns a list of all usable <see cref="BeatmapSetInfo"/>s.
         /// </summary>
         /// <returns>A list of available <see cref="BeatmapSetInfo"/>.</returns>
-        public List<BeatmapSetInfo> GetAllUsableBeatmapSets(IncludedDetails includes = IncludedDetails.All, bool includeProtected = false) =>
-            GetAllUsableBeatmapSetsEnumerable(includes, includeProtected).ToList();
+        public List<BeatmapSetInfo> GetAllUsableBeatmapSets(bool includeProtected = false) =>
+            GetAllUsableBeatmapSetsEnumerable(includeProtected).ToList();
 
         /// <summary>
         /// Returns a list of all usable <see cref="BeatmapSetInfo"/>s. Note that files are not populated.
         /// </summary>
-        /// <param name="includes">The level of detail to include in the returned objects.</param>
         /// <param name="includeProtected">Whether to include protected (system) beatmaps. These should not be included for gameplay playable use cases.</param>
         /// <returns>A list of available <see cref="BeatmapSetInfo"/>.</returns>
-        public IEnumerable<BeatmapSetInfo> GetAllUsableBeatmapSetsEnumerable(IncludedDetails includes, bool includeProtected = false)
+        public IEnumerable<BeatmapSetInfo> GetAllUsableBeatmapSetsEnumerable(bool includeProtected = false)
         {
-            IQueryable<BeatmapSetInfo> queryable = beatmaps.BeatmapSetsOverview;
-
-            // AsEnumerable used here to avoid applying the WHERE in sql. When done so, ef core 2.x uses an incorrect ORDER BY
-            // clause which causes queries to take 5-10x longer.
-            // TODO: remove if upgrading to EF core 3.x.
-            return queryable.AsEnumerable().Where(s => !s.DeletePending && (includeProtected || !s.Protected));
+            using (var context = ContextFactory.CreateContext())
+                return context.All<BeatmapSetInfo>().Where(b => !b.DeletePending && (includeProtected || !b.Protected));
         }
 
         /// <summary>
         /// Perform a lookup query on available <see cref="BeatmapSetInfo"/>s.
         /// </summary>
         /// <param name="query">The query.</param>
-        /// <param name="includes">The level of detail to include in the returned objects.</param>
         /// <returns>Results from the provided query.</returns>
-        public IEnumerable<BeatmapSetInfo> QueryBeatmapSets(Expression<Func<BeatmapSetInfo, bool>> query, IncludedDetails includes = IncludedDetails.All)
+        public IEnumerable<BeatmapSetInfo> QueryBeatmapSets(Expression<Func<BeatmapSetInfo, bool>> query)
         {
-            IQueryable<BeatmapSetInfo> queryable = beatmaps.BeatmapSetsOverview;
-
-            return queryable.AsNoTracking().Where(query);
+            using (var context = ContextFactory.CreateContext())
+            {
+                return context.All<BeatmapSetInfo>()
+                              .Where(b => !b.DeletePending)
+                              .Where(query);
+            }
         }
 
         /// <summary>
@@ -174,39 +193,24 @@ namespace osu.Game.Beatmaps
         /// </summary>
         /// <param name="query">The query.</param>
         /// <returns>The first result for the provided query, or null if no results were found.</returns>
-        public BeatmapInfo QueryBeatmap(Expression<Func<BeatmapInfo, bool>> query) => beatmaps.Beatmaps.AsNoTracking().FirstOrDefault(query);
+        public BeatmapInfo? QueryBeatmap(Expression<Func<BeatmapInfo, bool>> query)
+        {
+            using (var context = ContextFactory.CreateContext())
+                return context.All<BeatmapInfo>().FirstOrDefault(query); // TODO: ?.ToLive();
+        }
 
         /// <summary>
         /// Perform a lookup query on available <see cref="BeatmapInfo"/>s.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <returns>Results from the provided query.</returns>
-        public IQueryable<BeatmapInfo> QueryBeatmaps(Expression<Func<BeatmapInfo, bool>> query) => beatmaps.Beatmaps.AsNoTracking().Where(query);
-    }
-
-    /// <summary>
-    /// The level of detail to include in database results.
-    /// </summary>
-    public enum IncludedDetails
-    {
-        /// <summary>
-        /// Only include beatmap difficulties and set level metadata.
-        /// </summary>
-        Minimal,
-
-        /// <summary>
-        /// Include all difficulties, rulesets, difficulty metadata but no files.
-        /// </summary>
-        AllButFiles,
-
-        /// <summary>
-        /// Include everything except ruleset. Used for cases where we aren't sure the ruleset is present but still want to consume the beatmap.
-        /// </summary>
-        AllButRuleset,
-
-        /// <summary>
-        /// Include everything.
-        /// </summary>
-        All
+        public IQueryable<BeatmapInfo> QueryBeatmaps(Expression<Func<BeatmapInfo, bool>> query)
+        {
+            using (var context = ContextFactory.CreateContext())
+            {
+                return context.All<BeatmapInfo>()
+                              .Where(query);
+            }
+        }
     }
 }
