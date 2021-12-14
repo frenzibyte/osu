@@ -25,7 +25,6 @@ namespace osu.Game.Tests
 
             BeatmapInfo = new TestBeatmap(ruleset).BeatmapInfo;
             Ruleset = ruleset;
-            RulesetID = ruleset.OnlineID;
 
             Mods = excessMods
                 ? ruleset.CreateInstance()?.CreateAllMods().ToArray()

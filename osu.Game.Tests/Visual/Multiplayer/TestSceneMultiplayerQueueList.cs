@@ -126,7 +126,7 @@ namespace osu.Game.Tests.Visual.Multiplayer
                 MultiplayerPlaylistItem item = new MultiplayerPlaylistItem(new PlaylistItem
                 {
                     Beatmap = { Value = importedBeatmap },
-                    BeatmapID = importedBeatmap.OnlineID ?? -1,
+                    BeatmapID = importedBeatmap.OnlineID,
                 });
 
                 Client.AddUserPlaylistItem(userId(), item);

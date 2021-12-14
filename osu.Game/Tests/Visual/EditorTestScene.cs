@@ -122,7 +122,7 @@ namespace osu.Game.Tests.Visual
                 this.testBeatmap = testBeatmap;
             }
 
-            protected override BeatmapModelManager CreateBeatmapModelManager(Storage storage, IDatabaseContextFactory contextFactory, RulesetStore rulesets, IAPIProvider api, GameHost host)
+            protected override BeatmapModelManager CreateBeatmapModelManager(Storage storage, RealmContextFactory contextFactory, RulesetStore rulesets, IAPIProvider api, GameHost host)
             {
                 return new TestBeatmapModelManager(storage, contextFactory, rulesets, api, host);
             }
@@ -148,7 +148,7 @@ namespace osu.Game.Tests.Visual
 
             internal class TestBeatmapModelManager : BeatmapModelManager
             {
-                public TestBeatmapModelManager(Storage storage, IDatabaseContextFactory databaseContextFactory, RulesetStore rulesetStore, IAPIProvider apiProvider, GameHost gameHost)
+                public TestBeatmapModelManager(Storage storage, RealmContextFactory databaseContextFactory, RulesetStore rulesetStore, IAPIProvider apiProvider, GameHost gameHost)
                     : base(storage, databaseContextFactory, rulesetStore, gameHost)
                 {
                 }
