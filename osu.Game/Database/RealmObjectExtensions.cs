@@ -41,7 +41,7 @@ namespace osu.Game.Database
             c.ForAllMaps((a, b) =>
             {
                 b.PreserveReferences();
-                b.MaxDepth(2);
+                b.MaxDepth(3);
             });
         }).CreateMapper();
 
@@ -67,7 +67,7 @@ namespace osu.Game.Database
             c.ForAllMaps((a, b) =>
             {
                 b.PreserveReferences();
-                b.MaxDepth(2);
+                b.MaxDepth(3);
             });
         }).CreateMapper();
 
