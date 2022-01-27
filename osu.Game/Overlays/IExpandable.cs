@@ -18,7 +18,7 @@ namespace osu.Game.Overlays
         BindableBool Expanded { get; }
 
         /// <summary>
-        /// Whether this drawable should be/stay expanded by a parenting <see cref="IExpandingContainer"/>.
+        /// Whether this drawable should be/stay expanded by a parenting <see cref="ExpandingControlContainer{T}"/>.
         /// By default, this is <see langword="true"/> when this drawable is in a hovered or dragged state.
         /// </summary>
         /// <remarks>

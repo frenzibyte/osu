@@ -133,30 +133,9 @@ namespace osu.Game.Overlays
                 headerText.FadeTo(headerText.DrawWidth < DrawWidth ? 1 : 0, 150, Easing.OutQuint);
         }
 
-        [Resolved(canBeNull: true)]
-        private IExpandingContainer expandingContainer { get; set; }
-
-        private bool expandedByContainer;
-
         protected override void LoadComplete()
         {
             base.LoadComplete();
-
-            expandingContainer?.Expanded.BindValueChanged(containerExpanded =>
-            {
-                if (containerExpanded.NewValue && !Expanded.Value)
-                {
-                    Expanded.Value = true;
-                    expandedByContainer = true;
-                }
-                else if (!containerExpanded.NewValue && expandedByContainer)
-                {
-                    Expanded.Value = false;
-                    expandedByContainer = false;
-                }
-
-                updateActiveState();
-            }, true);
 
             Expanded.BindValueChanged(v =>
             {
@@ -196,7 +175,7 @@ namespace osu.Game.Overlays
 
         private void updateActiveState()
         {
-            this.FadeTo(IsHovered || expandingContainer?.Expanded.Value == true ? 1 : inactive_alpha, fade_duration, Easing.OutQuint);
+            this.FadeTo(IsHovered ? 1 : inactive_alpha, fade_duration, Easing.OutQuint);
         }
 
         protected override Container<Drawable> Content => content;

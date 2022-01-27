@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,13 +17,34 @@ namespace osu.Game.Overlays
     /// Represents a <see cref="Container"/> with the ability to expand/contract when hovering the controls within it.
     /// </summary>
     /// <typeparam name="TControl">The type of UI control to lookup for hover expansion.</typeparam>
-    public class ExpandingControlContainer<TControl> : Container, IExpandingContainer
+    public class ExpandingControlContainer<TControl> : Container, IExpandable
         where TControl : class, IDrawable
     {
         private readonly float contractedWidth;
         private readonly float expandedWidth;
 
         public BindableBool Expanded { get; } = new BindableBool();
+
+        /// <summary>
+        /// A list of all <see cref="IExpandable"/>s within this container.
+        /// </summary>
+        /// <remarks>
+        /// This is set only once at <see cref="LoadComplete"/> and does not consider children added afterwards.
+        /// </remarks>
+        private IReadOnlyList<IExpandable> expandables;
+
+        /// <summary>
+        /// A list of all target controls within this container.
+        /// </summary>
+        /// <remarks>
+        /// This is set only once at <see cref="LoadComplete"/> and does not consider children added afterwards.
+        /// </remarks>
+        private IReadOnlyList<TControl> controls;
+
+        /// <summary>
+        /// A list of all <see cref="IExpandable"/>s that have been expanded by this container.
+        /// </summary>
+        private readonly List<IExpandable> expandedChildren = new List<IExpandable>();
 
         /// <summary>
         /// Delay before the container switches to expanded state from hover.
@@ -63,9 +85,33 @@ namespace osu.Game.Overlays
         {
             base.LoadComplete();
 
+            // usually we wouldn't use ChildrenOfType in implementations, but this is the simplest way
+            // to handle cases like the editor where controls may be nested within a child hierarchy.
+            expandables = this.ChildrenOfType<IExpandable>().ToList();
+            controls = this.ChildrenOfType<TControl>().ToList();
+
             Expanded.BindValueChanged(v =>
             {
-                this.ResizeWidthTo(v.NewValue ? expandedWidth : contractedWidth, 500, Easing.OutQuint);
+                if (v.NewValue)
+                {
+                    foreach (var expandable in expandables)
+                    {
+                        if (expandable.Expanded.Value && expandable.GetType() != typeof(TControl))
+                            continue;
+
+                        expandable.Expanded.Value = true;
+                        expandedChildren.Add(expandable);
+                    }
+
+                    this.ResizeWidthTo(expandedWidth, 500, Easing.OutQuint);
+                }
+                else if (!v.NewValue)
+                {
+                    expandedChildren.ForEach(e => e.Expanded.Value = false);
+                    expandedChildren.Clear();
+
+                    this.ResizeWidthTo(contractedWidth, 500, Easing.OutQuint);
+                }
             }, true);
         }
 
@@ -107,9 +153,7 @@ namespace osu.Game.Overlays
             // ..otherwise check whether a new control is hovered, and if so, queue a new hover operation.
             hoverExpandEvent?.Cancel();
 
-            // usually we wouldn't use ChildrenOfType in implementations, but this is the simplest way
-            // to handle cases like the editor where the controls may be nested within a child hierarchy.
-            activeControl = FillFlow.ChildrenOfType<TControl>().FirstOrDefault(isControlActive);
+            activeControl = controls.FirstOrDefault(isControlActive);
 
             if (activeControl != null && !Expanded.Value)
                 hoverExpandEvent = Scheduler.AddDelayed(() => Expanded.Value = true, HoverExpansionDelay);
