@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Edit
             : base(title)
         {
             RelativeSizeAxes = Axes.X;
-            Width = 1;
+            AutoSizeAxes = Axes.Y;
         }
     }
 }

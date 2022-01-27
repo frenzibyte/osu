@@ -18,10 +18,9 @@ using osuTK.Graphics;
 
 namespace osu.Game.Overlays
 {
-    public abstract class SettingsToolboxGroup : Container
+    public class SettingsToolboxGroup : Container
     {
         private const float transition_duration = 250;
-        private const int container_width = 270;
         private const int border_thickness = 2;
         private const int header_height = 30;
         private const int corner_radius = 5;
@@ -32,6 +31,9 @@ namespace osu.Game.Overlays
         private readonly Cached headerTextVisibilityCache = new Cached();
 
         private readonly FillFlowContainer content;
+        private readonly GridContainer contentGrid;
+
+        private readonly OsuSpriteText headerText;
         private readonly IconButton button;
 
         private bool expanded = true;
@@ -48,7 +50,7 @@ namespace osu.Game.Overlays
                 content.ClearTransforms();
 
                 if (expanded)
-                    content.AutoSizeAxes = Axes.Y;
+                    content.AutoSizeAxes = AutoSizeAxes;
                 else
                 {
                     content.AutoSizeAxes = Axes.None;
@@ -61,16 +63,12 @@ namespace osu.Game.Overlays
 
         private Color4 expandedColour;
 
-        private readonly OsuSpriteText headerText;
-
         /// <summary>
         /// Create a new instance.
         /// </summary>
         /// <param name="title">The title to be displayed in the header of this group.</param>
-        protected SettingsToolboxGroup(string title)
+        public SettingsToolboxGroup(string title)
         {
-            AutoSizeAxes = Axes.Y;
-            Width = container_width;
             Masking = true;
             CornerRadius = corner_radius;
             BorderColour = Color4.Black;
@@ -84,57 +82,131 @@ namespace osu.Game.Overlays
                     Colour = Color4.Black,
                     Alpha = 0.5f,
                 },
-                new FillFlowContainer
+                contentGrid = new GridContainer
                 {
-                    Direction = FillDirection.Vertical,
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Children = new Drawable[]
+                    Content = new[]
                     {
-                        new Container
+                        new Drawable[]
                         {
-                            Name = @"Header",
-                            Origin = Anchor.TopCentre,
-                            Anchor = Anchor.TopCentre,
-                            RelativeSizeAxes = Axes.X,
-                            Height = header_height,
-                            Children = new Drawable[]
+                            new Container
                             {
-                                headerText = new OsuSpriteText
+                                Name = @"Header",
+                                Origin = Anchor.TopCentre,
+                                Anchor = Anchor.TopCentre,
+                                RelativeSizeAxes = Axes.Both,
+                                Children = new Drawable[]
                                 {
-                                    Origin = Anchor.CentreLeft,
-                                    Anchor = Anchor.CentreLeft,
-                                    Text = title.ToUpperInvariant(),
-                                    Font = OsuFont.GetFont(weight: FontWeight.Bold, size: 17),
-                                    Padding = new MarginPadding { Left = 10, Right = 30 },
-                                },
-                                button = new IconButton
-                                {
-                                    Origin = Anchor.Centre,
-                                    Anchor = Anchor.CentreRight,
-                                    Position = new Vector2(-15, 0),
-                                    Icon = FontAwesome.Solid.Bars,
-                                    Scale = new Vector2(0.75f),
-                                    Action = () => Expanded = !Expanded,
-                                },
-                            }
+                                    headerText = new OsuSpriteText
+                                    {
+                                        Origin = Anchor.CentreLeft,
+                                        Anchor = Anchor.CentreLeft,
+                                        Text = title.ToUpperInvariant(),
+                                        Font = OsuFont.GetFont(weight: FontWeight.Bold, size: 17),
+                                        Padding = new MarginPadding { Left = 10, Right = 30 },
+                                    },
+                                    button = new IconButton
+                                    {
+                                        Origin = Anchor.Centre,
+                                        Anchor = Anchor.CentreRight,
+                                        Position = new Vector2(-15, 0),
+                                        Icon = FontAwesome.Solid.Bars,
+                                        Scale = new Vector2(0.75f),
+                                        Action = () => Expanded = !Expanded,
+                                    },
+                                }
+                            },
                         },
-                        content = new FillFlowContainer
+                        new Drawable[]
                         {
-                            Name = @"Content",
-                            Origin = Anchor.TopCentre,
-                            Anchor = Anchor.TopCentre,
-                            Direction = FillDirection.Vertical,
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeDuration = transition_duration,
-                            AutoSizeEasing = Easing.OutQuint,
-                            AutoSizeAxes = Axes.Y,
-                            Padding = new MarginPadding(15),
-                            Spacing = new Vector2(0, 15),
+                            content = new FillFlowContainer
+                            {
+                                Name = @"Content",
+                                Origin = Anchor.TopCentre,
+                                Anchor = Anchor.TopCentre,
+                                Direction = FillDirection.Vertical,
+                                AutoSizeDuration = transition_duration,
+                                AutoSizeEasing = Easing.OutQuint,
+                                Padding = new MarginPadding(15),
+                                Spacing = new Vector2(0, 15),
+                            }
                         }
                     }
-                },
+                    // contentFlow = new FillFlowContainer
+                    // {
+                    //     Direction = FillDirection.Vertical,
+                    //     Children = new Drawable[]
+                    //     {
+                    //         new Container
+                    //         {
+                    //             Name = @"Header",
+                    //             Origin = Anchor.TopCentre,
+                    //             Anchor = Anchor.TopCentre,
+                    //             RelativeSizeAxes = Axes.X,
+                    //             Height = header_height,
+                    //             Children = new Drawable[]
+                    //             {
+                    //                 headerText = new OsuSpriteText
+                    //                 {
+                    //                     Origin = Anchor.CentreLeft,
+                    //                     Anchor = Anchor.CentreLeft,
+                    //                     Text = title.ToUpperInvariant(),
+                    //                     Font = OsuFont.GetFont(weight: FontWeight.Bold, size: 17),
+                    //                     Padding = new MarginPadding { Left = 10, Right = 30 },
+                    //                 },
+                    //                 button = new IconButton
+                    //                 {
+                    //                     Origin = Anchor.Centre,
+                    //                     Anchor = Anchor.CentreRight,
+                    //                     Position = new Vector2(-15, 0),
+                    //                     Icon = FontAwesome.Solid.Bars,
+                    //                     Scale = new Vector2(0.75f),
+                    //                     Action = () => Expanded = !Expanded,
+                    //                 },
+                    //             }
+                    //         },
+                    //         content = new FillFlowContainer
+                    //         {
+                    //             Name = @"Content",
+                    //             Origin = Anchor.TopCentre,
+                    //             Anchor = Anchor.TopCentre,
+                    //             Direction = FillDirection.Vertical,
+                    //             AutoSizeDuration = transition_duration,
+                    //             AutoSizeEasing = Easing.OutQuint,
+                    //             Padding = new MarginPadding(15),
+                    //             Spacing = new Vector2(0, 15),
+                    //         }
+                    //     }
+                    // },
+                }
             };
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(OsuColour colours)
+        {
+            content.RelativeSizeAxes = contentGrid.RelativeSizeAxes = Axes.Both & ~AutoSizeAxes;
+            content.AutoSizeAxes = contentGrid.AutoSizeAxes = AutoSizeAxes;
+
+            contentGrid.ColumnDimensions = new[]
+            {
+                new Dimension(AutoSizeAxes.HasFlagFast(Axes.X) ? GridSizeMode.AutoSize : GridSizeMode.Relative, minSize: 20f)
+            };
+
+            contentGrid.RowDimensions = new[]
+            {
+                new Dimension(GridSizeMode.Absolute, header_height),
+                new Dimension(AutoSizeAxes.HasFlagFast(Axes.Y) ? GridSizeMode.AutoSize : GridSizeMode.Relative)
+            };
+
+            expandedColour = colours.Yellow;
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            this.Delay(600).FadeTo(inactive_alpha, fade_duration, Easing.OutQuint);
+            updateExpanded();
         }
 
         protected override bool OnInvalidate(Invalidation invalidation, InvalidationSource source)
@@ -155,14 +227,6 @@ namespace osu.Game.Overlays
                 headerText.FadeTo(headerText.DrawWidth < DrawWidth ? 1 : 0, 150, Easing.OutQuint);
         }
 
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-
-            this.Delay(600).FadeTo(inactive_alpha, fade_duration, Easing.OutQuint);
-            updateExpanded();
-        }
-
         protected override bool OnHover(HoverEvent e)
         {
             this.FadeIn(fade_duration, Easing.OutQuint);
@@ -173,12 +237,6 @@ namespace osu.Game.Overlays
         {
             this.FadeTo(inactive_alpha, fade_duration, Easing.OutQuint);
             base.OnHoverLost(e);
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
-        {
-            expandedColour = colours.Yellow;
         }
 
         private void updateExpanded() => button.FadeColour(expanded ? expandedColour : Color4.White, 200, Easing.InOutQuint);
