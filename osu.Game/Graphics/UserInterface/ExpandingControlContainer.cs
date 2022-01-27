@@ -40,6 +40,7 @@ namespace osu.Game.Graphics.UserInterface
         public ExpandingControlContainer()
         {
             AutoSizeAxes = Axes.Both;
+
             InternalChildren = new Drawable[]
             {
                 collapsedSpriteText = new OsuSpriteText(),

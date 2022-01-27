@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
+using osu.Game.Overlays;
 using osu.Game.Overlays.Settings;
 
 namespace osu.Game.Tests.Visual.UserInterface
@@ -39,10 +40,10 @@ namespace osu.Game.Tests.Visual.UserInterface
                     expandingControlContainer = new ExpandingControlContainer
                     {
                         Padding = new MarginPadding(10),
-                        CollapsedText = "Collapsed button",
+                        CollapsedText = "C. B.",
                         ExpandedContent = new RoundedButton
                         {
-                            Text = "Expanded button",
+                            Text = "Expanded Button",
                             Width = 300,
                             Action = () => { }
                         }
@@ -64,35 +65,36 @@ namespace osu.Game.Tests.Visual.UserInterface
             AddStep("create content", () => Child = new Container
             {
                 AutoSizeAxes = Axes.Both,
-                Origin = Anchor.Centre,
+                Origin = Anchor.TopCentre,
                 Anchor = Anchor.Centre,
                 Padding = new MarginPadding(10),
                 Children = new Drawable[]
                 {
-                    new Box
+                    new SettingsToolboxGroup("sliders")
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = colours.GreySeaFoam
-                    },
-                    expandingControlContainer = new ExpandingControlContainer
-                    {
-                        Padding = new MarginPadding(10),
-                        CollapsedText = "Collapsed slider",
-                        ExpandedContent = new Container
+                        AutoSizeAxes = Axes.Both,
+                        Children = new[]
                         {
-                            AutoSizeAxes = Axes.Y,
-                            Width = 300,
-                            Child = new SettingsSlider<float>
+                            expandingControlContainer = new ExpandingControlContainer
                             {
-                                RelativeSizeAxes = Axes.X,
-                                LabelText = "expanded",
-                                Current = new BindableNumber<float>
+                                CollapsedText = "C. S.",
+                                ExpandedContent = new Container
                                 {
-                                    MinValue = 1,
-                                    MaxValue = 10,
-                                    Precision = 0.1f,
-                                    Default = 5,
-                                    Value = 5
+                                    AutoSizeAxes = Axes.Y,
+                                    Width = 200,
+                                    Child = new SettingsSlider<float>
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        LabelText = "Expanded Slider",
+                                        Current = new BindableNumber<float>
+                                        {
+                                            MinValue = 1,
+                                            MaxValue = 10,
+                                            Precision = 0.1f,
+                                            Default = 5,
+                                            Value = 5
+                                        }
+                                    }
                                 }
                             }
                         }
