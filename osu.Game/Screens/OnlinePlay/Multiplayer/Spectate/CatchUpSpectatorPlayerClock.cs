@@ -5,6 +5,7 @@
 
 using System;
 using osu.Framework.Bindables;
+using osu.Framework.Logging;
 using osu.Framework.Timing;
 
 namespace osu.Game.Screens.OnlinePlay.Multiplayer.Spectate
@@ -30,9 +31,21 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer.Spectate
 
         public void Reset() => CurrentTime = 0;
 
-        public void Start() => IsRunning = true;
+        public void Start()
+        {
+            if (!IsRunning)
+                Logger.Log($"{GetType().Name}.Start(): Starting catch-up clock.");
 
-        public void Stop() => IsRunning = false;
+            IsRunning = true;
+        }
+
+        public void Stop()
+        {
+            if (IsRunning)
+                Logger.Log($"{GetType().Name}.Stop(): Stopping catch-up clock.");
+
+            IsRunning = false;
+        }
 
         public bool Seek(double position)
         {
@@ -68,6 +81,8 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer.Spectate
             {
                 double elapsedSource = Source.ElapsedFrameTime;
                 double elapsed = elapsedSource * Rate;
+
+                Logger.Log($"{GetType().Name}.ProcessFrame(): Advancing time by {elapsed}ms (running at {Rate}x).");
 
                 CurrentTime += elapsed;
                 ElapsedFrameTime = elapsed;

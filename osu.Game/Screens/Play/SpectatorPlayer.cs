@@ -3,6 +3,7 @@
 
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
@@ -77,7 +78,10 @@ namespace osu.Game.Screens.Play
             }
 
             if (isFirstBundle && score.Replay.Frames.Count > 0)
+            {
+                Logger.Log($"{GetType().Name}.userSentFrames(): Received first frame bundle, seeking to {score.Replay.Frames[0].Time}ms");
                 NonFrameStableSeek(score.Replay.Frames[0].Time);
+            }
         }
 
         protected override Score CreateScore(IBeatmap beatmap) => score;
