@@ -129,6 +129,10 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
         {
             Debug.Assert(HitObject.HitWindows != null);
 
+            // If time passed beyond the time of this hit, start displaying behind the input drum.
+            if (timeOffset > 0 && !IsProxiedBehindInputDrum)
+                ProxyContent();
+
             if (!userTriggered)
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
@@ -195,12 +199,13 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
+                    ProxyContent();
+
                     this.FadeOut(100);
                     break;
 
                 case ArmedState.Hit:
-                    // If we're far enough away from the left stage, we should bring outselves in front of it
-                    ProxyContent();
+                    UnproxyContent();
 
                     var flash = (MainPiece.Drawable as CirclePiece)?.FlashBox;
                     flash?.FadeTo(0.9f).FadeOut(300);

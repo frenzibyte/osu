@@ -67,6 +67,8 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             base.LoadComplete();
 
             OnNewResult += onNewResult;
+
+            ProxyContent();
         }
 
         protected override void RecreatePieces()

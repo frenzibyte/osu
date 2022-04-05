@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
     public abstract class DrawableTaikoHitObject : DrawableHitObject<TaikoHitObject>, IKeyBindingHandler<TaikoAction>
     {
         protected readonly Container Content;
-        private readonly Container proxiedContent;
+        private readonly Container behindDrumContent;
 
         private readonly Container nonProxiedContent;
 
@@ -28,34 +28,37 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
         {
             AddRangeInternal(new[]
             {
+                behindDrumContent = new ProxiedContentContainer { RelativeSizeAxes = Axes.Both },
                 nonProxiedContent = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Child = Content = new Container { RelativeSizeAxes = Axes.Both }
                 },
-                proxiedContent = new ProxiedContentContainer { RelativeSizeAxes = Axes.Both }
             });
         }
 
         /// <summary>
-        /// <see cref="proxiedContent"/> is proxied into an upper layer. We don't want to get masked away otherwise <see cref="proxiedContent"/> would too.
+        /// <see cref="behindDrumContent"/> is proxied into a lower layer. We don't want to get masked away otherwise <see cref="behindDrumContent"/> would too.
         /// </summary>
         protected override bool ComputeIsMaskedAway(RectangleF maskingBounds) => false;
 
-        private bool isProxied;
+        /// <summary>
+        /// Whether <see cref="Content"/> has been moved to a layer behind the input drum.
+        /// </summary>
+        protected bool IsProxiedBehindInputDrum { get; private set; }
 
         /// <summary>
-        /// Moves <see cref="Content"/> to a layer proxied above the playfield.
+        /// Moves <see cref="Content"/> to a layer proxied behind the input drum.
         /// Does nothing if content is already proxied.
         /// </summary>
         protected void ProxyContent()
         {
-            if (isProxied) return;
+            if (IsProxiedBehindInputDrum) return;
 
-            isProxied = true;
+            IsProxiedBehindInputDrum = true;
 
             nonProxiedContent.Remove(Content);
-            proxiedContent.Add(Content);
+            behindDrumContent.Add(Content);
         }
 
         /// <summary>
@@ -64,18 +67,18 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
         /// </summary>
         protected void UnproxyContent()
         {
-            if (!isProxied) return;
+            if (!IsProxiedBehindInputDrum) return;
 
-            isProxied = false;
+            IsProxiedBehindInputDrum = false;
 
-            proxiedContent.Remove(Content);
+            behindDrumContent.Remove(Content);
             nonProxiedContent.Add(Content);
         }
 
         /// <summary>
-        /// Creates a proxy for the content of this <see cref="DrawableTaikoHitObject"/>.
+        /// Creates a proxy for content to be rendered behind the input drum.
         /// </summary>
-        public Drawable CreateProxiedContent() => proxiedContent.CreateProxy();
+        public Drawable CreateBehindDrumProxy() => behindDrumContent.CreateProxy();
 
         public abstract bool OnPressed(KeyBindingPressEvent<TaikoAction> e);
 
@@ -89,7 +92,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             set
             {
                 base.LifetimeStart = value;
-                proxiedContent.LifetimeStart = value;
+                behindDrumContent.LifetimeStart = value;
             }
         }
 
@@ -99,7 +102,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             set
             {
                 base.LifetimeEnd = value;
-                proxiedContent.LifetimeEnd = value;
+                behindDrumContent.LifetimeEnd = value;
             }
         }
 

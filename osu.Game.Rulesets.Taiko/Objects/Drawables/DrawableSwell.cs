@@ -260,9 +260,9 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             X = Math.Max(0, X);
 
             if (Time.Current >= HitObject.StartTime - ring_appear_offset)
-                ProxyContent();
-            else
                 UnproxyContent();
+            else
+                ProxyContent();
         }
 
         private bool? lastWasCentre;
