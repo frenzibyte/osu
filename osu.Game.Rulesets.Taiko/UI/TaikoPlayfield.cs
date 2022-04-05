@@ -47,9 +47,10 @@ namespace osu.Game.Rulesets.Taiko.UI
         private readonly IDictionary<HitResult, DrawablePool<DrawableTaikoJudgement>> judgementPools = new Dictionary<HitResult, DrawablePool<DrawableTaikoJudgement>>();
         private readonly IDictionary<HitResult, HitExplosionPool> explosionPools = new Dictionary<HitResult, HitExplosionPool>();
 
-        private ProxyContainer topLevelHitContainer;
-        private Container rightArea;
-        private Container leftArea;
+        private ProxyContainer hitContainerBehindDrum;
+        private Container inputDrumContainer;
+        private Container hitTargetContainer;
+        private Container hitTargetOffsetContent;
 
         /// <remarks>
         /// <see cref="Playfield.AddNested"/> is purposefully not called on this to prevent i.e. being able to interact
@@ -57,72 +58,40 @@ namespace osu.Game.Rulesets.Taiko.UI
         /// </remarks>
         private BarLinePlayfield barLinePlayfield;
 
-        private Container hitTargetOffsetContent;
-
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
         {
             InternalChildren = new[]
             {
                 new SkinnableDrawable(new TaikoSkinComponent(TaikoSkinComponents.PlayfieldBackgroundRight), _ => new PlayfieldBackgroundRight()),
-                rightArea = new Container
+                hitTargetContainer = new Container
                 {
-                    Name = "Right area",
+                    Name = "Hit target container",
                     RelativeSizeAxes = Axes.Both,
-                    RelativePositionAxes = Axes.Both,
-                    Children = new Drawable[]
+                    FillMode = FillMode.Fit,
+                    Children = new[]
                     {
-                        new Container
+                        hitExplosionContainer = new Container<HitExplosion>
                         {
-                            Name = "Masked elements before hit objects",
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.Both,
-                            FillMode = FillMode.Fit,
-                            Children = new[]
-                            {
-                                hitExplosionContainer = new Container<HitExplosion>
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                },
-                                HitTarget = new SkinnableDrawable(new TaikoSkinComponent(TaikoSkinComponents.HitTarget), _ => new TaikoHitTarget())
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                }
-                            }
                         },
-                        hitTargetOffsetContent = new Container
+                        HitTarget = new SkinnableDrawable(new TaikoSkinComponent(TaikoSkinComponents.HitTarget), _ => new TaikoHitTarget())
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Children = new Drawable[]
-                            {
-                                barLinePlayfield = new BarLinePlayfield(),
-                                new Container
-                                {
-                                    Name = "Hit objects",
-                                    RelativeSizeAxes = Axes.Both,
-                                    Children = new Drawable[]
-                                    {
-                                        HitObjectContainer,
-                                        drumRollHitContainer = new DrumRollHitContainer()
-                                    }
-                                },
-                                kiaiExplosionContainer = new Container<KiaiHitExplosion>
-                                {
-                                    Name = "Kiai hit explosions",
-                                    RelativeSizeAxes = Axes.Both,
-                                    FillMode = FillMode.Fit,
-                                },
-                                judgementContainer = new JudgementContainer<DrawableTaikoJudgement>
-                                {
-                                    Name = "Judgements",
-                                    RelativeSizeAxes = Axes.Y,
-                                },
-                            }
-                        },
+                        }
                     }
                 },
-                leftArea = new Container
+                barLinePlayfield = new BarLinePlayfield(),
+                hitContainerBehindDrum = new ProxyContainer
                 {
-                    Name = "Left overlay",
+                    Name = "Hit objects behind input drum",
+                    RelativeSizeAxes = Axes.Both,
+                },
+                inputDrumContainer = new Container
+                {
+                    Name = "Input drum container",
                     RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fit,
                     BorderColour = colours.Gray0,
@@ -144,12 +113,35 @@ namespace osu.Game.Rulesets.Taiko.UI
                     RelativeSizeAxes = Axes.None,
                     Y = 0.2f
                 },
-                topLevelHitContainer = new ProxyContainer
+                hitExplosionContainer.CreateProxy(),
+                hitTargetOffsetContent = new Container
                 {
-                    Name = "Top level hit objects",
                     RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        new Container
+                        {
+                            Name = "Hit objects",
+                            RelativeSizeAxes = Axes.Both,
+                            Children = new Drawable[]
+                            {
+                                HitObjectContainer,
+                                drumRollHitContainer = new DrumRollHitContainer()
+                            }
+                        },
+                        kiaiExplosionContainer = new Container<KiaiHitExplosion>
+                        {
+                            Name = "Kiai hit explosions",
+                            RelativeSizeAxes = Axes.Both,
+                            FillMode = FillMode.Fit,
+                        },
+                        judgementContainer = new JudgementContainer<DrawableTaikoJudgement>
+                        {
+                            Name = "Judgements",
+                            RelativeSizeAxes = Axes.Y,
+                        },
+                    }
                 },
-                drumRollHitContainer.CreateProxy(),
             };
 
             RegisterPool<Hit, DrawableHit>(50);
@@ -186,8 +178,16 @@ namespace osu.Game.Rulesets.Taiko.UI
         {
             base.OnNewDrawableHitObject(drawableHitObject);
 
+            // Generally, taiko has elements depth set up in the following order:
+            //  - Playfield background
+            //  - Input drum
+            //  - Hit explosions
+            //  - Hit objects
+            // But missed objects should naturally display behind the input drum instead as they scroll towards it.
+            // The simplest way to achieve such effect is by setting up a proxy container rendered behind the input drum,
+            // then let the taiko objects move their content to the proxied container once time passes their hit time.
             var taikoObject = (DrawableTaikoHitObject)drawableHitObject;
-            topLevelHitContainer.Add(taikoObject.CreateProxiedContent());
+            hitContainerBehindDrum.Add(taikoObject.CreateBehindDrumProxy());
         }
 
         protected override void Update()
@@ -196,8 +196,9 @@ namespace osu.Game.Rulesets.Taiko.UI
 
             // Padding is required to be updated for elements which are based on "absolute" X sized elements.
             // This is basically allowing for correct alignment as relative pieces move around them.
-            rightArea.Padding = new MarginPadding { Left = leftArea.DrawWidth - (ClassicHitTargetPosition.Value ? 45 : 0) };
-            hitTargetOffsetContent.Padding = new MarginPadding { Left = HitTarget.DrawWidth / 2 };
+            hitTargetContainer.Padding = new MarginPadding { Left = inputDrumContainer.DrawWidth - (ClassicHitTargetPosition.Value ? -200 : 0) };
+            hitTargetOffsetContent.Padding = new MarginPadding { Left = hitTargetContainer.Padding.Left + HitTarget.DrawWidth / 2 };
+            barLinePlayfield.Padding = hitTargetOffsetContent.Padding;
 
             mascot.Scale = new Vector2(DrawHeight / DEFAULT_HEIGHT);
         }
