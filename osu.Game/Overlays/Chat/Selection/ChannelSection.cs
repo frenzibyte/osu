@@ -13,11 +13,10 @@ using osuTK;
 
 namespace osu.Game.Overlays.Chat.Selection
 {
-    public class ChannelSection : Container, IHasFilterableChildren
+    public class ChannelSection : Container, IFilterable
     {
         public readonly FillFlowContainer<ChannelListItem> ChannelFlow;
 
-        public IEnumerable<IFilterable> FilterableChildren => ChannelFlow.Children;
         public IEnumerable<string> FilterTerms => Array.Empty<string>();
 
         public bool MatchingFilter

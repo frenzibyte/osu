@@ -15,7 +15,7 @@ using osu.Game.Graphics;
 namespace osu.Game.Overlays.Settings
 {
     [ExcludeFromDynamicCompile]
-    public abstract class SettingsSubsection : FillFlowContainer, IHasFilterableChildren
+    public abstract class SettingsSubsection : FillFlowContainer, IFilterable
     {
         protected override Container<Drawable> Content => FlowContent;
 

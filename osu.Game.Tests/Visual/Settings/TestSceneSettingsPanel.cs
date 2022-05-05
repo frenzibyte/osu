@@ -52,9 +52,7 @@ namespace osu.Game.Tests.Visual.Settings
                                                                      .ChildrenOfType<SettingsSection>().Where(f => f.IsPresent)
                                                                      .All(section =>
                                                                          section.Children.Where(f => f.IsPresent)
-                                                                                .OfType<ISettingsItem>()
                                                                                 .OfType<IFilterable>()
-                                                                                .Where(f => !(f is IHasFilterableChildren))
                                                                                 .All(f => f.FilterTerms.Any(t => t.Contains("scaling")))
                                                                      ));
 

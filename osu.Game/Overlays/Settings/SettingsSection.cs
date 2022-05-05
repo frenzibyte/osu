@@ -17,7 +17,7 @@ using osuTK;
 
 namespace osu.Game.Overlays.Settings
 {
-    public abstract class SettingsSection : Container, IHasFilterableChildren
+    public abstract class SettingsSection : Container, IFilterable
     {
         protected FillFlowContainer FlowContent;
         protected override Container<Drawable> Content => FlowContent;
