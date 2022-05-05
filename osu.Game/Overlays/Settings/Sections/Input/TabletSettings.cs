@@ -57,9 +57,8 @@ namespace osu.Game.Overlays.Settings.Sections.Input
 
         private ScheduledDelegate aspectRatioApplication;
 
-        private FillFlowContainer mainSettings;
-
         private FillFlowContainer noTabletMessage;
+        private TabletMainSettingsContainer mainSettings;
 
         protected override LocalisableString Header => TabletSettingsStrings.Tablet;
 
@@ -114,13 +113,8 @@ namespace osu.Game.Overlays.Settings.Sections.Input
                         }),
                     }
                 },
-                mainSettings = new FillFlowContainer
+                mainSettings = new TabletMainSettingsContainer
                 {
-                    Alpha = 0,
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Spacing = new Vector2(0, 8),
-                    Direction = FillDirection.Vertical,
                     Children = new Drawable[]
                     {
                         AreaSelection = new TabletAreaSelection(tabletHandler)
@@ -336,5 +330,28 @@ namespace osu.Game.Overlays.Settings.Sections.Input
         private void updateAspectRatio() => aspectRatio.Value = currentAspectRatio;
 
         private float currentAspectRatio => sizeX.Value / sizeY.Value;
+
+        private class TabletMainSettingsContainer : VisibilityContainer
+        {
+            protected override Container<Drawable> Content { get; }
+
+            public TabletMainSettingsContainer()
+            {
+                RelativeSizeAxes = Axes.X;
+                AutoSizeAxes = Axes.Y;
+
+                InternalChild = Content = new FillFlowContainer
+                {
+                    Alpha = 0,
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Spacing = new Vector2(0, 8),
+                    Direction = FillDirection.Vertical,
+                };
+            }
+
+            protected override void PopIn() => Alpha = 1;
+            protected override void PopOut() => Alpha = 0;
+        }
     }
 }
