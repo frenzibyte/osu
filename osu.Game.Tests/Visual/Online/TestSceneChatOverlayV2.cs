@@ -375,6 +375,26 @@ namespace osu.Game.Tests.Visual.Online
             AddAssert("TextBox is not focused", () => InputManager.FocusedDrawable == null);
         }
 
+        [Test]
+        public void TestMessageOnDifferentDates()
+        {
+            AddStep("Show overlay", () => chatOverlay.Show());
+            AddStep("Join channel 1", () => channelManager.JoinChannel(testChannel1));
+            AddStep("Send message in different months", () =>
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    testChannel1.AddNewMessages(new Message
+                    {
+                        ChannelId = testChannel1.Id,
+                        Content = "Some message",
+                        Timestamp = new DateTimeOffset(new DateTime(2022, i + 1, i + 1, 1, 1, 1)),
+                        Sender = testUser,
+                    });
+                }
+            });
+        }
+
         private Visibility listingVisibility =>
             chatOverlay.ChildrenOfType<ChannelListing>().Single().State.Value;
 
