@@ -33,6 +33,9 @@ namespace osu.Game.Graphics.UserInterface
 
         private Color4? backgroundColour;
 
+        /// <summary>
+        /// Sets a custom background colour to this button, replacing the default colour provided by this implementation.
+        /// </summary>
         public Color4 BackgroundColour
         {
             get => backgroundColour ?? Color4.White;
@@ -42,6 +45,11 @@ namespace osu.Game.Graphics.UserInterface
                 Background.FadeColour(value);
             }
         }
+
+        /// <summary>
+        /// Whether this button has a custom background colour set using <see cref="BackgroundColour"/>.
+        /// </summary>
+        protected bool HasBackgroundColour => backgroundColour != null;
 
         protected override Container<Drawable> Content { get; }
 
@@ -89,8 +97,8 @@ namespace osu.Game.Graphics.UserInterface
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
         {
-            if (backgroundColour == null)
-                BackgroundColour = colours.BlueDark;
+            if (!HasBackgroundColour)
+                Background.Colour = colours.BlueDarker;
         }
 
         protected override void LoadComplete()
@@ -106,10 +114,7 @@ namespace osu.Game.Graphics.UserInterface
         protected override bool OnClick(ClickEvent e)
         {
             if (Enabled.Value)
-            {
-                Debug.Assert(backgroundColour != null);
-                Background.FlashColour(backgroundColour.Value.Lighten(0.4f), 200);
-            }
+                Background.FlashColour(((Color4)Background.Colour).Lighten(0.4f), 200);
 
             return base.OnClick(e);
         }
