@@ -14,6 +14,7 @@ using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osu.Game.Graphics.Containers;
 using osu.Game.Scoring;
 using osuTK;
@@ -142,17 +143,24 @@ namespace osu.Game.Screens.Ranking
             return panel;
         }
 
+        private int scoreNumber = 0;
+
         private void displayScore(ScorePanelTrackingContainer trackingContainer)
         {
             if (!IsLoaded)
                 return;
 
             var score = trackingContainer.Panel.Score;
+            bool expanded = SelectedScore.Value.Equals(score);
+            int id = scoreNumber++;
+
+            Logger.Log($"Starting total score calculation for score #{id}{(expanded ? " (expanded) " : " ")}with total: {trackingContainer.Panel.Score.TotalScore}");
 
             // Calculating score can take a while in extreme scenarios, so only display scores after the process completes.
             scoreManager.GetTotalScoreAsync(score)
                         .ContinueWith(task => Schedule(() =>
                         {
+                            Logger.Log($"Finished calculating for score #{id}{(expanded ? " (expanded), " : ", ")}result: {task.GetResultSafely()}");
                             flow.SetLayoutPosition(trackingContainer, task.GetResultSafely());
 
                             trackingContainer.Show();
@@ -172,6 +180,7 @@ namespace osu.Game.Screens.Ranking
                                     // 2) Scroll before the scroll container's scroll position is updated.
                                     // Without this, we would have a 1-frame positioning error which looks very jarring.
                                     scroll.InstantScrollTarget = (scroll.InstantScrollTarget ?? scroll.Target) + ScorePanel.CONTRACTED_WIDTH + panel_spacing;
+                                    Logger.Log($"Score #{id} with index {flow.GetPanelIndex(score)} added before expanded panel which has index {flow.GetPanelIndex(expandedPanel.Score)}, pushed scroll position to {scroll.InstantScrollTarget} for alignment");
                                 }
                             }
                         }), TaskContinuationOptions.OnlyOnRanToCompletion);
