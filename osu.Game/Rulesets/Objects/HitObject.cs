@@ -38,22 +38,17 @@ namespace osu.Game.Rulesets.Objects
         /// </summary>
         public event Action<HitObject> DefaultsApplied;
 
-        private readonly HitObjectProperty<double> startTimeProperty = new HitObjectProperty<double>();
+        private IndirectBindable<double> startTimeBindable;
 
-        public Bindable<double> StartTimeBindable => startTimeProperty.Bindable;
+        public Bindable<double> StartTimeBindable => startTimeBindable ??= new IndirectBindable<double>(() => StartTime, v => StartTime = v);
 
         /// <summary>
         /// The time at which the HitObject starts.
         /// </summary>
-        public virtual double StartTime
-        {
-            get => startTimeProperty.Value;
-            set => startTimeProperty.Value = value;
-        }
+        public virtual double StartTime { get; set; }
 
-        private readonly HitObjectListProperty<HitSampleInfo> samplesProperty = new HitObjectListProperty<HitSampleInfo>();
-
-        public BindableList<HitSampleInfo> SamplesBindable => samplesProperty.Bindable;
+        // todo: uhh
+        public readonly BindableList<HitSampleInfo> SamplesBindable = new BindableList<HitSampleInfo>();
 
         /// <summary>
         /// The samples to be played when this hit object is hit.
@@ -64,8 +59,12 @@ namespace osu.Game.Rulesets.Objects
         /// </summary>
         public IList<HitSampleInfo> Samples
         {
-            get => samplesProperty.List;
-            set => samplesProperty.List = value;
+            get => SamplesBindable;
+            set
+            {
+                SamplesBindable.Clear();
+                SamplesBindable.AddRange(value);
+            }
         }
 
         /// <summary>

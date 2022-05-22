@@ -34,15 +34,11 @@ namespace osu.Game.Rulesets.Osu.Objects
         public double TimePreempt = 600;
         public double TimeFadeIn = 400;
 
-        private readonly HitObjectProperty<Vector2> positionProperty = new HitObjectProperty<Vector2>();
+        private IndirectBindable<Vector2> positionBindable;
 
-        public Bindable<Vector2> PositionBindable => positionProperty.Bindable;
+        public Bindable<Vector2> PositionBindable => positionBindable ??= new IndirectBindable<Vector2>(() => Position, v => Position = v);
 
-        public virtual Vector2 Position
-        {
-            get => positionProperty.Value;
-            set => positionProperty.Value = value;
-        }
+        public virtual Vector2 Position { get; set; }
 
         public float X => Position.X;
         public float Y => Position.Y;
@@ -53,81 +49,53 @@ namespace osu.Game.Rulesets.Osu.Objects
 
         public Vector2 StackedEndPosition => EndPosition + StackOffset;
 
-        private readonly HitObjectProperty<int> stackHeightProperty = new HitObjectProperty<int>();
+        private IndirectBindable<int> stackHeightBindable;
 
-        public Bindable<int> StackHeightBindable => stackHeightProperty.Bindable;
+        public Bindable<int> StackHeightBindable => stackHeightBindable ??= new IndirectBindable<int>(() => StackHeight, v => StackHeight = v);
 
-        public int StackHeight
-        {
-            get => stackHeightProperty.Value;
-            set => stackHeightProperty.Value = value;
-        }
+        public virtual int StackHeight { get; set; }
 
         public virtual Vector2 StackOffset => new Vector2(StackHeight * Scale * -6.4f);
 
         public double Radius => OBJECT_RADIUS * Scale;
 
-        private readonly HitObjectProperty<float> scaleProperty = new HitObjectProperty<float>();
+        private IndirectBindable<float> scaleBindable;
 
-        public Bindable<float> ScaleBindable => scaleProperty.Bindable;
+        public Bindable<float> ScaleBindable => scaleBindable ??= new IndirectBindable<float>(() => Scale, v => Scale = v);
 
-        public float Scale
-        {
-            get => scaleProperty.Value;
-            set => scaleProperty.Value = value;
-        }
+        public virtual float Scale { get; set; }
 
         public virtual bool NewCombo { get; set; }
 
-        private readonly HitObjectProperty<int> comboOffsetProperty = new HitObjectProperty<int>();
+        private IndirectBindable<int> comboOffsetBindable;
 
-        public Bindable<int> ComboOffsetBindable => comboOffsetProperty.Bindable;
+        public Bindable<int> ComboOffsetBindable => comboOffsetBindable ??= new IndirectBindable<int>(() => ComboOffset, v => ComboOffset = v);
 
-        public int ComboOffset
-        {
-            get => comboOffsetProperty.Value;
-            set => comboOffsetProperty.Value = value;
-        }
+        public virtual int ComboOffset { get; set; }
 
-        private readonly HitObjectProperty<int> indexInCurrentComboProperty = new HitObjectProperty<int>();
+        private IndirectBindable<int> indexInCurrentComboBindable;
 
-        public Bindable<int> IndexInCurrentComboBindable => indexInCurrentComboProperty.Bindable;
+        public Bindable<int> IndexInCurrentComboBindable => indexInCurrentComboBindable ??= new IndirectBindable<int>(() => IndexInCurrentCombo, v => IndexInCurrentCombo = v);
 
-        public virtual int IndexInCurrentCombo
-        {
-            get => indexInCurrentComboProperty.Value;
-            set => indexInCurrentComboProperty.Value = value;
-        }
+        public virtual int IndexInCurrentCombo { get; set; }
 
-        private readonly HitObjectProperty<int> comboIndexProperty = new HitObjectProperty<int>();
+        private IndirectBindable<int> comboIndexBindable;
 
-        public Bindable<int> ComboIndexBindable => comboIndexProperty.Bindable;
+        public Bindable<int> ComboIndexBindable => comboIndexBindable ??= new IndirectBindable<int>(() => ComboIndex, v => ComboIndex = v);
 
-        public virtual int ComboIndex
-        {
-            get => comboIndexProperty.Value;
-            set => comboIndexProperty.Value = value;
-        }
+        public virtual int ComboIndex { get; set; }
 
-        private readonly HitObjectProperty<int> comboIndexWithOffsetsProperty = new HitObjectProperty<int>();
+        private IndirectBindable<int> comboIndexWithOffsetsBindable;
 
-        public Bindable<int> ComboIndexWithOffsetsBindable => comboIndexWithOffsetsProperty.Bindable;
+        public Bindable<int> ComboIndexWithOffsetsBindable => comboIndexWithOffsetsBindable ??= new IndirectBindable<int>(() => ComboIndexWithOffsets, v => ComboIndexWithOffsets = v);
 
-        public int ComboIndexWithOffsets
-        {
-            get => comboIndexWithOffsetsProperty.Value;
-            set => comboIndexWithOffsetsProperty.Value = value;
-        }
+        public virtual int ComboIndexWithOffsets { get; set; }
 
-        private readonly HitObjectProperty<bool> lastInComboProperty = new HitObjectProperty<bool>();
+        private IndirectBindable<bool> lastInComboBindable;
 
-        public Bindable<bool> LastInComboBindable => lastInComboProperty.Bindable;
+        public Bindable<bool> LastInComboBindable => lastInComboBindable ??= new IndirectBindable<bool>(() => LastInCombo, v => LastInCombo = v);
 
-        public bool LastInCombo
-        {
-            get => lastInComboProperty.Value;
-            set => lastInComboProperty.Value = value;
-        }
+        public virtual bool LastInCombo { get; set; }
 
         protected OsuHitObject()
         {
