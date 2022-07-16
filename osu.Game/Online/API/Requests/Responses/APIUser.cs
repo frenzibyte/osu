@@ -34,8 +34,22 @@ namespace osu.Game.Online.API.Requests.Responses
         [JsonProperty(@"previous_usernames")]
         public string[] PreviousUsernames;
 
+        [CanBeNull]
+        public string Country
+        {
+            get => userCountry?.Code;
+            set => userCountry = new UserCountry { Code = value };
+        }
+
+        [CanBeNull]
         [JsonProperty(@"country")]
-        public Country Country;
+        private UserCountry userCountry;
+
+        private class UserCountry
+        {
+            [JsonProperty(@"code")]
+            public string Code;
+        }
 
         public readonly Bindable<UserStatus> Status = new Bindable<UserStatus>();
 
