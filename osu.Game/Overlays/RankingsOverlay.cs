@@ -7,7 +7,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Overlays.Rankings;
-using osu.Game.Users;
 using osu.Game.Rulesets;
 using osu.Game.Online.API;
 using osu.Game.Online.API.Requests;
@@ -17,7 +16,7 @@ namespace osu.Game.Overlays
 {
     public class RankingsOverlay : TabbableOnlineOverlay<RankingsOverlayHeader, RankingsScope>
     {
-        protected Bindable<Country> Country => Header.Country;
+        protected Bindable<string> Country => Header.Country;
 
         private APIRequest lastRequest;
 
@@ -85,7 +84,7 @@ namespace osu.Game.Overlays
 
         protected override RankingsOverlayHeader CreateHeader() => new RankingsOverlayHeader();
 
-        public void ShowCountry(Country requested)
+        public void ShowCountry(string requested)
         {
             if (requested == null)
                 return;
@@ -128,7 +127,7 @@ namespace osu.Game.Overlays
             switch (Header.Current.Value)
             {
                 case RankingsScope.Performance:
-                    return new GetUserRankingsRequest(ruleset.Value, country: Country.Value?.FlagName);
+                    return new GetUserRankingsRequest(ruleset.Value, country: Country.Value);
 
                 case RankingsScope.Country:
                     return new GetCountryRankingsRequest(ruleset.Value);

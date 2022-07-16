@@ -11,7 +11,6 @@ using osu.Game.Overlays.Rankings;
 using osu.Game.Rulesets.Catch;
 using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Osu;
-using osu.Game.Users;
 
 namespace osu.Game.Tests.Visual.Online
 {
@@ -21,7 +20,7 @@ namespace osu.Game.Tests.Visual.Online
 
         private TestRankingsOverlay rankingsOverlay;
 
-        private readonly Bindable<Country> countryBindable = new Bindable<Country>();
+        private readonly Bindable<string> countryBindable = new Bindable<string>();
         private readonly Bindable<RankingsScope> scope = new Bindable<RankingsScope>();
 
         [SetUp]
@@ -49,14 +48,14 @@ namespace osu.Game.Tests.Visual.Online
         {
             AddStep("Set scope to Score", () => scope.Value = RankingsScope.Score);
             AddAssert("Check country is Null", () => countryBindable.Value == null);
-            AddStep("Set country", () => countryBindable.Value = us_country);
+            AddStep("Set country", () => countryBindable.Value = "US");
             AddAssert("Check scope is Performance", () => scope.Value == RankingsScope.Performance);
         }
 
         [Test]
         public void TestShowCountry()
         {
-            AddStep("Show US", () => rankingsOverlay.ShowCountry(us_country));
+            AddStep("Show US", () => rankingsOverlay.ShowCountry("US"));
         }
 
         private void loadRankingsOverlay()
@@ -69,15 +68,9 @@ namespace osu.Game.Tests.Visual.Online
             };
         }
 
-        private static readonly Country us_country = new Country
-        {
-            FlagName = "US",
-            FullName = "United States"
-        };
-
         private class TestRankingsOverlay : RankingsOverlay
         {
-            public new Bindable<Country> Country => base.Country;
+            public new Bindable<string> Country => base.Country;
         }
     }
 }

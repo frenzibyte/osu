@@ -11,19 +11,18 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Users;
 using osuTK;
 
 namespace osu.Game.Overlays.Rankings
 {
-    public class CountryFilter : CompositeDrawable, IHasCurrentValue<Country>
+    public class CountryFilter : CompositeDrawable, IHasCurrentValue<string>
     {
         private const int duration = 200;
         private const int height = 70;
 
-        private readonly BindableWithCurrent<Country> current = new BindableWithCurrent<Country>();
+        private readonly BindableWithCurrent<string> current = new BindableWithCurrent<string>();
 
-        public Bindable<Country> Current
+        public Bindable<string> Current
         {
             get => current.Current;
             set => current.Current = value;
@@ -89,7 +88,7 @@ namespace osu.Game.Overlays.Rankings
             Current.BindValueChanged(onCountryChanged, true);
         }
 
-        private void onCountryChanged(ValueChangedEvent<Country> country)
+        private void onCountryChanged(ValueChangedEvent<string> country)
         {
             if (country.NewValue == null)
             {

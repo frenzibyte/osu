@@ -15,7 +15,6 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Scoring;
 using osu.Game.Rulesets.Osu.Mods;
-using osu.Game.Users;
 
 namespace osu.Game.Tests.Visual.SongSelect
 {
@@ -69,11 +68,7 @@ namespace osu.Game.Tests.Visual.SongSelect
                     {
                         Id = 6602580,
                         Username = @"waaiiru",
-                        Country = new Country
-                        {
-                            FullName = @"Spain",
-                            FlagName = @"ES",
-                        },
+                        Country = "ES",
                     },
                 },
                 new ScoreInfo
@@ -88,11 +83,7 @@ namespace osu.Game.Tests.Visual.SongSelect
                     {
                         Id = 4608074,
                         Username = @"Skycries",
-                        Country = new Country
-                        {
-                            FullName = @"Brazil",
-                            FlagName = @"BR",
-                        },
+                        Country = "BR",
                     },
                 },
                 new ScoreInfo
@@ -107,11 +98,7 @@ namespace osu.Game.Tests.Visual.SongSelect
                     {
                         Id = 1541390,
                         Username = @"Toukai",
-                        Country = new Country
-                        {
-                            FullName = @"Canada",
-                            FlagName = @"CA",
-                        },
+                        Country = "CA",
                     },
                 }
             };

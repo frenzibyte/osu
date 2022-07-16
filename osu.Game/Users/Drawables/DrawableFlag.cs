@@ -4,21 +4,24 @@
 #nullable disable
 
 using System;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Localisation;
+using osu.Game.Extensions;
 
 namespace osu.Game.Users.Drawables
 {
     public class DrawableFlag : Sprite, IHasTooltip
     {
-        private readonly Country country;
+        [CanBeNull]
+        private readonly string country;
 
-        public LocalisableString TooltipText => country?.FullName;
+        public LocalisableString TooltipText => country == null ? string.Empty : CountryExtensions.GetCountryName(country);
 
-        public DrawableFlag(Country country)
+        public DrawableFlag(string country)
         {
             this.country = country;
         }
@@ -29,7 +32,7 @@ namespace osu.Game.Users.Drawables
             if (ts == null)
                 throw new ArgumentNullException(nameof(ts));
 
-            Texture = ts.Get($@"Flags/{country?.FlagName ?? @"__"}") ?? ts.Get(@"Flags/__");
+            Texture = ts.Get($@"Flags/{country ?? "__"}") ?? ts.Get(@"Flags/__");
         }
     }
 }

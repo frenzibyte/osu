@@ -13,7 +13,6 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Extensions.LocalisationExtensions;
-using osu.Game.Users;
 using osu.Game.Users.Drawables;
 using osuTK;
 using osu.Framework.Localisation;
@@ -79,7 +78,7 @@ namespace osu.Game.Overlays.Rankings.Tables
         protected sealed override Drawable CreateHeader(int index, TableColumn column)
             => (column as RankingsTableColumn)?.CreateHeaderText() ?? new HeaderText(column?.Header ?? default, false);
 
-        protected abstract Country GetCountry(TModel item);
+        protected abstract string GetCountry(TModel item);
 
         protected abstract Drawable CreateFlagContent(TModel item);
 

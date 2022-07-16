@@ -8,7 +8,6 @@ using osu.Game.Localisation;
 using osu.Game.Resources.Localisation.Web;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets;
-using osu.Game.Users;
 
 namespace osu.Game.Overlays.Rankings
 {
@@ -16,7 +15,7 @@ namespace osu.Game.Overlays.Rankings
     {
         public Bindable<RulesetInfo> Ruleset => rulesetSelector.Current;
 
-        public Bindable<Country> Country => countryFilter.Current;
+        public Bindable<string> Country => countryFilter.Current;
 
         private OverlayRulesetSelector rulesetSelector;
         private CountryFilter countryFilter;

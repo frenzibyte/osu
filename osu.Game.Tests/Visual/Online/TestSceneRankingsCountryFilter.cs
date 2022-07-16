@@ -6,7 +6,6 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Overlays.Rankings;
-using osu.Game.Users;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK.Graphics;
@@ -23,7 +22,7 @@ namespace osu.Game.Tests.Visual.Online
 
         public TestSceneRankingsCountryFilter()
         {
-            var countryBindable = new Bindable<Country>();
+            var countryBindable = new Bindable<string>();
 
             AddRange(new Drawable[]
             {
@@ -56,20 +55,12 @@ namespace osu.Game.Tests.Visual.Online
                 }
             });
 
-            var country = new Country
-            {
-                FlagName = "BY",
-                FullName = "Belarus"
-            };
-            var unknownCountry = new Country
-            {
-                FlagName = "CK",
-                FullName = "Cook Islands"
-            };
+            const string country = "BY";
+            const string unknown_country = "CK";
 
             AddStep("Set country", () => countryBindable.Value = country);
             AddStep("Set null country", () => countryBindable.Value = null);
-            AddStep("Set country with no flag", () => countryBindable.Value = unknownCountry);
+            AddStep("Set country with no flag", () => countryBindable.Value = unknown_country);
         }
     }
 }

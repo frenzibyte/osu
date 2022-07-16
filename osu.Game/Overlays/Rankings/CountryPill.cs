@@ -11,23 +11,23 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osu.Game.Extensions;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Users;
 using osu.Game.Users.Drawables;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Overlays.Rankings
 {
-    public class CountryPill : CompositeDrawable, IHasCurrentValue<Country>
+    public class CountryPill : CompositeDrawable, IHasCurrentValue<string>
     {
         private const int duration = 200;
 
-        private readonly BindableWithCurrent<Country> current = new BindableWithCurrent<Country>();
+        private readonly BindableWithCurrent<string> current = new BindableWithCurrent<string>();
 
-        public Bindable<Country> Current
+        public Bindable<string> Current
         {
             get => current.Current;
             set => current.Current = value;
@@ -130,13 +130,13 @@ namespace osu.Game.Overlays.Rankings
             this.FadeOut(duration, Easing.OutQuint);
         }
 
-        private void onCountryChanged(ValueChangedEvent<Country> country)
+        private void onCountryChanged(ValueChangedEvent<string> country)
         {
             if (country.NewValue == null)
                 return;
 
             flag.Country = country.NewValue;
-            countryName.Text = country.NewValue.FullName;
+            countryName.Text = CountryExtensions.GetCountryName(country.NewValue);
         }
 
         private class CloseButton : OsuHoverContainer

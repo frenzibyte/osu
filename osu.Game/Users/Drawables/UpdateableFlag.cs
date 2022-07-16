@@ -13,9 +13,9 @@ using osu.Game.Overlays;
 
 namespace osu.Game.Users.Drawables
 {
-    public class UpdateableFlag : ModelBackedDrawable<Country>
+    public class UpdateableFlag : ModelBackedDrawable<string>
     {
-        public Country Country
+        public string Country
         {
             get => Model;
             set => Model = value;
@@ -32,12 +32,12 @@ namespace osu.Game.Users.Drawables
         /// </summary>
         public Action Action;
 
-        public UpdateableFlag(Country country = null)
+        public UpdateableFlag(string country = null)
         {
             Country = country;
         }
 
-        protected override Drawable CreateDrawable(Country country)
+        protected override Drawable CreateDrawable(string country)
         {
             if (country == null && !ShowPlaceholderOnNull)
                 return null;

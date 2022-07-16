@@ -11,6 +11,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Localisation;
+using osu.Game.Extensions;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
@@ -175,7 +176,7 @@ namespace osu.Game.Overlays.Profile.Header
             usernameText.Text = user?.Username ?? string.Empty;
             openUserExternally.Link = $@"{api.WebsiteRootUrl}/users/{user?.Id ?? 0}";
             userFlag.Country = user?.Country;
-            userCountryText.Text = user?.Country?.FullName ?? "Alien";
+            userCountryText.Text = CountryExtensions.GetCountryName(user?.Country);
             supporterTag.SupportLevel = user?.SupportLevel ?? 0;
             titleText.Text = user?.Title ?? string.Empty;
             titleText.Colour = Color4Extensions.FromHex(user?.Colour ?? "fff");

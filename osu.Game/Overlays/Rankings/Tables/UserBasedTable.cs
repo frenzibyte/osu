@@ -59,7 +59,7 @@ namespace osu.Game.Overlays.Rankings.Tables
              .Concat(GradeColumns.Select(grade => new GradeTableColumn(grade, Anchor.Centre, new Dimension(GridSizeMode.AutoSize))))
              .ToArray();
 
-        protected sealed override Country GetCountry(UserStatistics item) => item.User.Country;
+        protected sealed override string GetCountry(UserStatistics item) => item.User.Country;
 
         protected sealed override Drawable CreateFlagContent(UserStatistics item)
         {

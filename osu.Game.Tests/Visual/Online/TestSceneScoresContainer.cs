@@ -20,7 +20,6 @@ using osu.Game.Overlays.BeatmapSet.Scores;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
-using osu.Game.Users;
 using osuTK.Graphics;
 using APIUser = osu.Game.Online.API.Requests.Responses.APIUser;
 
@@ -157,11 +156,7 @@ namespace osu.Game.Tests.Visual.Online
                         {
                             Id = 6602580,
                             Username = @"waaiiru",
-                            Country = new Country
-                            {
-                                FullName = @"Spain",
-                                FlagName = @"ES",
-                            },
+                            Country = "ES",
                         },
                         Mods = new[]
                         {
@@ -184,11 +179,7 @@ namespace osu.Game.Tests.Visual.Online
                         {
                             Id = 4608074,
                             Username = @"Skycries",
-                            Country = new Country
-                            {
-                                FullName = @"Brazil",
-                                FlagName = @"BR",
-                            },
+                            Country = "BR",
                         },
                         Mods = new[]
                         {
@@ -210,11 +201,7 @@ namespace osu.Game.Tests.Visual.Online
                         {
                             Id = 1014222,
                             Username = @"eLy",
-                            Country = new Country
-                            {
-                                FullName = @"Japan",
-                                FlagName = @"JP",
-                            },
+                            Country = "JP",
                         },
                         Mods = new[]
                         {
@@ -235,11 +222,7 @@ namespace osu.Game.Tests.Visual.Online
                         {
                             Id = 1541390,
                             Username = @"Toukai",
-                            Country = new Country
-                            {
-                                FullName = @"Canada",
-                                FlagName = @"CA",
-                            },
+                            Country = "CA",
                         },
                         Mods = new[]
                         {
@@ -259,11 +242,7 @@ namespace osu.Game.Tests.Visual.Online
                         {
                             Id = 7151382,
                             Username = @"Mayuri Hana",
-                            Country = new Country
-                            {
-                                FullName = @"Thailand",
-                                FlagName = @"TH",
-                            },
+                            Country = "TH",
                         },
                         Rank = ScoreRank.D,
                         PP = 160,
@@ -302,11 +281,7 @@ namespace osu.Game.Tests.Visual.Online
                 {
                     Id = 7151382,
                     Username = @"Mayuri Hana",
-                    Country = new Country
-                    {
-                        FullName = @"Thailand",
-                        FlagName = @"TH",
-                    },
+                    Country = "TH",
                 },
                 Rank = ScoreRank.D,
                 PP = 160,
