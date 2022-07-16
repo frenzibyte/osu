@@ -77,8 +77,8 @@ namespace osu.Game.Overlays.Rankings.Tables
                 RelativeSizeAxes = Axes.Y;
                 TextAnchor = Anchor.CentreLeft;
 
-                if (!string.IsNullOrEmpty(country.FullName))
-                    AddLink(country.FullName, () => rankings?.ShowCountry(country));
+                if (!string.IsNullOrEmpty(country.Name))
+                    AddLink(country.Name, () => rankings?.ShowCountry(country));
             }
         }
     }

@@ -136,7 +136,7 @@ namespace osu.Game.Overlays.Rankings
                 return;
 
             flag.Country = country.NewValue;
-            countryName.Text = country.NewValue.FullName;
+            countryName.Text = country.NewValue.Name;
         }
 
         private class CloseButton : OsuHoverContainer

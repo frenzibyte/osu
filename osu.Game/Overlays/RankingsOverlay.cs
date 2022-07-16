@@ -128,7 +128,7 @@ namespace osu.Game.Overlays
             switch (Header.Current.Value)
             {
                 case RankingsScope.Performance:
-                    return new GetUserRankingsRequest(ruleset.Value, country: Country.Value?.FlagName);
+                    return new GetUserRankingsRequest(ruleset.Value, country: Country.Value?.Code);
 
                 case RankingsScope.Country:
                     return new GetCountryRankingsRequest(ruleset.Value);

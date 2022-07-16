@@ -12,9 +12,6 @@ namespace osu.Game.Users
         [JsonProperty]
         public Country Country;
 
-        [JsonProperty(@"code")]
-        public string FlagName;
-
         [JsonProperty(@"active_users")]
         public long ActiveUsers;
 
