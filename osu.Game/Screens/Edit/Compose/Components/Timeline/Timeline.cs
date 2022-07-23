@@ -71,8 +71,6 @@ namespace osu.Game.Screens.Edit.Compose.Components.Timeline
         /// </summary>
         private float defaultTimelineZoom;
 
-        private bool trackWasLoaded;
-
         public Timeline(Drawable userContent)
         {
             this.userContent = userContent;
@@ -147,6 +145,8 @@ namespace osu.Game.Screens.Edit.Compose.Components.Timeline
             {
                 waveform.Waveform = b.NewValue.Waveform;
                 track = b.NewValue.Track;
+
+                setupTimelineZoom();
             }, true);
         }
 
@@ -189,28 +189,26 @@ namespace osu.Game.Screens.Edit.Compose.Components.Timeline
         {
             base.Update();
 
-            if (!trackWasLoaded && track.IsLoaded)
-            {
-                trackWasLoaded = true;
-
-                defaultTimelineZoom = getZoomLevelForVisibleMilliseconds(6000);
-                MaxZoom = getZoomLevelForVisibleMilliseconds(500);
-                MinZoom = getZoomLevelForVisibleMilliseconds(10000);
-                Zoom = (float)(defaultTimelineZoom * editorBeatmap.BeatmapInfo.TimelineZoom);
-
-                // The above zoom causes an initial seek to the middle of the track (since the focus point is the centre of the timeline).
-                // This seek, because it happens as a result of an interaction with the timeline, causes the track to seek to the timeline's position, which we don't want.
-                // To get around this, we'll finish the transform immediately and give the last scroll position an initial value.
-                FinishTransforms(targetMember: nameof(Zoom));
-                lastScrollPosition = Current;
-            }
-
             // The extrema of track time should be positioned at the centre of the container when scrolled to the start or end
             Content.Margin = new MarginPadding { Horizontal = DrawWidth / 2 };
 
             // This needs to happen after transforms are updated, but before the scroll position is updated in base.UpdateAfterChildren
             if (editorClock.IsRunning)
                 scrollToTrackTime();
+        }
+
+        private void setupTimelineZoom()
+        {
+            if (!track.IsLoaded)
+            {
+                Scheduler.AddOnce(setupTimelineZoom);
+                return;
+            }
+
+            defaultTimelineZoom = getZoomLevelForVisibleMilliseconds(6000);
+
+            float initialZoom = (float)(defaultTimelineZoom * editorBeatmap.BeatmapInfo.TimelineZoom);
+            SetupZoom(initialZoom, getZoomLevelForVisibleMilliseconds(10000), getZoomLevelForVisibleMilliseconds(500));
         }
 
         protected override bool OnScroll(ScrollEvent e)
@@ -226,26 +224,6 @@ namespace osu.Game.Screens.Edit.Compose.Components.Timeline
         {
             base.OnZoomChanged();
             editorBeatmap.BeatmapInfo.TimelineZoom = Zoom / defaultTimelineZoom;
-        }
-
-        public override float Zoom
-        {
-            get => base.Zoom;
-            set
-            {
-                if (!trackWasLoaded)
-                    return;
-
-                base.Zoom = value;
-            }
-        }
-
-        public override void AdjustZoomRelatively(float change, float? focusPoint = null)
-        {
-            if (!trackWasLoaded)
-                return;
-
-            base.AdjustZoomRelatively(change, focusPoint);
         }
 
         protected override void UpdateAfterChildren()
