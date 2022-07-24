@@ -56,6 +56,7 @@ namespace osu.Game.Rulesets.Mods
     public class ModCreatedUser : IUser
     {
         public int OnlineID => APIUser.SYSTEM_USER_ID;
+        public string? AvatarUrl => null;
         public CountryCode CountryCode => default;
         public bool IsBot => true;
 

@@ -344,7 +344,7 @@ namespace osu.Game.Tests.Visual.Ranking
                 RetryOverlay = InternalChildren.OfType<HotkeyRetryOverlay>().SingleOrDefault();
             }
 
-            protected override APIRequest FetchScores(Action<IEnumerable<ScoreInfo>> scoresCallback)
+            protected override APIRequest FetchScores(Action<IEnumerable<IScoreInfo>> scoresCallback)
             {
                 var scores = new List<ScoreInfo>();
 
@@ -374,7 +374,7 @@ namespace osu.Game.Tests.Visual.Ranking
                 this.fetchWaitTask = fetchWaitTask ?? Task.CompletedTask;
             }
 
-            protected override APIRequest FetchScores(Action<IEnumerable<ScoreInfo>> scoresCallback)
+            protected override APIRequest FetchScores(Action<IEnumerable<IScoreInfo>> scoresCallback)
             {
                 Task.Run(async () =>
                 {
@@ -405,8 +405,8 @@ namespace osu.Game.Tests.Visual.Ranking
             public UnrankedSoloResultsScreen(ScoreInfo score)
                 : base(score, true)
             {
-                Score.BeatmapInfo.OnlineID = 0;
-                Score.BeatmapInfo.Status = BeatmapOnlineStatus.Pending;
+                score.BeatmapInfo.OnlineID = 0;
+                score.BeatmapInfo.Status = BeatmapOnlineStatus.Pending;
             }
 
             protected override void LoadComplete()

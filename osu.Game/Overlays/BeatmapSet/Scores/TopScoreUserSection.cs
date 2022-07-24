@@ -14,8 +14,10 @@ using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Online.Leaderboards;
 using osu.Game.Scoring;
+using osu.Game.Users;
 using osu.Game.Users.Drawables;
 using osuTK;
 using osuTK.Graphics;
@@ -136,13 +138,13 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
         /// <summary>
         /// Sets the score to be displayed.
         /// </summary>
-        public ScoreInfo Score
+        public SoloScoreInfo Score
         {
             set
             {
                 avatar.User = value.User;
-                flag.CountryCode = value.User.CountryCode;
-                achievedOn.Date = value.Date;
+                flag.CountryCode = value.User?.CountryCode ?? CountryCode.Unknown;
+                achievedOn.Date = value.EndedAt;
 
                 usernameText.Clear();
                 usernameText.AddUserLink(value.User);

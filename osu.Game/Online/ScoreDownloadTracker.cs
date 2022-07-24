@@ -11,7 +11,7 @@ using osu.Game.Scoring;
 
 namespace osu.Game.Online
 {
-    public class ScoreDownloadTracker : DownloadTracker<ScoreInfo>
+    public class ScoreDownloadTracker : DownloadTracker<IScoreInfo>
     {
         [Resolved(CanBeNull = true)]
         protected ScoreModelDownloader? Downloader { get; private set; }
@@ -23,7 +23,7 @@ namespace osu.Game.Online
         [Resolved]
         private RealmAccess realm { get; set; } = null!;
 
-        public ScoreDownloadTracker(ScoreInfo trackedItem)
+        public ScoreDownloadTracker(IScoreInfo trackedItem)
             : base(trackedItem)
         {
         }
@@ -36,11 +36,7 @@ namespace osu.Game.Online
                 return;
 
             // Used to interact with manager classes that don't support interface types. Will eventually be replaced.
-            var scoreInfo = new ScoreInfo
-            {
-                ID = TrackedItem.ID,
-                OnlineID = TrackedItem.OnlineID
-            };
+            var scoreInfo = new ScoreInfo { OnlineID = TrackedItem.OnlineID };
 
             Downloader.DownloadBegan += downloadBegan;
             Downloader.DownloadFailed += downloadFailed;

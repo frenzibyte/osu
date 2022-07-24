@@ -9,9 +9,9 @@ namespace osu.Game.Database
     /// <summary>
     /// A model that contains a list of files it is responsible for.
     /// </summary>
-    public interface IHasRealmFiles
+    public interface IHasRealmFiles : IHasNamedFiles
     {
-        IList<RealmNamedFileUsage> Files { get; }
+        new IList<RealmNamedFileUsage> Files { get; }
 
         string Hash { get; set; }
     }

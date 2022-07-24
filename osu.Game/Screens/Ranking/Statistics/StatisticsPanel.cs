@@ -27,7 +27,7 @@ namespace osu.Game.Screens.Ranking.Statistics
     {
         public const float SIDE_PADDING = 30;
 
-        public readonly Bindable<ScoreInfo> Score = new Bindable<ScoreInfo>();
+        public readonly Bindable<IScoreInfo> Score = new Bindable<IScoreInfo>();
 
         protected override bool StartHidden => true;
 
@@ -72,7 +72,7 @@ namespace osu.Game.Screens.Ranking.Statistics
 
         private CancellationTokenSource loadCancellation;
 
-        private void populateStatistics(ValueChangedEvent<ScoreInfo> score)
+        private void populateStatistics(ValueChangedEvent<IScoreInfo> score)
         {
             loadCancellation?.Cancel();
             loadCancellation = null;
@@ -95,13 +95,47 @@ namespace osu.Game.Screens.Ranking.Statistics
             // Todo: The placement of this is temporary. Eventually we'll both generate the playable beatmap _and_ run through it in a background task to generate the hit events.
             Task.Run(() =>
             {
-                playableBeatmap = beatmapManager.GetWorkingBeatmap(newScore.BeatmapInfo).GetPlayableBeatmap(newScore.Ruleset, newScore.Mods);
+                playableBeatmap = beatmapManager.GetWorkingBeatmap(newScore.Beatmap as BeatmapInfo).GetPlayableBeatmap(newScore.Ruleset, newScore.Mods);
             }, loadCancellation.Token).ContinueWith(_ => Schedule(() =>
             {
-                bool hitEventsAvailable = newScore.HitEvents.Count != 0;
                 Container<Drawable> container;
 
-                var statisticRows = newScore.Ruleset.CreateInstance().CreateStatisticsForScore(newScore, playableBeatmap);
+                if (newScore is not ScoreInfo newLocalScore)
+                {
+                    container = new FillFlowContainer
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Direction = FillDirection.Vertical,
+                        Children = new Drawable[]
+                        {
+                            new MessagePlaceholder("Extended statistics are only available after watching a replay!"),
+                            new ReplayDownloadButton(newScore)
+                            {
+                                Scale = new Vector2(1.5f),
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                            },
+                        }
+                    };
+
+                    LoadComponentAsync(container, d =>
+                    {
+                        if (!Score.Value.Equals(newScore))
+                            return;
+
+                        spinner.Hide();
+                        content.Add(d);
+                        d.FadeIn(250, Easing.OutQuint);
+                    }, localCancellationSource.Token);
+
+                    return;
+                }
+
+                bool hitEventsAvailable = newLocalScore?.HitEvents.Count != 0;
+
+                var statisticRows = newLocalScore.Ruleset.CreateInstance().CreateStatisticsForScore(newLocalScore, playableBeatmap);
 
                 if (!hitEventsAvailable && statisticRows.SelectMany(r => r.Columns).All(c => c.RequiresHitEvents))
                 {
@@ -114,7 +148,7 @@ namespace osu.Game.Screens.Ranking.Statistics
                         Children = new Drawable[]
                         {
                             new MessagePlaceholder("Extended statistics are only available after watching a replay!"),
-                            new ReplayDownloadButton(newScore)
+                            new ReplayDownloadButton(newLocalScore)
                             {
                                 Scale = new Vector2(1.5f),
                                 Anchor = Anchor.Centre,

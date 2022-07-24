@@ -152,7 +152,7 @@ namespace osu.Game.Tests.Visual.Navigation
             ScoreInfo score = null;
             LeaderboardScore scorePanel = null;
 
-            AddStep("get score", () => score = ((ResultsScreen)Game.ScreenStack.CurrentScreen).Score);
+            AddStep("get score", () => score = ((ResultsScreen)Game.ScreenStack.CurrentScreen).Score as ScoreInfo);
 
             AddAssert("ensure score is databased", () => Game.Realm.Run(r => r.Find<ScoreInfo>(score.ID)?.DeletePending == false));
 
@@ -185,7 +185,7 @@ namespace osu.Game.Tests.Visual.Navigation
             ScoreInfo score = null;
             LeaderboardScore scorePanel = null;
 
-            AddStep("get score", () => score = ((ResultsScreen)Game.ScreenStack.CurrentScreen).Score);
+            AddStep("get score", () => score = ((ResultsScreen)Game.ScreenStack.CurrentScreen).Score as ScoreInfo);
 
             AddAssert("ensure score is databased", () => Game.Realm.Run(r => r.Find<ScoreInfo>(score.ID)?.DeletePending == false));
 

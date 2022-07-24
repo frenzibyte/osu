@@ -59,19 +59,19 @@ namespace osu.Game.Scoring
         }
 
         /// <summary>
-        /// Orders an array of <see cref="ScoreInfo"/>s by total score.
+        /// Orders an array of <see cref="IScoreInfo"/>s by total score.
         /// </summary>
         /// <param name="scores">The array of <see cref="ScoreInfo"/>s to reorder.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the process.</param>
         /// <returns>The given <paramref name="scores"/> ordered by decreasing total score.</returns>
-        public async Task<ScoreInfo[]> OrderByTotalScoreAsync(ScoreInfo[] scores, CancellationToken cancellationToken = default)
+        public async Task<IScoreInfo[]> OrderByTotalScoreAsync(IReadOnlyList<IScoreInfo> scores, CancellationToken cancellationToken = default)
         {
             if (difficultyCache != null)
             {
                 // Compute difficulties asynchronously first to prevent blocking via the GetTotalScore() call below.
                 foreach (var s in scores)
                 {
-                    await difficultyCache.GetDifficultyAsync(s.BeatmapInfo, s.Ruleset, s.Mods, cancellationToken).ConfigureAwait(false);
+                    await difficultyCache.GetDifficultyAsync(s.Beatmap, s.Ruleset, s.Mods, cancellationToken).ConfigureAwait(false);
                     cancellationToken.ThrowIfCancellationRequested();
                 }
             }
@@ -86,34 +86,34 @@ namespace osu.Game.Scoring
         }
 
         /// <summary>
-        /// Retrieves a bindable that represents the total score of a <see cref="ScoreInfo"/>.
+        /// Retrieves a bindable that represents the total score of a <see cref="IScoreInfo"/>.
         /// </summary>
         /// <remarks>
         /// Responds to changes in the currently-selected <see cref="ScoringMode"/>.
         /// </remarks>
-        /// <param name="score">The <see cref="ScoreInfo"/> to retrieve the bindable for.</param>
+        /// <param name="score">The <see cref="IScoreInfo"/> to retrieve the bindable for.</param>
         /// <returns>The bindable containing the total score.</returns>
-        public Bindable<long> GetBindableTotalScore([NotNull] ScoreInfo score) => new TotalScoreBindable(score, this, configManager);
+        public Bindable<long> GetBindableTotalScore([NotNull] IScoreInfo score) => new TotalScoreBindable(score, this, configManager);
 
         /// <summary>
-        /// Retrieves a bindable that represents the formatted total score string of a <see cref="ScoreInfo"/>.
+        /// Retrieves a bindable that represents the formatted total score string of a <see cref="IScoreInfo"/>.
         /// </summary>
         /// <remarks>
         /// Responds to changes in the currently-selected <see cref="ScoringMode"/>.
         /// </remarks>
-        /// <param name="score">The <see cref="ScoreInfo"/> to retrieve the bindable for.</param>
+        /// <param name="score">The <see cref="IScoreInfo"/> to retrieve the bindable for.</param>
         /// <returns>The bindable containing the formatted total score string.</returns>
-        public Bindable<string> GetBindableTotalScoreString([NotNull] ScoreInfo score) => new TotalScoreStringBindable(GetBindableTotalScore(score));
+        public Bindable<string> GetBindableTotalScoreString([NotNull] IScoreInfo score) => new TotalScoreStringBindable(GetBindableTotalScore(score));
 
         /// <summary>
-        /// Retrieves the total score of a <see cref="ScoreInfo"/> in the given <see cref="ScoringMode"/>.
+        /// Retrieves the total score of a <see cref="IScoreInfo"/> in the given <see cref="ScoringMode"/>.
         /// The score is returned in a callback that is run on the update thread.
         /// </summary>
-        /// <param name="score">The <see cref="ScoreInfo"/> to calculate the total score of.</param>
+        /// <param name="score">The <see cref="IScoreInfo"/> to calculate the total score of.</param>
         /// <param name="callback">The callback to be invoked with the total score.</param>
         /// <param name="mode">The <see cref="ScoringMode"/> to return the total score as.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the process.</param>
-        public void GetTotalScore([NotNull] ScoreInfo score, [NotNull] Action<long> callback, ScoringMode mode = ScoringMode.Standardised, CancellationToken cancellationToken = default)
+        public void GetTotalScore([NotNull] IScoreInfo score, [NotNull] Action<long> callback, ScoringMode mode = ScoringMode.Standardised, CancellationToken cancellationToken = default)
         {
             GetTotalScoreAsync(score, mode, cancellationToken)
                 .ContinueWith(task => scheduler.Add(() =>
@@ -124,16 +124,16 @@ namespace osu.Game.Scoring
         }
 
         /// <summary>
-        /// Retrieves the total score of a <see cref="ScoreInfo"/> in the given <see cref="ScoringMode"/>.
+        /// Retrieves the total score of a <see cref="IScoreInfo"/> in the given <see cref="ScoringMode"/>.
         /// </summary>
-        /// <param name="score">The <see cref="ScoreInfo"/> to calculate the total score of.</param>
+        /// <param name="score">The <see cref="IScoreInfo"/> to calculate the total score of.</param>
         /// <param name="mode">The <see cref="ScoringMode"/> to return the total score as.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the process.</param>
         /// <returns>The total score.</returns>
-        public async Task<long> GetTotalScoreAsync([NotNull] ScoreInfo score, ScoringMode mode = ScoringMode.Standardised, CancellationToken cancellationToken = default)
+        public async Task<long> GetTotalScoreAsync([NotNull] IScoreInfo score, ScoringMode mode = ScoringMode.Standardised, CancellationToken cancellationToken = default)
         {
             // TODO: This is required for playlist aggregate scores. They should likely not be getting here in the first place.
-            if (string.IsNullOrEmpty(score.BeatmapInfo.MD5Hash))
+            if (string.IsNullOrEmpty(score.Beatmap.MD5Hash))
                 return score.TotalScore;
 
             int? beatmapMaxCombo = await GetMaximumAchievableComboAsync(score, cancellationToken).ConfigureAwait(false);
@@ -153,25 +153,18 @@ namespace osu.Game.Scoring
         /// <summary>
         /// Retrieves the maximum achievable combo for the provided score.
         /// </summary>
-        /// <param name="score">The <see cref="ScoreInfo"/> to compute the maximum achievable combo for.</param>
+        /// <param name="score">The <see cref="IScoreInfo"/> to compute the maximum achievable combo for.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the process.</param>
         /// <returns>The maximum achievable combo. A <see langword="null"/> return value indicates the difficulty cache has failed to retrieve the combo.</returns>
-        public async Task<int?> GetMaximumAchievableComboAsync([NotNull] ScoreInfo score, CancellationToken cancellationToken = default)
+        public async Task<int?> GetMaximumAchievableComboAsync([NotNull] IScoreInfo score, CancellationToken cancellationToken = default)
         {
             if (score.IsLegacyScore)
             {
-                // This score is guaranteed to be an osu!stable score.
-                // The combo must be determined through either the beatmap's max combo value or the difficulty calculator, as lazer's scoring has changed and the score statistics cannot be used.
-#pragma warning disable CS0618
-                if (score.BeatmapInfo.MaxCombo != null)
-                    return score.BeatmapInfo.MaxCombo.Value;
-#pragma warning restore CS0618
-
                 if (difficultyCache == null)
                     return null;
 
                 // We can compute the max combo locally after the async beatmap difficulty computation.
-                var difficulty = await difficultyCache.GetDifficultyAsync(score.BeatmapInfo, score.Ruleset, score.Mods, cancellationToken).ConfigureAwait(false);
+                var difficulty = await difficultyCache.GetDifficultyAsync(score.Beatmap, score.Ruleset, score.Mods, cancellationToken).ConfigureAwait(false);
                 return difficulty?.MaxCombo;
             }
 
@@ -181,12 +174,12 @@ namespace osu.Game.Scoring
         }
 
         /// <summary>
-        /// Provides the total score of a <see cref="ScoreInfo"/>. Responds to changes in the currently-selected <see cref="ScoringMode"/>.
+        /// Provides the total score of a <see cref="IScoreInfo"/>. Responds to changes in the currently-selected <see cref="ScoringMode"/>.
         /// </summary>
         private class TotalScoreBindable : Bindable<long>
         {
             private readonly Bindable<ScoringMode> scoringMode = new Bindable<ScoringMode>();
-            private readonly ScoreInfo score;
+            private readonly IScoreInfo score;
             private readonly ScoreManager scoreManager;
 
             private CancellationTokenSource difficultyCalculationCancellationSource;
@@ -194,10 +187,10 @@ namespace osu.Game.Scoring
             /// <summary>
             /// Creates a new <see cref="TotalScoreBindable"/>.
             /// </summary>
-            /// <param name="score">The <see cref="ScoreInfo"/> to provide the total score of.</param>
+            /// <param name="score">The <see cref="IScoreInfo"/> to provide the total score of.</param>
             /// <param name="scoreManager">The <see cref="ScoreManager"/>.</param>
             /// <param name="configManager">The config.</param>
-            public TotalScoreBindable(ScoreInfo score, ScoreManager scoreManager, OsuConfigManager configManager)
+            public TotalScoreBindable(IScoreInfo score, ScoreManager scoreManager, OsuConfigManager configManager)
             {
                 this.score = score;
                 this.scoreManager = scoreManager;
@@ -216,7 +209,7 @@ namespace osu.Game.Scoring
         }
 
         /// <summary>
-        /// Provides the total score of a <see cref="ScoreInfo"/> as a formatted string. Responds to changes in the currently-selected <see cref="ScoringMode"/>.
+        /// Provides the total score of a <see cref="IScoreInfo"/> as a formatted string. Responds to changes in the currently-selected <see cref="ScoringMode"/>.
         /// </summary>
         private class TotalScoreStringBindable : Bindable<string>
         {

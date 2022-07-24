@@ -16,6 +16,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Scoring;
 using osu.Game.Screens.Ranking.Contracted;
 using osu.Game.Screens.Ranking.Expanded;
@@ -94,7 +95,7 @@ namespace osu.Game.Screens.Ranking
         /// </summary>
         public Action PostExpandAction;
 
-        public readonly ScoreInfo Score;
+        public readonly IScoreInfo Score;
 
         [Resolved]
         private OsuGameBase game { get; set; }
@@ -115,12 +116,10 @@ namespace osu.Game.Screens.Ranking
 
         private DrawableSample samplePanelFocus;
 
-        public ScorePanel(ScoreInfo score, bool isNewLocalScore = false)
+        public ScorePanel(IScoreInfo score, bool isNewLocalScore = false)
         {
             Score = score;
             displayWithFlair = isNewLocalScore;
-
-            ScorePosition.Value = score.Position;
         }
 
         [BackgroundDependencyLoader]
@@ -175,7 +174,8 @@ namespace osu.Game.Screens.Ranking
                                     new UserCoverBackground
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        User = Score.User,
+                                        // todo: I dunno
+                                        User = Score.User as APIUser,
                                         Colour = ColourInfo.GradientVertical(Color4.White.Opacity(0.5f), Color4Extensions.FromHex("#444").Opacity(0))
                                     }
                                 }

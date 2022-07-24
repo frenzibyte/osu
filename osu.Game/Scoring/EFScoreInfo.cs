@@ -252,6 +252,8 @@ namespace osu.Game.Scoring
             return false;
         }
 
+        public bool Equals(IScoreInfo other) => other is EFScoreInfo s && Equals(s);
+
         #region Implementation of IHasOnlineID
 
         long IHasOnlineID<long>.OnlineID => OnlineID ?? -1;
@@ -266,7 +268,5 @@ namespace osu.Game.Scoring
         bool IScoreInfo.HasReplay => Files.Any();
 
         #endregion
-
-        IEnumerable<INamedFileUsage> IHasNamedFiles.Files => Files;
     }
 }

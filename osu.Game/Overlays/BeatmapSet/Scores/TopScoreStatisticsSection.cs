@@ -3,11 +3,13 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.LocalisationExtensions;
+using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -16,10 +18,13 @@ using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Resources.Localisation.Web;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
+using osu.Game.Utils;
 using osuTK;
 
 namespace osu.Game.Overlays.BeatmapSet.Scores
@@ -100,31 +105,37 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                 totalScoreColumn.Current = scoreManager.GetBindableTotalScoreString(score);
         }
 
-        private ScoreInfo score;
+        [Resolved]
+        private RulesetStore rulesets { get; set; }
+
+        private SoloScoreInfo score;
 
         /// <summary>
         /// Sets the score to be displayed.
         /// </summary>
-        public ScoreInfo Score
+        public SoloScoreInfo Score
         {
             set
             {
                 if (score == null && value == null)
                     return;
 
-                if (score?.Equals(value) == true)
+                if (score?.OnlineID == value.OnlineID)
                     return;
 
                 score = value;
 
-                accuracyColumn.Text = value.DisplayAccuracy;
+                accuracyColumn.Text = value.Accuracy.FormatAccuracy();
                 maxComboColumn.Text = value.MaxCombo.ToLocalisableString(@"0\x");
 
-                ppColumn.Alpha = value.BeatmapInfo.Status.GrantsPerformancePoints() ? 1 : 0;
+                ppColumn.Alpha = value.Beatmap.AsNonNull().Status.GrantsPerformancePoints() ? 1 : 0;
                 ppColumn.Text = value.PP?.ToLocalisableString(@"N0") ?? default;
 
                 statisticsColumns.ChildrenEnumerable = value.GetStatisticsForDisplay().Select(createStatisticsColumn);
-                modsColumn.Mods = value.Mods;
+
+                var ruleset = rulesets.GetRuleset(value.RulesetID) ?? throw new InvalidOperationException($"Ruleset with ID of {value.RulesetID} not found locally");
+
+                modsColumn.Mods = value.Mods.Select(m => m.ToMod(ruleset.CreateInstance()));
 
                 if (scoreManager != null)
                     totalScoreColumn.Current = scoreManager.GetBindableTotalScoreString(value);

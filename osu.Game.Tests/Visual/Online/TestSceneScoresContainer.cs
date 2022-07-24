@@ -118,7 +118,7 @@ namespace osu.Game.Tests.Visual.Online
             AddStep("Load scores with personal best (first place)", () =>
             {
                 var allScores = createScores();
-                allScores.UserScore = new APIScoreWithPosition
+                allScores.UserScore = new SoloScoreInfoWithPosition
                 {
                     Score = allScores.Scores.First(),
                     Position = 1,
@@ -279,7 +279,7 @@ namespace osu.Game.Tests.Visual.Online
             return scores;
         }
 
-        private APIScoreWithPosition createUserBest() => new APIScoreWithPosition
+        private SoloScoreInfoWithPosition createUserBest() => new SoloScoreInfoWithPosition
         {
             Score = new SoloScoreInfo
             {

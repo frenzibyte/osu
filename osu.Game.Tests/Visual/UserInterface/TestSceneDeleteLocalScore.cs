@@ -140,7 +140,7 @@ namespace osu.Game.Tests.Visual.UserInterface
             {
                 var leaderboardScore = leaderboard.ChildrenOfType<LeaderboardScore>().First();
 
-                scoreBeingDeleted = leaderboardScore.Score;
+                scoreBeingDeleted = (ScoreInfo)leaderboardScore.Score;
 
                 InputManager.MoveMouseTo(leaderboardScore);
                 InputManager.Click(MouseButton.Right);

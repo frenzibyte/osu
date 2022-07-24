@@ -22,17 +22,17 @@ namespace osu.Game.Screens.Ranking
         [Resolved]
         private RulesetStore rulesets { get; set; }
 
-        public SoloResultsScreen(ScoreInfo score, bool allowRetry)
+        public SoloResultsScreen(IScoreInfo score, bool allowRetry)
             : base(score, allowRetry)
         {
         }
 
-        protected override APIRequest FetchScores(Action<IEnumerable<ScoreInfo>> scoresCallback)
+        protected override APIRequest FetchScores(Action<IEnumerable<IScoreInfo>> scoresCallback)
         {
-            if (Score.BeatmapInfo.OnlineID <= 0 || Score.BeatmapInfo.Status <= BeatmapOnlineStatus.Pending)
+            if (Score.Beatmap.OnlineID <= 0 || Score.Beatmap.Status <= BeatmapOnlineStatus.Pending)
                 return null;
 
-            getScoreRequest = new GetScoresRequest(Score.BeatmapInfo, Score.Ruleset);
+            getScoreRequest = new GetScoresRequest(Score.Beatmap, Score.Ruleset);
             getScoreRequest.Success += r => scoresCallback?.Invoke(r.Scores.Where(s => s.OnlineID != Score.OnlineID).Select(s => s.ToScoreInfo(rulesets, Beatmap.Value.BeatmapInfo)));
             return getScoreRequest;
         }

@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.LocalisationExtensions;
@@ -15,9 +14,9 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Online.Leaderboards;
 using osu.Game.Resources.Localisation.Web;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Users;
@@ -33,7 +32,7 @@ namespace osu.Game.Screens.Ranking.Contracted
     /// </summary>
     public class ContractedPanelMiddleContent : CompositeDrawable
     {
-        private readonly ScoreInfo score;
+        private readonly IScoreInfo score;
 
         [Resolved]
         private ScoreManager scoreManager { get; set; }
@@ -42,7 +41,7 @@ namespace osu.Game.Screens.Ranking.Contracted
         /// Creates a new <see cref="ContractedPanelMiddleContent"/>.
         /// </summary>
         /// <param name="score">The <see cref="ScoreInfo"/> to display.</param>
-        public ContractedPanelMiddleContent(ScoreInfo score)
+        public ContractedPanelMiddleContent(IScoreInfo score)
         {
             this.score = score;
             RelativeSizeAxes = Axes.Both;
@@ -81,7 +80,7 @@ namespace osu.Game.Screens.Ranking.Contracted
                                 new UserCoverBackground
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    User = score.User,
+                                    User = score.User as APIUser,
                                     Colour = ColourInfo.GradientVertical(Color4.White.Opacity(0.5f), Color4Extensions.FromHex("#444").Opacity(0))
                                 },
                                 new FillFlowContainer
@@ -112,7 +111,7 @@ namespace osu.Game.Screens.Ranking.Contracted
                                         {
                                             Anchor = Anchor.TopCentre,
                                             Origin = Anchor.TopCentre,
-                                            Text = score.RealmUser.Username,
+                                            Text = score.User.Username,
                                             Font = OsuFont.GetFont(size: 16, weight: FontWeight.SemiBold)
                                         },
                                         new FillFlowContainer

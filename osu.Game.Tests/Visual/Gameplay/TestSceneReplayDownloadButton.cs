@@ -213,9 +213,9 @@ namespace osu.Game.Tests.Visual.Gameplay
 
         private ScoreInfo getScoreInfo(bool replayAvailable, bool hasOnlineId = true)
         {
-            return new APIScore
+            return new SoloScoreInfo
             {
-                OnlineID = hasOnlineId ? online_score_id : 0,
+                ID = hasOnlineId ? online_score_id : 0,
                 RulesetID = 0,
                 Beatmap = CreateAPIBeatmapSet(new OsuRuleset().RulesetInfo).Beatmaps.First(),
                 HasReplay = replayAvailable,
@@ -224,7 +224,7 @@ namespace osu.Game.Tests.Visual.Gameplay
                     Id = 39828,
                     Username = @"WubWoofWolf",
                 }
-            }.CreateScoreInfo(rulesets, beatmapManager.GetAllUsableBeatmapSets().First().Beatmaps.First());
+            }.ToScoreInfo(rulesets, beatmapManager.GetAllUsableBeatmapSets().First().Beatmaps.First());
         }
 
         private class TestReplayDownloadButton : ReplayDownloadButton

@@ -27,6 +27,8 @@ namespace osu.Game.Models
 
         public bool IsBot => false;
 
+        public string? AvatarUrl => null; // todo: I dunno.
+
         public bool Equals(RealmUser other)
         {
             if (ReferenceEquals(null, other)) return false;

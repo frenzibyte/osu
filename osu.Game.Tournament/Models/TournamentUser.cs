@@ -31,6 +31,11 @@ namespace osu.Game.Tournament.Models
         public int? Rank { get; set; }
 
         /// <summary>
+        /// A URL to the player's avatar.
+        /// </summary>
+        public string AvatarUrl { get; set; } = string.Empty;
+
+        /// <summary>
         /// A URL to the player's profile cover.
         /// </summary>
         public string CoverUrl { get; set; } = string.Empty;
@@ -42,6 +47,7 @@ namespace osu.Game.Tournament.Models
                 Id = OnlineID,
                 Username = Username,
                 CountryCode = CountryCode,
+                AvatarUrl = AvatarUrl,
                 CoverUrl = CoverUrl,
             };
 

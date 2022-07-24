@@ -7,16 +7,17 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using osu.Game.Beatmaps;
-using osu.Game.Database;
+using osu.Game.Extensions;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
+using osu.Game.Users;
 
 namespace osu.Game.Online.API.Requests.Responses
 {
     [Serializable]
-    public class SoloScoreInfo : IHasOnlineID<long>
+    public class SoloScoreInfo : IScoreInfo
     {
         [JsonProperty("replay")]
         public bool HasReplay { get; set; }
@@ -49,6 +50,9 @@ namespace osu.Game.Online.API.Requests.Responses
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty("rank")]
         public ScoreRank Rank { get; set; }
+
+        // todo: temporary?
+        public string Hash => HasReplay ? "online" : string.Empty;
 
         [JsonProperty("started_at")]
         public DateTimeOffset? StartedAt { get; set; }
@@ -104,6 +108,8 @@ namespace osu.Game.Online.API.Requests.Responses
 
         #endregion
 
+        public bool Equals(IScoreInfo? other) => other is SoloScoreInfo s && this.MatchesOnlineID(s);
+
         public override string ToString() => $"score_id: {ID} user_id: {UserID}";
 
         /// <summary>
@@ -152,5 +158,15 @@ namespace osu.Game.Online.API.Requests.Responses
         };
 
         public long OnlineID => ID ?? -1;
+
+        long IScoreInfo.TotalScore => TotalScore;
+
+        IUser IScoreInfo.User => User ?? new APIUser { Id = UserID };
+
+        IBeatmapInfo IScoreInfo.Beatmap => Beatmap ?? new APIBeatmap { OnlineID = UserID };
+
+        IRulesetInfo IScoreInfo.Ruleset => new RulesetInfo { OnlineID = RulesetID };
+
+        DateTimeOffset IScoreInfo.Date => EndedAt;
     }
 }

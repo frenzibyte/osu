@@ -10,7 +10,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Online.API.Requests.Responses;
+using osu.Game.Users;
 using osu.Game.Users.Drawables;
 using osuTK;
 
@@ -21,7 +21,7 @@ namespace osu.Game.Screens.Ranking.Expanded
     /// </summary>
     public class ExpandedPanelTopContent : CompositeDrawable
     {
-        private readonly APIUser user;
+        private readonly IUser user;
 
         private Sample appearanceSample;
 
@@ -30,9 +30,9 @@ namespace osu.Game.Screens.Ranking.Expanded
         /// <summary>
         /// Creates a new <see cref="ExpandedPanelTopContent"/>.
         /// </summary>
-        /// <param name="user">The <see cref="APIUser"/> to display.</param>
+        /// <param name="user">The <see cref="IUser"/> to display.</param>
         /// <param name="playAppearanceSound">Whether the appearance sample should play</param>
-        public ExpandedPanelTopContent(APIUser user, bool playAppearanceSound = false)
+        public ExpandedPanelTopContent(IUser user, bool playAppearanceSound = false)
         {
             this.user = user;
             this.playAppearanceSound = playAppearanceSound;

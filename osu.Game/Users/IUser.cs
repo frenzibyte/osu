@@ -10,6 +10,8 @@ namespace osu.Game.Users
     {
         string Username { get; }
 
+        string? AvatarUrl { get; }
+
         CountryCode CountryCode { get; }
 
         bool IsBot { get; }

@@ -34,7 +34,7 @@ namespace osu.Game.Users.Drawables
             set => clickableArea.TooltipText = value ? (user?.Username ?? string.Empty) : default_tooltip_text;
         }
 
-        private readonly APIUser user;
+        private readonly IUser user;
 
         [Resolved(CanBeNull = true)]
         private OsuGame game { get; set; }
@@ -46,7 +46,7 @@ namespace osu.Game.Users.Drawables
         /// If <see cref="OpenOnClick"/> is <c>true</c>, clicking will open the user's profile.
         /// </summary>
         /// <param name="user">The user. A null value will get a placeholder avatar.</param>
-        public ClickableAvatar(APIUser user = null)
+        public ClickableAvatar(IUser user = null)
         {
             this.user = user;
 
@@ -55,7 +55,7 @@ namespace osu.Game.Users.Drawables
                 RelativeSizeAxes = Axes.Both,
             });
 
-            if (user?.Id != APIUser.SYSTEM_USER_ID)
+            if (user?.OnlineID != APIUser.SYSTEM_USER_ID)
                 clickableArea.Action = openProfile;
         }
 
@@ -67,7 +67,7 @@ namespace osu.Game.Users.Drawables
 
         private void openProfile()
         {
-            if (user?.Id > 1 || !string.IsNullOrEmpty(user?.Username))
+            if (user?.OnlineID > 1 || !string.IsNullOrEmpty(user?.Username))
                 game?.ShowUser(user);
         }
 

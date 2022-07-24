@@ -37,11 +37,11 @@ using osu.Game.Utils;
 
 namespace osu.Game.Online.Leaderboards
 {
-    public class LeaderboardScore : OsuClickableContainer, IHasContextMenu, IHasCustomTooltip<ScoreInfo>
+    public class LeaderboardScore : OsuClickableContainer, IHasContextMenu, IHasCustomTooltip<IScoreInfo>
     {
         public const float HEIGHT = 60;
 
-        public readonly ScoreInfo Score;
+        public readonly IScoreInfo Score;
 
         private const float corner_radius = 5;
         private const float edge_margin = 5;
@@ -75,10 +75,10 @@ namespace osu.Game.Online.Leaderboards
         [Resolved]
         private Storage storage { get; set; }
 
-        public ITooltip<ScoreInfo> GetCustomTooltip() => new LeaderboardScoreTooltip();
-        public virtual ScoreInfo TooltipContent => Score;
+        public ITooltip<IScoreInfo> GetCustomTooltip() => new LeaderboardScoreTooltip();
+        public virtual IScoreInfo TooltipContent => Score;
 
-        public LeaderboardScore(ScoreInfo score, int? rank, bool isOnlineScope = true)
+        public LeaderboardScore(IScoreInfo score, int? rank, bool isOnlineScope = true)
         {
             Score = score;
 
@@ -292,10 +292,10 @@ namespace osu.Game.Online.Leaderboards
             }
         }
 
-        protected virtual IEnumerable<LeaderboardScoreStatistic> GetStatistics(ScoreInfo model) => new[]
+        protected virtual IEnumerable<LeaderboardScoreStatistic> GetStatistics(IScoreInfo model) => new[]
         {
             new LeaderboardScoreStatistic(FontAwesome.Solid.Link, BeatmapsetsStrings.ShowScoreboardHeadersCombo, model.MaxCombo.ToString()),
-            new LeaderboardScoreStatistic(FontAwesome.Solid.Crosshairs, BeatmapsetsStrings.ShowScoreboardHeadersAccuracy, model.DisplayAccuracy)
+            new LeaderboardScoreStatistic(FontAwesome.Solid.Crosshairs, BeatmapsetsStrings.ShowScoreboardHeadersAccuracy, model.Accuracy.FormatAccuracy())
         };
 
         protected override bool OnHover(HoverEvent e)
@@ -425,10 +425,10 @@ namespace osu.Game.Online.Leaderboards
                 if (Score.Mods.Length > 0 && modsContainer.Any(s => s.IsHovered) && songSelect != null)
                     items.Add(new OsuMenuItem("Use these mods", MenuItemType.Highlighted, () => songSelect.Mods.Value = Score.Mods));
 
-                if (Score.Files.Count > 0)
+                if (Score is ScoreInfo localScore)
                 {
-                    items.Add(new OsuMenuItem("Export", MenuItemType.Standard, () => new LegacyScoreExporter(storage).Export(Score)));
-                    items.Add(new OsuMenuItem(CommonStrings.ButtonsDelete, MenuItemType.Destructive, () => dialogOverlay?.Push(new LocalScoreDeleteDialog(Score))));
+                    items.Add(new OsuMenuItem("Export", MenuItemType.Standard, () => new LegacyScoreExporter(storage).Export(localScore)));
+                    items.Add(new OsuMenuItem(CommonStrings.ButtonsDelete, MenuItemType.Destructive, () => dialogOverlay?.Push(new LocalScoreDeleteDialog(localScore))));
                 }
 
                 return items.ToArray();

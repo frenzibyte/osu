@@ -87,7 +87,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                     MD5Hash = apiBeatmap.MD5Hash
                 };
 
-                scoreManager.OrderByTotalScoreAsync(value.Scores.Select(s => s.ToScoreInfo(rulesets, beatmapInfo)).ToArray(), loadCancellationSource.Token)
+                scoreManager.OrderByTotalScoreAsync(value.Scores, loadCancellationSource.Token)
                             .ContinueWith(task => Schedule(() =>
                             {
                                 if (loadCancellationSource.IsCancellationRequested)
@@ -101,12 +101,11 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                                 scoreTable.Show();
 
                                 var userScore = value.UserScore;
-                                var userScoreInfo = userScore?.Score.ToScoreInfo(rulesets, beatmapInfo);
 
                                 topScoresContainer.Add(new DrawableTopScore(topScore));
 
-                                if (userScoreInfo != null && userScoreInfo.OnlineID != topScore.OnlineID)
-                                    topScoresContainer.Add(new DrawableTopScore(userScoreInfo, userScore.Position));
+                                if (userScore != null && userScore.OnlineID != topScore.OnlineID)
+                                    topScoresContainer.Add(new DrawableTopScore(userScore, userScore.Position));
                             }), TaskContinuationOptions.OnlyOnRanToCompletion);
             });
         }

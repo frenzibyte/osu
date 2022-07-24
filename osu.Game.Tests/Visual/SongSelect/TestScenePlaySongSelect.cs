@@ -1063,7 +1063,7 @@ namespace osu.Game.Tests.Visual.SongSelect
             public new BeatmapCarousel Carousel => base.Carousel;
             public new ModSelectOverlay ModSelect => base.ModSelect;
 
-            public new void PresentScore(ScoreInfo score) => base.PresentScore(score);
+            public new void PresentScore(IScoreInfo score) => base.PresentScore(score);
 
             protected override bool OnStart()
             {

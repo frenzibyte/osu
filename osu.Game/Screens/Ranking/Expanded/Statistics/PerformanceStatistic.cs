@@ -17,7 +17,7 @@ namespace osu.Game.Screens.Ranking.Expanded.Statistics
 {
     public class PerformanceStatistic : StatisticDisplay
     {
-        private readonly ScoreInfo score;
+        private readonly IScoreInfo score;
 
         private readonly Bindable<int> performance = new Bindable<int>();
 
@@ -25,7 +25,7 @@ namespace osu.Game.Screens.Ranking.Expanded.Statistics
 
         private RollingCounter<int> counter;
 
-        public PerformanceStatistic(ScoreInfo score)
+        public PerformanceStatistic(IScoreInfo score)
             : base(BeatmapsetsStrings.ShowScoreboardHeaderspp)
         {
             this.score = score;
@@ -38,9 +38,9 @@ namespace osu.Game.Screens.Ranking.Expanded.Statistics
             {
                 setPerformanceValue(score.PP.Value);
             }
-            else
+            else if (score is ScoreInfo localScore)
             {
-                performanceCache.CalculatePerformanceAsync(score, cancellationTokenSource.Token)
+                performanceCache.CalculatePerformanceAsync(localScore, cancellationTokenSource.Token)
                                 .ContinueWith(t => Schedule(() => setPerformanceValue(t.GetResultSafely()?.Total)), cancellationTokenSource.Token);
             }
         }

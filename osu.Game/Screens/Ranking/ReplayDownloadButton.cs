@@ -17,7 +17,7 @@ namespace osu.Game.Screens.Ranking
 {
     public class ReplayDownloadButton : CompositeDrawable
     {
-        public readonly Bindable<ScoreInfo> Score = new Bindable<ScoreInfo>();
+        public readonly Bindable<IScoreInfo> Score = new Bindable<IScoreInfo>();
 
         protected readonly Bindable<DownloadState> State = new Bindable<DownloadState>();
 
@@ -40,7 +40,7 @@ namespace osu.Game.Screens.Ranking
             }
         }
 
-        public ReplayDownloadButton(ScoreInfo score)
+        public ReplayDownloadButton(IScoreInfo score)
         {
             Score.Value = score;
             Size = new Vector2(50, 30);

@@ -280,10 +280,10 @@ namespace osu.Game.Rulesets.Scoring
         /// <param name="scoreInfo">The <see cref="ScoreInfo"/> to compute the total score of.</param>
         /// <returns>The total score in the given <see cref="ScoringMode"/>.</returns>
         [Pure]
-        public double ComputeFinalScore(ScoringMode mode, ScoreInfo scoreInfo)
+        public double ComputeFinalScore(ScoringMode mode, IScoreInfo scoreInfo)
         {
-            if (!ruleset.RulesetInfo.Equals(scoreInfo.Ruleset))
-                throw new ArgumentException($"Unexpected score ruleset. Expected \"{ruleset.RulesetInfo.ShortName}\" but was \"{scoreInfo.Ruleset.ShortName}\".");
+            if (ruleset.RulesetInfo.ShortName != scoreInfo.GetRulesetShortName())
+                throw new ArgumentException($"Unexpected score ruleset. Expected \"{ruleset.RulesetInfo.ShortName}\" but was \"{scoreInfo.GetRulesetShortName()}\".");
 
             ExtractScoringValues(scoreInfo, out var current, out var maximum);
 
@@ -300,10 +300,10 @@ namespace osu.Game.Rulesets.Scoring
         /// <param name="scoreInfo">The <see cref="ScoreInfo"/> to compute the total score of.</param>
         /// <returns>The total score in the given <see cref="ScoringMode"/>.</returns>
         [Pure]
-        public double ComputePartialScore(ScoringMode mode, ScoreInfo scoreInfo)
+        public double ComputePartialScore(ScoringMode mode, IScoreInfo scoreInfo)
         {
-            if (!ruleset.RulesetInfo.Equals(scoreInfo.Ruleset))
-                throw new ArgumentException($"Unexpected score ruleset. Expected \"{ruleset.RulesetInfo.ShortName}\" but was \"{scoreInfo.Ruleset.ShortName}\".");
+            if (ruleset.RulesetInfo.ShortName != scoreInfo.GetRulesetShortName())
+                throw new ArgumentException($"Unexpected score ruleset. Expected \"{ruleset.RulesetInfo.ShortName}\" but was \"{scoreInfo.GetRulesetShortName()}\".");
 
             if (!beatmapApplied)
                 throw new InvalidOperationException($"Cannot compute partial score without calling {nameof(ApplyBeatmap)}.");
@@ -314,21 +314,21 @@ namespace osu.Game.Rulesets.Scoring
         }
 
         /// <summary>
-        /// Computes the total score of a given <see cref="ScoreInfo"/> with a given custom max achievable combo.
+        /// Computes the total score of a given <see cref="IScoreInfo"/> with a given custom max achievable combo.
         /// </summary>
         /// <remarks>
         /// This is useful for processing legacy scores in which the maximum achievable combo can be more accurately determined via external means (e.g. database values or difficulty calculation).
         /// <p>Does not require <see cref="JudgementProcessor.ApplyBeatmap"/> to have been called before use.</p>
         /// </remarks>
         /// <param name="mode">The <see cref="ScoringMode"/> to represent the score as.</param>
-        /// <param name="scoreInfo">The <see cref="ScoreInfo"/> to compute the total score of.</param>
+        /// <param name="scoreInfo">The <see cref="IScoreInfo"/> to compute the total score of.</param>
         /// <param name="maxAchievableCombo">The maximum achievable combo for the provided beatmap.</param>
         /// <returns>The total score in the given <see cref="ScoringMode"/>.</returns>
         [Pure]
-        public double ComputeFinalLegacyScore(ScoringMode mode, ScoreInfo scoreInfo, int maxAchievableCombo)
+        public double ComputeFinalLegacyScore(ScoringMode mode, IScoreInfo scoreInfo, int maxAchievableCombo)
         {
-            if (!ruleset.RulesetInfo.Equals(scoreInfo.Ruleset))
-                throw new ArgumentException($"Unexpected score ruleset. Expected \"{ruleset.RulesetInfo.ShortName}\" but was \"{scoreInfo.Ruleset.ShortName}\".");
+            if (ruleset.RulesetInfo.ShortName != scoreInfo.GetRulesetShortName())
+                throw new ArgumentException($"Unexpected score ruleset. Expected \"{ruleset.RulesetInfo.ShortName}\" but was \"{scoreInfo.GetRulesetShortName()}\".");
 
             double accuracyRatio = scoreInfo.Accuracy;
             double comboRatio = maxAchievableCombo > 0 ? (double)scoreInfo.MaxCombo / maxAchievableCombo : 1;
@@ -528,7 +528,7 @@ namespace osu.Game.Rulesets.Scoring
         /// <param name="current">The "current" scoring values, representing the hit statistics as they appear.</param>
         /// <param name="maximum">The "maximum" scoring values, representing the hit statistics as if the maximum hit result was attained each time.</param>
         [Pure]
-        internal void ExtractScoringValues(ScoreInfo scoreInfo, out ScoringValues current, out ScoringValues maximum)
+        internal void ExtractScoringValues(IScoreInfo scoreInfo, out ScoringValues current, out ScoringValues maximum)
         {
             extractScoringValues(scoreInfo.Statistics, out current, out maximum);
             current.MaxCombo = scoreInfo.MaxCombo;

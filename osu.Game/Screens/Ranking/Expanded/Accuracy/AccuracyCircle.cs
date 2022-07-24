@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -77,7 +76,7 @@ namespace osu.Game.Screens.Ranking.Expanded.Accuracy
         /// </summary>
         public static readonly Easing ACCURACY_TRANSFORM_EASING = Easing.OutPow10;
 
-        private readonly ScoreInfo score;
+        private readonly IScoreInfo score;
 
         private SmoothCircularProgress accuracyCircle;
         private SmoothCircularProgress innerMask;
@@ -98,7 +97,7 @@ namespace osu.Game.Screens.Ranking.Expanded.Accuracy
 
         private readonly bool withFlair;
 
-        public AccuracyCircle(ScoreInfo score, bool withFlair = false)
+        public AccuracyCircle(IScoreInfo score, bool withFlair = false)
         {
             this.score = score;
             this.withFlair = withFlair;

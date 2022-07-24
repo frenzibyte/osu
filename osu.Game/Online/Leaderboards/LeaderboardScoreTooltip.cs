@@ -16,7 +16,7 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Online.Leaderboards
 {
-    public class LeaderboardScoreTooltip : VisibilityContainer, ITooltip<ScoreInfo>
+    public class LeaderboardScoreTooltip : VisibilityContainer, ITooltip<IScoreInfo>
     {
         private OsuSpriteText timestampLabel = null!;
         private FillFlowContainer<HitResultCell> topScoreStatistics = null!;
@@ -90,9 +90,9 @@ namespace osu.Game.Online.Leaderboards
             };
         }
 
-        private ScoreInfo? displayedScore;
+        private IScoreInfo? displayedScore;
 
-        public void SetContent(ScoreInfo score)
+        public void SetContent(IScoreInfo score)
         {
             if (displayedScore?.Equals(score) == true)
                 return;

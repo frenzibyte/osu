@@ -56,7 +56,7 @@ namespace osu.Game.Online.API.Requests.Responses
         public string Colour;
 
         [JsonProperty(@"avatar_url")]
-        public string AvatarUrl;
+        public string AvatarUrl { get; set; }
 
         [JsonProperty(@"cover_url")]
         public string CoverUrl
