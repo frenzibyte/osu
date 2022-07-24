@@ -186,50 +186,6 @@ namespace osu.Game.Scoring
         [NotMapped]
         public int? Position { get; set; } // TODO: remove after all calls to `CreateScoreInfo` are gone.
 
-        /// <summary>
-        /// Whether this <see cref="EFScoreInfo"/> represents a legacy (osu!stable) score.
-        /// </summary>
-        [NotMapped]
-        public bool IsLegacyScore => Mods.OfType<ModClassic>().Any();
-
-        public IEnumerable<HitResultDisplayStatistic> GetStatisticsForDisplay()
-        {
-            foreach (var r in Ruleset.CreateInstance().GetHitResults())
-            {
-                int value = Statistics.GetValueOrDefault(r.result);
-
-                switch (r.result)
-                {
-                    case HitResult.SmallTickHit:
-                    {
-                        int total = value + Statistics.GetValueOrDefault(HitResult.SmallTickMiss);
-                        if (total > 0)
-                            yield return new HitResultDisplayStatistic(r.result, value, total, r.displayName);
-
-                        break;
-                    }
-
-                    case HitResult.LargeTickHit:
-                    {
-                        int total = value + Statistics.GetValueOrDefault(HitResult.LargeTickMiss);
-                        if (total > 0)
-                            yield return new HitResultDisplayStatistic(r.result, value, total, r.displayName);
-
-                        break;
-                    }
-
-                    case HitResult.SmallTickMiss:
-                    case HitResult.LargeTickMiss:
-                        break;
-
-                    default:
-                        yield return new HitResultDisplayStatistic(r.result, value, null, r.displayName);
-
-                        break;
-                }
-            }
-        }
-
         public EFScoreInfo DeepClone()
         {
             var clone = (EFScoreInfo)MemberwiseClone();
@@ -263,7 +219,6 @@ namespace osu.Game.Scoring
         #region Implementation of IScoreInfo
 
         IBeatmapInfo IScoreInfo.Beatmap => BeatmapInfo;
-        IRulesetInfo IScoreInfo.Ruleset => Ruleset;
         IUser IScoreInfo.User => User;
         bool IScoreInfo.HasReplay => Files.Any();
 

@@ -165,8 +165,6 @@ namespace osu.Game.Online.API.Requests.Responses
 
         IBeatmapInfo IScoreInfo.Beatmap => Beatmap ?? new APIBeatmap { OnlineID = UserID };
 
-        IRulesetInfo IScoreInfo.Ruleset => new RulesetInfo { OnlineID = RulesetID };
-
         DateTimeOffset IScoreInfo.Date => EndedAt;
     }
 }

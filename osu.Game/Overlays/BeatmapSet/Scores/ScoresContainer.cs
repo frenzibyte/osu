@@ -104,8 +104,8 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
 
                                 topScoresContainer.Add(new DrawableTopScore(topScore));
 
-                                if (userScore != null && userScore.OnlineID != topScore.OnlineID)
-                                    topScoresContainer.Add(new DrawableTopScore(userScore, userScore.Position));
+                                if (userScore != null && userScore.Score.OnlineID != topScore.OnlineID)
+                                    topScoresContainer.Add(new DrawableTopScore(userScore.Score, userScore.Position));
                             }), TaskContinuationOptions.OnlyOnRanToCompletion);
             });
         }

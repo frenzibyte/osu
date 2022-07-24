@@ -12,6 +12,7 @@ using osu.Framework.Screens;
 using osu.Game.Graphics;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Notifications;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play;
@@ -25,6 +26,9 @@ namespace osu.Game.Screens.Select
     public class PlaySongSelect : SongSelect
     {
         private OsuScreen playerLoader;
+
+        [Resolved]
+        private RulesetStore rulesets { get; set; }
 
         [Resolved(CanBeNull = true)]
         private INotificationOverlay notifications { get; set; }
@@ -43,7 +47,7 @@ namespace osu.Game.Screens.Select
 
         protected void PresentScore(IScoreInfo score)
         {
-            FinaliseSelection(score.Beatmap, score.Ruleset, () => this.Push(new SoloResultsScreen(score, false)));
+            FinaliseSelection(score.Beatmap, score.GetRuleset(rulesets), () => this.Push(new SoloResultsScreen(score, false)));
         }
 
         protected override BeatmapDetailArea CreateBeatmapDetailArea() => new PlayBeatmapDetailArea();

@@ -99,6 +99,9 @@ namespace osu.Game.Screens.Select
         [Resolved]
         private BeatmapManager beatmaps { get; set; }
 
+        [Resolved]
+        private RulesetStore rulesets { get; set; }
+
         protected ModSelectOverlay ModSelect { get; private set; }
 
         protected Sample SampleConfirm { get; private set; }
@@ -365,8 +368,11 @@ namespace osu.Game.Screens.Select
                 return;
             }
 
-            if (ruleset != null)
-                Ruleset.Value = ruleset;
+            // todo: we need to figure out a better way for this.
+            if (ruleset is RulesetInfo localRuleset)
+                Ruleset.Value = localRuleset;
+            else if (ruleset != null)
+                Ruleset.Value = rulesets.GetRuleset(ruleset.OnlineID);
 
             transferRulesetValue();
 

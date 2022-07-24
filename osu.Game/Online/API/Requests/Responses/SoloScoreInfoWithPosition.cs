@@ -6,7 +6,7 @@
 using System;
 using Newtonsoft.Json;
 using osu.Game.Beatmaps;
-using osu.Game.Rulesets;
+using osu.Game.Database;
 using osu.Game.Scoring;
 using osu.Game.Users;
 
@@ -22,31 +22,31 @@ namespace osu.Game.Online.API.Requests.Responses
 
         #region IScoreInfo
 
-        public long OnlineID => Score.OnlineID;
+        long IHasOnlineID<long>.OnlineID => Score.OnlineID;
 
-        public bool Equals(IScoreInfo other) => Score.Equals(other);
+        bool IEquatable<IScoreInfo>.Equals(IScoreInfo other) => Score.Equals(other);
 
-        public IUser User => ((IScoreInfo)Score).User;
+        IUser IScoreInfo.User => ((IScoreInfo)Score).User;
 
-        public long TotalScore => ((IScoreInfo)Score).TotalScore;
+        long IScoreInfo.TotalScore => ((IScoreInfo)Score).TotalScore;
 
-        public int MaxCombo => Score.MaxCombo;
+        int IScoreInfo.MaxCombo => Score.MaxCombo;
 
-        public double Accuracy => Score.Accuracy;
+        double IScoreInfo.Accuracy => Score.Accuracy;
 
-        public bool HasReplay => Score.HasReplay;
+        bool IScoreInfo.HasReplay => Score.HasReplay;
 
-        public DateTimeOffset Date => ((IScoreInfo)Score).Date;
+        DateTimeOffset IScoreInfo.Date => ((IScoreInfo)Score).Date;
 
-        public double? PP => Score.PP;
+        double? IScoreInfo.PP => Score.PP;
 
-        public IBeatmapInfo Beatmap => ((IScoreInfo)Score).Beatmap;
+        IBeatmapInfo IScoreInfo.Beatmap => ((IScoreInfo)Score).Beatmap;
 
-        public IRulesetInfo Ruleset => ((IScoreInfo)Score).Ruleset;
+        int IScoreInfo.RulesetID => Score.RulesetID;
 
-        public ScoreRank Rank => Score.Rank;
+        ScoreRank IScoreInfo.Rank => Score.Rank;
 
-        public string Hash => Score.Hash;
+        string IScoreInfo.Hash => Score.Hash;
 
         #endregion
     }

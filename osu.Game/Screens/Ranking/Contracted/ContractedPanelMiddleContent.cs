@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.LocalisationExtensions;
@@ -17,6 +18,8 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Online.Leaderboards;
 using osu.Game.Resources.Localisation.Web;
+using osu.Game.Rulesets;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Users;
@@ -48,7 +51,7 @@ namespace osu.Game.Screens.Ranking.Contracted
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(RulesetStore rulesets)
         {
             InternalChild = new GridContainer
             {
@@ -120,7 +123,7 @@ namespace osu.Game.Screens.Ranking.Contracted
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Vertical,
                                             Spacing = new Vector2(0, 5),
-                                            ChildrenEnumerable = score.GetStatisticsForDisplay().Where(s => !s.Result.IsBonus()).Select(createStatistic)
+                                            ChildrenEnumerable = score.GetStatisticsForDisplay(rulesets).Where(s => !s.Result.IsBonus()).Select(createStatistic)
                                         },
                                         new FillFlowContainer
                                         {
@@ -141,7 +144,7 @@ namespace osu.Game.Screens.Ranking.Contracted
                                             Origin = Anchor.TopCentre,
                                             AutoSizeAxes = Axes.Y,
                                             RelativeSizeAxes = Axes.X,
-                                            Current = { Value = score.Mods },
+                                            Current = { Value = score.GetMods(rulesets) },
                                             IconScale = 0.5f,
                                         }
                                     }

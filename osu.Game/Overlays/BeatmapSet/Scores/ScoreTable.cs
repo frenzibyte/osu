@@ -23,8 +23,12 @@ using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Localisation;
 using osu.Framework.Extensions.LocalisationExtensions;
+using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics.Cursor;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Resources.Localisation.Web;
+using osu.Game.Rulesets;
+using osu.Game.Utils;
 
 namespace osu.Game.Overlays.BeatmapSet.Scores
 {
@@ -56,6 +60,9 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
             });
         }
 
+        [Resolved]
+        private RulesetStore rulesets { get; set; }
+
         /// <summary>
         /// The statistics that appear in the table, in order of appearance.
         /// </summary>
@@ -63,7 +70,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
 
         private bool showPerformancePoints;
 
-        public void DisplayScores(IReadOnlyList<ScoreInfo> scores, bool showPerformanceColumn)
+        public void DisplayScores(IReadOnlyList<SoloScoreInfo> scores, bool showPerformanceColumn)
         {
             ClearScores();
 
@@ -86,7 +93,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
             backgroundFlow.Clear();
         }
 
-        private TableColumn[] createHeaders(IReadOnlyList<ScoreInfo> scores)
+        private TableColumn[] createHeaders(IReadOnlyList<SoloScoreInfo> scores)
         {
             var columns = new List<TableColumn>
             {
@@ -100,9 +107,9 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
             };
 
             // All statistics across all scores, unordered.
-            var allScoreStatistics = scores.SelectMany(s => s.GetStatisticsForDisplay().Select(stat => stat.Result)).ToHashSet();
+            var allScoreStatistics = scores.SelectMany(s => s.GetStatisticsForDisplay(rulesets).Select(stat => stat.Result)).ToHashSet();
 
-            var ruleset = scores.First().Ruleset.CreateInstance();
+            var ruleset = scores.First().GetRuleset(rulesets).CreateInstance();
 
             foreach (var result in EnumExtensions.GetValuesInOrder<HitResult>())
             {
@@ -129,7 +136,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
             return columns.ToArray();
         }
 
-        private Drawable[] createContent(int index, ScoreInfo score)
+        private Drawable[] createContent(int index, SoloScoreInfo score)
         {
             var username = new LinkFlowContainer(t => t.Font = OsuFont.GetFont(size: text_size)) { AutoSizeAxes = Axes.Both };
             username.AddUserLink(score.User);
@@ -154,20 +161,18 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                 new StatisticText(score.Accuracy, 1, showTooltip: false)
                 {
                     Margin = new MarginPadding { Right = horizontal_inset },
-                    Text = score.DisplayAccuracy,
+                    Text = score.Accuracy.FormatAccuracy(),
                 },
-                new UpdateableFlag(score.User.CountryCode)
+                new UpdateableFlag(score.User.AsNonNull().CountryCode)
                 {
                     Size = new Vector2(19, 14),
                     ShowPlaceholderOnUnknown = false,
                 },
                 username,
-#pragma warning disable 618
-                new StatisticText(score.MaxCombo, score.BeatmapInfo.MaxCombo, @"0\x"),
-#pragma warning restore 618
+                new StatisticText(score.MaxCombo, score.Beatmap.AsNonNull().MaxCombo, @"0\x"),
             };
 
-            var availableStatistics = score.GetStatisticsForDisplay().ToDictionary(tuple => tuple.Result);
+            var availableStatistics = score.GetStatisticsForDisplay(rulesets).ToDictionary(tuple => tuple.Result);
 
             foreach (var result in statisticResultTypes)
             {
@@ -183,7 +188,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                 content.Add(new StatisticText(score.PP.Value, format: @"N0"));
             }
 
-            content.Add(new ScoreboardTime(score.Date, text_size)
+            content.Add(new ScoreboardTime(score.EndedAt, text_size)
             {
                 Margin = new MarginPadding { Right = 10 }
             });
@@ -193,7 +198,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                 Direction = FillDirection.Horizontal,
                 AutoSizeAxes = Axes.Both,
                 Spacing = new Vector2(1),
-                ChildrenEnumerable = score.Mods.Select(m => new ModIcon(m)
+                ChildrenEnumerable = score.GetMods(rulesets).Select(m => new ModIcon(m)
                 {
                     AutoSizeAxes = Axes.Both,
                     Scale = new Vector2(0.3f)

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -14,6 +15,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Graphics;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Scoring;
 using osu.Game.Skinning;
@@ -96,6 +98,9 @@ namespace osu.Game.Screens.Ranking.Expanded.Accuracy
         private bool isTicking;
 
         private readonly bool withFlair;
+
+        [Resolved]
+        private RulesetStore rulesets { get; set; }
 
         public AccuracyCircle(IScoreInfo score, bool withFlair = false)
         {
@@ -402,7 +407,7 @@ namespace osu.Game.Screens.Ranking.Expanded.Accuracy
 
         private ScoreRank getRank(ScoreRank rank)
         {
-            foreach (var mod in score.Mods.OfType<IApplicableToScoreProcessor>())
+            foreach (var mod in score.GetMods(rulesets).OfType<IApplicableToScoreProcessor>())
                 rank = mod.AdjustRank(rank, score.Accuracy);
 
             return rank;

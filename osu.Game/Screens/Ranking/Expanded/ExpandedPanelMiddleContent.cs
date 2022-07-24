@@ -17,6 +17,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play.HUD;
@@ -61,7 +62,7 @@ namespace osu.Game.Screens.Ranking.Expanded
         }
 
         [BackgroundDependencyLoader]
-        private void load(BeatmapDifficultyCache beatmapDifficultyCache)
+        private void load(BeatmapDifficultyCache beatmapDifficultyCache, RulesetStore rulesets)
         {
             var beatmap = score.Beatmap;
             var metadata = beatmap.BeatmapSet?.Metadata ?? beatmap.Metadata;
@@ -78,7 +79,7 @@ namespace osu.Game.Screens.Ranking.Expanded
 
             var bottomStatistics = new List<HitResultStatistic>();
 
-            foreach (var result in score.GetStatisticsForDisplay())
+            foreach (var result in score.GetStatisticsForDisplay(rulesets))
                 bottomStatistics.Add(new HitResultStatistic(result));
 
             statisticDisplays.AddRange(topStatistics);
@@ -228,7 +229,7 @@ namespace osu.Game.Screens.Ranking.Expanded
             if (score.Date != default)
                 AddInternal(new PlayedOnText(score.Date));
 
-            var starDifficulty = beatmapDifficultyCache.GetDifficultyAsync(beatmap, score.Ruleset, score.Mods).GetResultSafely();
+            var starDifficulty = beatmapDifficultyCache.GetDifficultyAsync(beatmap, score.GetRuleset(rulesets), score.GetMods(rulesets)).GetResultSafely();
 
             if (starDifficulty != null)
             {
@@ -239,7 +240,9 @@ namespace osu.Game.Screens.Ranking.Expanded
                 });
             }
 
-            if (score.Mods.Any())
+            var mods = score.GetMods(rulesets);
+
+            if (mods.Any())
             {
                 starAndModDisplay.Add(new ModDisplay
                 {
@@ -247,7 +250,7 @@ namespace osu.Game.Screens.Ranking.Expanded
                     Origin = Anchor.CentreLeft,
                     ExpansionMode = ExpansionMode.AlwaysExpanded,
                     Scale = new Vector2(0.5f),
-                    Current = { Value = score.Mods }
+                    Current = { Value = mods }
                 });
             }
         }

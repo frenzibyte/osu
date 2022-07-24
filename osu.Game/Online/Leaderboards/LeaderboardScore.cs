@@ -33,6 +33,7 @@ using osuTK;
 using osuTK.Graphics;
 using osu.Game.Online.API;
 using osu.Game.Resources.Localisation.Web;
+using osu.Game.Rulesets;
 using osu.Game.Utils;
 
 namespace osu.Game.Online.Leaderboards
@@ -90,7 +91,7 @@ namespace osu.Game.Online.Leaderboards
         }
 
         [BackgroundDependencyLoader]
-        private void load(IAPIProvider api, OsuColour colour, ScoreManager scoreManager)
+        private void load(IAPIProvider api, OsuColour colour, ScoreManager scoreManager, RulesetStore rulesets)
         {
             var user = Score.User;
 
@@ -244,7 +245,7 @@ namespace osu.Game.Online.Leaderboards
                                     Origin = Anchor.BottomRight,
                                     AutoSizeAxes = Axes.Both,
                                     Direction = FillDirection.Horizontal,
-                                    ChildrenEnumerable = Score.Mods.Select(mod => new ModIcon(mod) { Scale = new Vector2(0.375f) })
+                                    ChildrenEnumerable = Score.GetMods(rulesets).Select(mod => new ModIcon(mod) { Scale = new Vector2(0.375f) })
                                 },
                             },
                         },
@@ -416,14 +417,19 @@ namespace osu.Game.Online.Leaderboards
             }
         }
 
+        [Resolved]
+        private RulesetStore rulesets { get; set; }
+
         public MenuItem[] ContextMenuItems
         {
             get
             {
                 List<MenuItem> items = new List<MenuItem>();
 
-                if (Score.Mods.Length > 0 && modsContainer.Any(s => s.IsHovered) && songSelect != null)
-                    items.Add(new OsuMenuItem("Use these mods", MenuItemType.Highlighted, () => songSelect.Mods.Value = Score.Mods));
+                var mods = Score.GetMods(rulesets);
+
+                if (mods.Length > 0 && modsContainer.Any(s => s.IsHovered) && songSelect != null)
+                    items.Add(new OsuMenuItem("Use these mods", MenuItemType.Highlighted, () => songSelect.Mods.Value = mods));
 
                 if (Score is ScoreInfo localScore)
                 {

@@ -10,6 +10,7 @@ using osuTK;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Framework.Allocation;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.UI;
@@ -32,6 +33,9 @@ namespace osu.Game.Online.Leaderboards
             Masking = true;
             CornerRadius = 5;
         }
+
+        [Resolved]
+        private RulesetStore rulesets { get; set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
@@ -105,12 +109,12 @@ namespace osu.Game.Online.Leaderboards
             topScoreStatistics.Clear();
             bottomScoreStatistics.Clear();
 
-            foreach (var mod in score.Mods)
+            foreach (var mod in score.GetMods(rulesets))
             {
                 modStatistics.Add(new ModCell(mod));
             }
 
-            foreach (var result in score.GetStatisticsForDisplay())
+            foreach (var result in score.GetStatisticsForDisplay(rulesets))
             {
                 if (result.Result > HitResult.Perfect)
                     bottomScoreStatistics.Add(new HitResultCell(result));

@@ -47,7 +47,7 @@ namespace osu.Game.Tests.Visual.Gameplay
             seekTo(beatmap.Beatmap.HitObjects[^1].GetEndTime());
             AddUntilStep("results displayed", () => getResultsScreen()?.IsLoaded == true);
 
-            AddAssert("score has combo", () => getResultsScreen().Score.Combo > 100);
+            AddAssert("score has combo", () => getResultsScreen().Score.MaxCombo > 100);
             AddAssert("score has no misses", () => getResultsScreen().Score.Statistics[HitResult.Miss] == 0);
 
             AddUntilStep("avatar displayed", () => getAvatar() != null);

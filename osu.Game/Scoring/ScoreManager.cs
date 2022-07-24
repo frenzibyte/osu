@@ -27,6 +27,7 @@ namespace osu.Game.Scoring
 {
     public class ScoreManager : ModelManager<ScoreInfo>, IModelImporter<ScoreInfo>
     {
+        private readonly RulesetStore rulesets;
         private readonly Scheduler scheduler;
         private readonly BeatmapDifficultyCache difficultyCache;
         private readonly OsuConfigManager configManager;
@@ -36,6 +37,7 @@ namespace osu.Game.Scoring
                             BeatmapDifficultyCache difficultyCache = null, OsuConfigManager configManager = null)
             : base(storage, realm)
         {
+            this.rulesets = rulesets;
             this.scheduler = scheduler;
             this.difficultyCache = difficultyCache;
             this.configManager = configManager;
@@ -64,14 +66,15 @@ namespace osu.Game.Scoring
         /// <param name="scores">The array of <see cref="ScoreInfo"/>s to reorder.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to cancel the process.</param>
         /// <returns>The given <paramref name="scores"/> ordered by decreasing total score.</returns>
-        public async Task<IScoreInfo[]> OrderByTotalScoreAsync(IReadOnlyList<IScoreInfo> scores, CancellationToken cancellationToken = default)
+        public async Task<TScoreInfo[]> OrderByTotalScoreAsync<TScoreInfo>(IReadOnlyList<TScoreInfo> scores, CancellationToken cancellationToken = default)
+            where TScoreInfo : IScoreInfo
         {
             if (difficultyCache != null)
             {
                 // Compute difficulties asynchronously first to prevent blocking via the GetTotalScore() call below.
                 foreach (var s in scores)
                 {
-                    await difficultyCache.GetDifficultyAsync(s.Beatmap, s.Ruleset, s.Mods, cancellationToken).ConfigureAwait(false);
+                    await difficultyCache.GetDifficultyAsync(s.Beatmap, s.GetRuleset(rulesets), s.GetMods(rulesets), cancellationToken).ConfigureAwait(false);
                     cancellationToken.ThrowIfCancellationRequested();
                 }
             }
@@ -143,9 +146,9 @@ namespace osu.Game.Scoring
             if (beatmapMaxCombo == 0)
                 return 0;
 
-            var ruleset = score.Ruleset.CreateInstance();
+            var ruleset = score.GetRuleset(rulesets).CreateInstance();
             var scoreProcessor = ruleset.CreateScoreProcessor();
-            scoreProcessor.Mods.Value = score.Mods;
+            scoreProcessor.Mods.Value = score.GetMods(rulesets);
 
             return (long)Math.Round(scoreProcessor.ComputeFinalLegacyScore(mode, score, beatmapMaxCombo.Value));
         }
@@ -158,13 +161,13 @@ namespace osu.Game.Scoring
         /// <returns>The maximum achievable combo. A <see langword="null"/> return value indicates the difficulty cache has failed to retrieve the combo.</returns>
         public async Task<int?> GetMaximumAchievableComboAsync([NotNull] IScoreInfo score, CancellationToken cancellationToken = default)
         {
-            if (score.IsLegacyScore)
+            if (score.IsLegacyScore())
             {
                 if (difficultyCache == null)
                     return null;
 
                 // We can compute the max combo locally after the async beatmap difficulty computation.
-                var difficulty = await difficultyCache.GetDifficultyAsync(score.Beatmap, score.Ruleset, score.Mods, cancellationToken).ConfigureAwait(false);
+                var difficulty = await difficultyCache.GetDifficultyAsync(score.Beatmap, score.GetRuleset(rulesets), score.GetMods(rulesets), cancellationToken).ConfigureAwait(false);
                 return difficulty?.MaxCombo;
             }
 

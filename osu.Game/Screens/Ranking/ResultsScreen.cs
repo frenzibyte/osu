@@ -22,6 +22,7 @@ using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Input.Bindings;
 using osu.Game.Online.API;
+using osu.Game.Rulesets;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Ranking.Statistics;
@@ -74,7 +75,7 @@ namespace osu.Game.Screens.Ranking
         }
 
         [BackgroundDependencyLoader]
-        private void load(AudioManager audio)
+        private void load(AudioManager audio, RulesetStore rulesets)
         {
             FillFlowContainer buttons;
 
@@ -153,7 +154,7 @@ namespace osu.Game.Screens.Ranking
             if (Score != null)
             {
                 // only show flair / animation when arriving after watching a play that isn't autoplay.
-                bool shouldFlair = player != null && Score.Mods.All(m => m.UserPlayable);
+                bool shouldFlair = player != null && Score.GetMods(rulesets).All(m => m.UserPlayable);
 
                 ScorePanelList.AddScore(Score, shouldFlair);
             }

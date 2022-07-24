@@ -16,6 +16,6 @@ namespace osu.Game.Online.API.Requests
 
         protected override string FileExtension => ".osr";
 
-        protected override string Target => $@"scores/{Model.Ruleset.ShortName}/{Model.OnlineID}/download";
+        protected override string Target => $@"scores/{Model.GetRulesetShortName()}/{Model.OnlineID}/download";
     }
 }

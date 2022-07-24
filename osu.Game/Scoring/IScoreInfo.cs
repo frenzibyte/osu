@@ -6,7 +6,6 @@
 using System;
 using osu.Game.Beatmaps;
 using osu.Game.Database;
-using osu.Game.Rulesets;
 using osu.Game.Users;
 
 namespace osu.Game.Scoring
@@ -29,7 +28,7 @@ namespace osu.Game.Scoring
 
         IBeatmapInfo Beatmap { get; }
 
-        IRulesetInfo Ruleset { get; }
+        int RulesetID { get; }
 
         ScoreRank Rank { get; }
 

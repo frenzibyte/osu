@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -131,11 +130,8 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                 ppColumn.Alpha = value.Beatmap.AsNonNull().Status.GrantsPerformancePoints() ? 1 : 0;
                 ppColumn.Text = value.PP?.ToLocalisableString(@"N0") ?? default;
 
-                statisticsColumns.ChildrenEnumerable = value.GetStatisticsForDisplay().Select(createStatisticsColumn);
-
-                var ruleset = rulesets.GetRuleset(value.RulesetID) ?? throw new InvalidOperationException($"Ruleset with ID of {value.RulesetID} not found locally");
-
-                modsColumn.Mods = value.Mods.Select(m => m.ToMod(ruleset.CreateInstance()));
+                statisticsColumns.ChildrenEnumerable = value.GetStatisticsForDisplay(rulesets).Select(createStatisticsColumn);
+                modsColumn.Mods = value.Mods.Select(m => m.ToMod(value.GetRuleset(rulesets).CreateInstance()));
 
                 if (scoreManager != null)
                     totalScoreColumn.Current = scoreManager.GetBindableTotalScoreString(value);

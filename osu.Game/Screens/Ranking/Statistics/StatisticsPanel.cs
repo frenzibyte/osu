@@ -18,6 +18,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Online.Placeholders;
+using osu.Game.Rulesets;
 using osu.Game.Scoring;
 using osuTK;
 
@@ -61,6 +62,9 @@ namespace osu.Game.Screens.Ranking.Statistics
             };
         }
 
+        [Resolved]
+        private RulesetStore rulesets { get; set; }
+
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
         {
@@ -95,7 +99,8 @@ namespace osu.Game.Screens.Ranking.Statistics
             // Todo: The placement of this is temporary. Eventually we'll both generate the playable beatmap _and_ run through it in a background task to generate the hit events.
             Task.Run(() =>
             {
-                playableBeatmap = beatmapManager.GetWorkingBeatmap(newScore.Beatmap as BeatmapInfo).GetPlayableBeatmap(newScore.Ruleset, newScore.Mods);
+                // todo: this is probably broken for online scores because Beatmap is not BeatmapInfo.
+                playableBeatmap = beatmapManager.GetWorkingBeatmap(newScore.Beatmap as BeatmapInfo).GetPlayableBeatmap(newScore.GetRuleset(rulesets), newScore.GetMods(rulesets));
             }, loadCancellation.Token).ContinueWith(_ => Schedule(() =>
             {
                 Container<Drawable> container;

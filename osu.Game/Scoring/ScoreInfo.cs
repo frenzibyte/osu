@@ -112,7 +112,6 @@ namespace osu.Game.Scoring
         [MapTo(nameof(Rank))]
         public int RankInt { get; set; }
 
-        IRulesetInfo IScoreInfo.Ruleset => Ruleset;
         IBeatmapInfo IScoreInfo.Beatmap => BeatmapInfo;
         IUser IScoreInfo.User => User;
         IEnumerable<INamedFileUsage> IHasNamedFiles.Files => Files;
