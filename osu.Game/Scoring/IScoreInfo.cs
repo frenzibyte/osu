@@ -4,9 +4,11 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 using osu.Game.Beatmaps;
 using osu.Game.Database;
 using osu.Game.Online.API;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Users;
 
 namespace osu.Game.Scoring
@@ -37,6 +39,6 @@ namespace osu.Game.Scoring
 
         APIMod[] Mods { get; }
 
-        // Statistics is also missing. This can be reconsidered once changes in serialisation have been completed.
+        Dictionary<HitResult, int> Statistics { get; }
     }
 }

@@ -4,9 +4,11 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using osu.Game.Beatmaps;
 using osu.Game.Database;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 using osu.Game.Users;
 
@@ -49,6 +51,8 @@ namespace osu.Game.Online.API.Requests.Responses
         string IScoreInfo.Hash => Score.Hash;
 
         APIMod[] IScoreInfo.Mods => Score.Mods;
+
+        Dictionary<HitResult, int> IScoreInfo.Statistics => Score.Statistics;
 
         #endregion
     }
