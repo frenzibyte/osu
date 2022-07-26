@@ -47,9 +47,6 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
         private IAPIProvider api { get; set; }
 
         [Resolved]
-        private RulesetStore rulesets { get; set; }
-
-        [Resolved]
         private ScoreManager scoreManager { get; set; }
 
         private GetScoresRequest getScoresRequest;
@@ -76,16 +73,6 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
                 var apiBeatmap = Beatmap.Value;
 
                 Debug.Assert(apiBeatmap != null);
-
-                // TODO: temporary. should be removed once `OrderByTotalScore` can accept `IScoreInfo`.
-                var beatmapInfo = new BeatmapInfo
-                {
-#pragma warning disable 618
-                    MaxCombo = apiBeatmap.MaxCombo,
-#pragma warning restore 618
-                    Status = apiBeatmap.Status,
-                    MD5Hash = apiBeatmap.MD5Hash
-                };
 
                 scoreManager.OrderByTotalScoreAsync(value.Scores, loadCancellationSource.Token)
                             .ContinueWith(task => Schedule(() =>

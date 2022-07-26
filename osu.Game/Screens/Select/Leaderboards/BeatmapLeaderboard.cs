@@ -80,9 +80,6 @@ namespace osu.Game.Screens.Select.Leaderboards
         private IAPIProvider api { get; set; }
 
         [Resolved]
-        private RulesetStore rulesets { get; set; }
-
-        [Resolved]
         private RealmAccess realm { get; set; }
 
         private IDisposable scoreSubscription;
