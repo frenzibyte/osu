@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
@@ -58,10 +59,11 @@ namespace osu.Game.Scoring
         /// </summary>
         public static Mod[] GetMods(this IScoreInfo score, RulesetStore rulesets)
         {
-            throw new NotImplementedException();
+            var ruleset = score.GetRuleset(rulesets).CreateInstance();
+            return score.Mods.Select(m => m.ToMod(ruleset)).ToArray();
         }
 
-        public static bool IsLegacyScore(this IScoreInfo score) => score.Mods.Any(m => m.Acronym == "CL");
+        public static bool IsLegacyScore(this IScoreInfo score) => score.Mods.Any(m => m.Acronym == ModClassic.ACRONYM);
 
         public static IEnumerable<HitResultDisplayStatistic> GetStatisticsForDisplay(this IScoreInfo score, RulesetStore rulesets)
         {

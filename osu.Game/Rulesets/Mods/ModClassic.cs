@@ -7,9 +7,11 @@ namespace osu.Game.Rulesets.Mods
 {
     public abstract class ModClassic : Mod
     {
+        public const string ACRONYM = @"CL";
+
         public override string Name => "Classic";
 
-        public override string Acronym => "CL";
+        public override string Acronym => ACRONYM;
 
         public override double ScoreMultiplier => 1;
 

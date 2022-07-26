@@ -218,6 +218,7 @@ namespace osu.Game.Scoring
 
         #region Implementation of IScoreInfo
 
+        APIMod[] IScoreInfo.Mods => APIMods;
         IBeatmapInfo IScoreInfo.Beatmap => BeatmapInfo;
         IUser IScoreInfo.User => User;
         bool IScoreInfo.HasReplay => Files.Any();

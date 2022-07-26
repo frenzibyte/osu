@@ -48,6 +48,8 @@ namespace osu.Game.Online.API.Requests.Responses
 
         string IScoreInfo.Hash => Score.Hash;
 
+        APIMod[] IScoreInfo.Mods => Score.Mods;
+
         #endregion
     }
 }

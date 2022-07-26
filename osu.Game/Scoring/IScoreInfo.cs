@@ -6,6 +6,7 @@
 using System;
 using osu.Game.Beatmaps;
 using osu.Game.Database;
+using osu.Game.Online.API;
 using osu.Game.Users;
 
 namespace osu.Game.Scoring
@@ -34,8 +35,7 @@ namespace osu.Game.Scoring
 
         string Hash { get; }
 
-        // Mods is currently missing from this interface as the `IMod` class has properties which can't be fulfilled by `APIMod`,
-        // but also doesn't expose `Settings`. We can consider how to implement this in the future if required.
+        APIMod[] Mods { get; }
 
         // Statistics is also missing. This can be reconsidered once changes in serialisation have been completed.
     }
