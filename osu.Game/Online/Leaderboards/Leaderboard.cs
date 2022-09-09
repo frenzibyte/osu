@@ -25,6 +25,7 @@ using osu.Game.Online.Placeholders;
 using osuTK;
 using osuTK.Graphics;
 using osu.Game.Localisation;
+using osu.Game.Scoring;
 
 namespace osu.Game.Online.Leaderboards
 {
@@ -34,7 +35,8 @@ namespace osu.Game.Online.Leaderboards
     /// </summary>
     /// <typeparam name="TScope">The scope of the leaderboard (ie. global or local).</typeparam>
     /// <typeparam name="TScoreInfo">The score model class.</typeparam>
-    public abstract class Leaderboard<TScope, TScoreInfo> : CompositeDrawable
+    public abstract class Leaderboard<TScope, TScoreInfo> : CompositeDrawable, ILeaderboard
+        where TScoreInfo : IScoreInfo
     {
         /// <summary>
         /// The currently displayed scores.
@@ -395,5 +397,7 @@ namespace osu.Game.Online.Leaderboards
         }
 
         #endregion
+
+        IEnumerable<IScoreInfo> ILeaderboard.Scores => Scores.Cast<IScoreInfo>();
     }
 }

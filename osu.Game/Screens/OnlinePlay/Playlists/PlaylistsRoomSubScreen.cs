@@ -248,7 +248,7 @@ namespace osu.Game.Screens.OnlinePlay.Playlists
             Logger.Log($"Polling adjusted (selection: {selectionPollingComponent.TimeBetweenPolls.Value})");
         }
 
-        protected override Screen CreateGameplayScreen() => new PlayerLoader(() => new PlaylistsPlayer(Room, SelectedItem.Value)
+        protected override Screen CreateGameplayScreen() => new PlayerLoader(() => new PlaylistsPlayer(Room, SelectedItem.Value, leaderboard)
         {
             Exited = () => leaderboard.RefetchScores()
         });

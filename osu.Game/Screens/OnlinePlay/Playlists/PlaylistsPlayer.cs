@@ -27,9 +27,14 @@ namespace osu.Game.Screens.OnlinePlay.Playlists
 
         protected override UserActivity InitialActivity => new UserActivity.InPlaylistGame(Beatmap.Value.BeatmapInfo, Ruleset.Value);
 
-        public PlaylistsPlayer(Room room, PlaylistItem playlistItem, PlayerConfiguration configuration = null)
-            : base(room, playlistItem, configuration)
+        // todo: this is very ugly flow.
+        [Cached(typeof(ILeaderboard))]
+        private readonly MatchLeaderboard leaderboard;
+
+        public PlaylistsPlayer(Room room, PlaylistItem playlistItem, MatchLeaderboard leaderboard)
+            : base(room, playlistItem)
         {
+            this.leaderboard = leaderboard;
         }
 
         [BackgroundDependencyLoader]

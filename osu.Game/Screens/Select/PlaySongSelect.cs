@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osu.Game.Graphics;
+using osu.Game.Online.Leaderboards;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Notifications;
 using osu.Game.Rulesets.Mods;
@@ -33,16 +34,25 @@ namespace osu.Game.Screens.Select
 
         protected override UserActivity InitialActivity => new UserActivity.ChoosingBeatmap();
 
+        protected new PlayBeatmapDetailArea BeatmapDetails => (PlayBeatmapDetailArea)base.BeatmapDetails;
+
+        private DependencyContainer dependencies;
+
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
         {
             BeatmapOptions.AddButton(@"Edit", @"beatmap", FontAwesome.Solid.PencilAlt, colours.Yellow, () => Edit());
 
-            ((PlayBeatmapDetailArea)BeatmapDetails).Leaderboard.ScoreSelected += PresentScore;
+            BeatmapDetails.Leaderboard.ScoreSelected += PresentScore;
+
+            dependencies.CacheAs<ILeaderboard>(BeatmapDetails.Leaderboard);
         }
 
         protected void PresentScore(ScoreInfo score) =>
             FinaliseSelection(score.BeatmapInfo, score.Ruleset, () => this.Push(new SoloResultsScreen(score, false)));
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+            => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
         protected override BeatmapDetailArea CreateBeatmapDetailArea() => new PlayBeatmapDetailArea();
 
