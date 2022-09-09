@@ -5,17 +5,23 @@
 
 using System;
 using System.Diagnostics;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Extensions;
 using osu.Game.Online.API;
 using osu.Game.Online.Rooms;
 using osu.Game.Online.Solo;
 using osu.Game.Scoring;
+using osu.Game.Screens.Play.HUD;
 
 namespace osu.Game.Screens.Play
 {
     public class SoloPlayer : SubmittingPlayer
     {
+        private readonly Bindable<bool> leaderboardExpanded = new BindableBool();
+
         public SoloPlayer()
             : this(null)
         {
@@ -25,6 +31,30 @@ namespace osu.Game.Screens.Play
             : base(configuration)
         {
         }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            HUDOverlay.HoldingForHUD.BindValueChanged(_ => updateLeaderboardExpandedState());
+            LocalUserPlaying.BindValueChanged(_ => updateLeaderboardExpandedState(), true);
+
+            // todo: this should be implemented via a custom HUD implementation, and correctly masked to the main content area.
+            LoadComponentAsync(new SoloGameplayLeaderboard
+            {
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Margin = new MarginPadding { Bottom = 75, Left = 20 },
+            }, leaderboard =>
+            {
+                if (!LoadedBeatmapSuccessfully)
+                    return;
+
+                leaderboard.Expanded.BindTo(leaderboardExpanded);
+                HUDOverlay.Add(leaderboard);
+            });
+        }
+
+        private void updateLeaderboardExpandedState() => leaderboardExpanded.Value = !LocalUserPlaying.Value || HUDOverlay.HoldingForHUD.Value;
 
         protected override APIRequest<APIScoreToken> CreateTokenRequest()
         {

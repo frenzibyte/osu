@@ -9,13 +9,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Screens;
 using osu.Game.Extensions;
+using osu.Game.Online.Leaderboards;
 using osu.Game.Online.Rooms;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
+using osu.Game.Screens.OnlinePlay.Match.Components;
 using osu.Game.Screens.Play;
+using osu.Game.Screens.Play.HUD;
 using osu.Game.Screens.Ranking;
 using osu.Game.Users;
 
@@ -30,6 +34,8 @@ namespace osu.Game.Screens.OnlinePlay.Playlists
         // todo: this is very ugly flow.
         [Cached(typeof(ILeaderboard))]
         private readonly MatchLeaderboard leaderboard;
+
+        private readonly Bindable<bool> leaderboardExpanded = new BindableBool();
 
         public PlaylistsPlayer(Room room, PlaylistItem playlistItem, MatchLeaderboard leaderboard)
             : base(room, playlistItem)
@@ -50,7 +56,27 @@ namespace osu.Game.Screens.OnlinePlay.Playlists
             var requiredLocalMods = PlaylistItem.RequiredMods.Select(m => m.ToMod(GameplayState.Ruleset));
             if (!requiredLocalMods.All(m => Mods.Value.Any(m.Equals)))
                 throw new InvalidOperationException("Current Mods do not match PlaylistItem's RequiredMods");
+
+            HUDOverlay.HoldingForHUD.BindValueChanged(_ => updateLeaderboardExpandedState());
+            LocalUserPlaying.BindValueChanged(_ => updateLeaderboardExpandedState(), true);
+
+            // todo: this should be implemented via a custom HUD implementation, and correctly masked to the main content area.
+            LoadComponentAsync(new SoloGameplayLeaderboard
+            {
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Margin = new MarginPadding { Bottom = 75, Left = 20 },
+            }, leaderboard =>
+            {
+                if (!LoadedBeatmapSuccessfully)
+                    return;
+
+                leaderboard.Expanded.BindTo(leaderboardExpanded);
+                HUDOverlay.Add(leaderboard);
+            });
         }
+
+        private void updateLeaderboardExpandedState() => leaderboardExpanded.Value = !LocalUserPlaying.Value || HUDOverlay.HoldingForHUD.Value;
 
         public override bool OnExiting(ScreenExitEvent e)
         {
