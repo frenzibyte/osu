@@ -6,9 +6,9 @@
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
 using osu.Framework.Testing;
+using osu.Game.Rulesets.Catch.Skinning.Legacy;
 using osu.Game.Skinning;
 using osu.Game.Tests.Visual;
 using osuTK;
@@ -31,10 +31,7 @@ namespace osu.Game.Rulesets.Catch.Tests
                 CreateTest();
             }
 
-            AddAssert("legacy osu combo counter hidden", () =>
-            {
-                return Player.ChildrenOfType<LegacyOsuComboCounter>().All(c => c.ChildrenOfType<Container>().Single().Alpha == 0f);
-            });
+            AddAssert("legacy catch combo counter shown", () => Player.ChildrenOfType<LegacyCatchComboCounter>().Any());
         }
     }
 }

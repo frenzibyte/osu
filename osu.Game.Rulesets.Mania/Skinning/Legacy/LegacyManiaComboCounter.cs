@@ -3,20 +3,30 @@
 
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Mania.UI;
+using osu.Game.Rulesets.UI;
 using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Mania.Skinning.Legacy
 {
-    public class LegacyManiaComboCounter : LegacyComboCounter
+    public class LegacyManiaComboCounter : LegacyRulesetComboCounter
     {
-        [BackgroundDependencyLoader]
-        private void load(ISkinSource skin)
+        [Resolved]
+        private DrawableRuleset? drawableRuleset { get; set; }
+
+        protected override bool ShouldBeAlive => drawableRuleset is DrawableManiaRuleset;
+
+        public LegacyManiaComboCounter()
         {
             Anchor = Anchor.TopCentre;
             Origin = Anchor.Centre;
+        }
 
+        [BackgroundDependencyLoader]
+        private void load(ISkinSource skin)
+        {
             Y = skin.GetManiaSkinConfig<float>(LegacyManiaSkinConfigurationLookups.ComboPosition)?.Value ?? 0;
 
             DisplayedCountText.Anchor = Anchor.Centre;
@@ -27,9 +37,9 @@ namespace osu.Game.Rulesets.Mania.Skinning.Legacy
             PopOutCountText.Colour = skin.GetManiaSkinConfig<Color4>(LegacyManiaSkinConfigurationLookups.ComboBreakColour)?.Value ?? Color4.Red;
         }
 
-        protected override void OnCountIncrement()
+        protected override void IncrementCounter()
         {
-            base.OnCountIncrement();
+            base.IncrementCounter();
 
             PopOutCountText.Hide();
             DisplayedCountText.ScaleTo(new Vector2(1f, 1.4f))
@@ -37,15 +47,15 @@ namespace osu.Game.Rulesets.Mania.Skinning.Legacy
                               .FadeIn(120);
         }
 
-        protected override void OnCountChange()
+        protected override void SetCounter()
         {
-            base.OnCountChange();
+            base.SetCounter();
 
             PopOutCountText.Hide();
             DisplayedCountText.ScaleTo(1f);
         }
 
-        protected override void OnCountRolling()
+        protected override void RollCounterToZero()
         {
             if (DisplayedCount > 0)
             {
@@ -56,7 +66,7 @@ namespace osu.Game.Rulesets.Mania.Skinning.Legacy
                 DisplayedCountText.FadeTo(0.5f, 300);
             }
 
-            base.OnCountRolling();
+            base.RollCounterToZero();
         }
     }
 }

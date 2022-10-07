@@ -187,6 +187,8 @@ namespace osu.Game.Rulesets.Taiko
 
         public int LegacyID => 1;
 
+        LegacyRulesetComboCounter ILegacyRuleset.CreateLegacyComboCounter() => new LegacyTaikoComboCounter();
+
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new TaikoReplayFrame();
 
         protected override IEnumerable<HitResult> GetValidHitResults()

@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Catch.Mods
         public void ApplyToDrawableRuleset(DrawableRuleset<CatchHitObject> drawableRuleset)
         {
             var drawableCatchRuleset = (DrawableCatchRuleset)drawableRuleset;
-            var catchPlayfield = (CatchPlayfield)drawableCatchRuleset.Playfield;
+            var catchPlayfield = drawableCatchRuleset.Playfield;
 
             catchPlayfield.Catcher.CatchFruitOnPlate = false;
         }

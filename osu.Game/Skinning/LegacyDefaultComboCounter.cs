@@ -1,37 +1,29 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Threading;
+using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Play.HUD;
 using osuTK;
 
 namespace osu.Game.Skinning
 {
     /// <summary>
-    /// Uses the 'x' symbol and has a pop-out effect while rolling over.
+    /// Represents a default (osu! ruleset) combo counter variant for legacy skins. Used for non-legacy rulesets.
     /// </summary>
-    // todo: this shouldn't be here, hmm...
-    public class LegacyOsuComboCounter : LegacyComboCounter
+    public class LegacyDefaultComboCounter : LegacyRulesetComboCounter
     {
         private const double big_pop_out_duration = 300;
         private const double small_pop_out_duration = 100;
 
         private ScheduledDelegate? scheduledPopOut;
 
-        /// <summary>
-        /// Hides the combo counter internally without affecting its <see cref="SkinnableInfo"/>.
-        /// </summary>
-        /// <remarks>
-        /// This is used for rulesets that provide their own combo counter and don't want this HUD one to be visible,
-        /// without potentially affecting the user's selected skin.
-        /// </remarks>
-        public bool HiddenByRulesetImplementation
-        {
-            set => CounterContainer.Alpha = value ? 1 : 0;
-        }
+        [Resolved]
+        private DrawableRuleset? drawableRuleset { get; set; }
 
-        public LegacyOsuComboCounter()
+        public LegacyDefaultComboCounter()
         {
             Anchor = Anchor.BottomLeft;
             Origin = Anchor.BottomLeft;
@@ -42,6 +34,13 @@ namespace osu.Game.Skinning
 
             PopOutCountText.Anchor = Anchor.BottomLeft;
             DisplayedCountText.Anchor = Anchor.BottomLeft;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            if (drawableRuleset != null && drawableRuleset.Ruleset.RulesetInfo.OnlineID > 0)
+                throw new SkinnableNotBelongingException();
         }
 
         protected override void LoadComplete()
@@ -58,7 +57,7 @@ namespace osu.Game.Skinning
             PopOutCountText.Position = new Vector2(0, -(1 - font_height_ratio) * PopOutCountText.Height + vertical_offset);
         }
 
-        protected override void OnCountIncrement()
+        protected override void IncrementCounter()
         {
             scheduledPopOut?.Cancel();
             scheduledPopOut = null;
@@ -75,7 +74,7 @@ namespace osu.Game.Skinning
 
             this.Delay(big_pop_out_duration - 140).Schedule(() =>
             {
-                base.OnCountIncrement();
+                base.IncrementCounter();
 
                 DisplayedCountText.ScaleTo(1).Then()
                                   .ScaleTo(1.1f, small_pop_out_duration / 2, Easing.In).Then()
@@ -83,20 +82,20 @@ namespace osu.Game.Skinning
             }, out scheduledPopOut);
         }
 
-        protected override void OnCountRolling()
+        protected override void RollCounterToZero()
         {
             scheduledPopOut?.Cancel();
             scheduledPopOut = null;
 
-            base.OnCountRolling();
+            base.RollCounterToZero();
         }
 
-        protected override void OnCountChange()
+        protected override void SetCounter()
         {
             scheduledPopOut?.Cancel();
             scheduledPopOut = null;
 
-            base.OnCountChange();
+            base.SetCounter();
         }
 
         protected override string FormatCount(int count) => $@"{count}x";

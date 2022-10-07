@@ -248,6 +248,8 @@ namespace osu.Game.Rulesets.Osu
 
         public int LegacyID => 0;
 
+        LegacyRulesetComboCounter ILegacyRuleset.CreateLegacyComboCounter() => new LegacyDefaultComboCounter();
+
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new OsuReplayFrame();
 
         public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new OsuRulesetConfigManager(settings, RulesetInfo);

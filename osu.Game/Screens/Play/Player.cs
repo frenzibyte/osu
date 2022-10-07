@@ -337,9 +337,9 @@ namespace osu.Game.Screens.Play
 
             DrawableRuleset.NewResult += r =>
             {
+                GameplayState.ApplyResult(r);
                 HealthProcessor.ApplyResult(r);
                 ScoreProcessor.ApplyResult(r);
-                GameplayState.ApplyResult(r);
             };
 
             DrawableRuleset.RevertResult += r =>

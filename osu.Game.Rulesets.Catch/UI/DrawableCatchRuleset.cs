@@ -22,6 +22,8 @@ namespace osu.Game.Rulesets.Catch.UI
 {
     public class DrawableCatchRuleset : DrawableScrollingRuleset<CatchHitObject>
     {
+        public new CatchPlayfield Playfield => (CatchPlayfield)base.Playfield;
+
         protected override ScrollVisualisationMethod VisualisationMethod => ScrollVisualisationMethod.Constant;
 
         protected override bool UserScrollSpeedAdjustment => false;
@@ -41,7 +43,7 @@ namespace osu.Game.Rulesets.Catch.UI
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new CatchFramedReplayInputHandler(replay);
 
-        protected override ReplayRecorder CreateReplayRecorder(Score score) => new CatchReplayRecorder(score, (CatchPlayfield)Playfield);
+        protected override ReplayRecorder CreateReplayRecorder(Score score) => new CatchReplayRecorder(score, Playfield);
 
         protected override Playfield CreatePlayfield() => new CatchPlayfield(Beatmap.Difficulty);
 

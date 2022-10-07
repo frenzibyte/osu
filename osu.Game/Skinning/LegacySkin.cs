@@ -370,7 +370,7 @@ namespace osu.Game.Skinning
                             {
                                 Children = new Drawable[]
                                 {
-                                    new LegacyOsuComboCounter(),
+                                    new LegacyComboCounter(),
                                     new LegacyScoreCounter(),
                                     new LegacyAccuracyCounter(),
                                     new LegacyHealthDisplay(),

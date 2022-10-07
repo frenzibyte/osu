@@ -6,11 +6,11 @@
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
 using osu.Framework.Testing;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mania.Mods;
+using osu.Game.Rulesets.Mania.Skinning.Legacy;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Skinning;
 using osu.Game.Tests.Beatmaps;
@@ -55,10 +55,7 @@ namespace osu.Game.Rulesets.Mania.Tests
                 CreateTest();
             }
 
-            AddAssert("legacy osu combo counter hidden", () =>
-            {
-                return Player.ChildrenOfType<LegacyOsuComboCounter>().All(c => c.ChildrenOfType<Container>().Single().Alpha == 0f);
-            });
+            AddAssert("legacy mania combo counter hidden", () => Player.ChildrenOfType<LegacyManiaComboCounter>().Any());
         }
     }
 }

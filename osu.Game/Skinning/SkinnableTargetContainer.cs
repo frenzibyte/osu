@@ -4,10 +4,10 @@
 #nullable disable
 
 using System;
-using System.Linq;
 using System.Threading;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Testing;
 
 namespace osu.Game.Skinning
 {
@@ -51,7 +51,7 @@ namespace osu.Game.Skinning
                 LoadComponentAsync(content, wrapper =>
                 {
                     AddInternal(wrapper);
-                    components.AddRange(wrapper.Children.OfType<ISkinnableDrawable>());
+                    components.AddRange(wrapper.ChildrenOfType<ISkinnableDrawable>());
                     ComponentsLoaded = true;
                 }, (cancellationSource = new CancellationTokenSource()).Token);
             }
@@ -85,7 +85,7 @@ namespace osu.Game.Skinning
             if (!(component is Drawable drawable))
                 throw new ArgumentException($"Provided argument must be of type {nameof(Drawable)}.", nameof(component));
 
-            content.Remove(drawable, true);
+            drawable.RemoveAndDisposeImmediately();
             components.Remove(component);
         }
 

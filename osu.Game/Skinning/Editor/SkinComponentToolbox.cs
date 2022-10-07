@@ -158,7 +158,7 @@ namespace osu.Game.Skinning.Editor
             {
                 base.Update();
 
-                if (component.DrawSize != Vector2.Zero)
+                if (component.IsAlive && component.DrawSize != Vector2.Zero)
                 {
                     float bestScale = Math.Min(
                         innerContainer.DrawWidth / component.DrawWidth,

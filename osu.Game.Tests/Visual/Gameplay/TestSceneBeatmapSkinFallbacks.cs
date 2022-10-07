@@ -14,7 +14,6 @@ using osu.Framework.Timing;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Database;
-using osu.Game.Extensions;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Skinning.Legacy;
@@ -63,7 +62,7 @@ namespace osu.Game.Tests.Visual.Gameplay
             if (actualComponentsContainer == null)
                 return false;
 
-            var actualInfo = actualComponentsContainer.CreateSkinnableInfo();
+            var actualInfo = new SkinnableInfo(actualComponentsContainer);
 
             var expectedComponentsContainer = (SkinnableTargetComponentsContainer)expectedSource.GetDrawableComponent(new SkinnableTargetComponent(target));
             if (expectedComponentsContainer == null)
@@ -86,7 +85,8 @@ namespace osu.Game.Tests.Visual.Gameplay
 
             Add(expectedComponentsAdjustmentContainer);
             expectedComponentsAdjustmentContainer.UpdateSubTree();
-            var expectedInfo = expectedComponentsContainer.CreateSkinnableInfo();
+
+            var expectedInfo = new SkinnableInfo(expectedComponentsContainer);
             Remove(expectedComponentsAdjustmentContainer, true);
 
             return almostEqual(actualInfo, expectedInfo);

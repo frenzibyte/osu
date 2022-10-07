@@ -290,6 +290,8 @@ namespace osu.Game.Rulesets.Mania
 
         public int LegacyID => 3;
 
+        LegacyRulesetComboCounter ILegacyRuleset.CreateLegacyComboCounter() => new LegacyManiaComboCounter();
+
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new ManiaReplayFrame();
 
         public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new ManiaRulesetConfigManager(settings, RulesetInfo);
