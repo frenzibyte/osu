@@ -5,7 +5,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Threading;
 using osu.Game.Rulesets.UI;
-using osu.Game.Screens.Play.HUD;
 using osuTK;
 
 namespace osu.Game.Skinning
@@ -23,6 +22,8 @@ namespace osu.Game.Skinning
         [Resolved]
         private DrawableRuleset? drawableRuleset { get; set; }
 
+        protected override bool ShouldBeAlive => drawableRuleset == null || drawableRuleset.Ruleset.RulesetInfo.OnlineID <= 0;
+
         public LegacyDefaultComboCounter()
         {
             Anchor = Anchor.BottomLeft;
@@ -34,13 +35,6 @@ namespace osu.Game.Skinning
 
             PopOutCountText.Anchor = Anchor.BottomLeft;
             DisplayedCountText.Anchor = Anchor.BottomLeft;
-        }
-
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            if (drawableRuleset != null && drawableRuleset.Ruleset.RulesetInfo.OnlineID > 0)
-                throw new SkinnableNotBelongingException();
         }
 
         protected override void LoadComplete()

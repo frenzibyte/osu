@@ -101,11 +101,12 @@ namespace osu.Game.Screens.Play.HUD
 
         public static Type[] GetAllAvailableDrawables()
         {
-            return typeof(OsuGame).Assembly.GetTypes()
-                                  .Where(t => !t.IsInterface && !t.IsAbstract)
-                                  .Where(t => typeof(ISkinnableDrawable).IsAssignableFrom(t))
-                                  .OrderBy(t => t.Name)
-                                  .ToArray();
+            return AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(a => a.GetTypes())
+                            .Where(t => !t.IsInterface && !t.IsAbstract)
+                            .Where(t => typeof(ISkinnableDrawable).IsAssignableFrom(t))
+                            .OrderBy(t => t.Name)
+                            .ToArray();
         }
     }
 }
