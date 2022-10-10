@@ -11,6 +11,7 @@ namespace osu.Game.Screens.Play.HUD
 {
     public class DefaultAccuracyCounter : GameplayAccuracyCounter, ISkinnableDrawable
     {
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         [BackgroundDependencyLoader]

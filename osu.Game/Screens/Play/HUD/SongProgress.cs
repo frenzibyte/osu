@@ -20,6 +20,7 @@ namespace osu.Game.Screens.Play.HUD
         public override bool HandlePositionalInput => false;
         protected override bool BlockScrollInput => false;
 
+        public string? RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         [Resolved]

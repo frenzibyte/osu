@@ -30,6 +30,7 @@ namespace osu.Game.Skinning
 
         private bool isNewStyle;
 
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         [BackgroundDependencyLoader]

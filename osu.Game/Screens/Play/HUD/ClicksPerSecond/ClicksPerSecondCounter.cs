@@ -21,6 +21,7 @@ namespace osu.Game.Screens.Play.HUD.ClicksPerSecond
 
         protected override double RollingDuration => 350;
 
+        public string? RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         public ClicksPerSecondCounter()

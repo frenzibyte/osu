@@ -62,6 +62,7 @@ namespace osu.Game.Extensions
 
             if (component is ISkinnableDrawable skinnable)
             {
+                skinnable.RulesetName = info.RulesetName;
                 skinnable.UsesFixedAnchor = info.UsesFixedAnchor;
 
                 foreach (var (_, property) in component.GetSettingsSourceProperties())

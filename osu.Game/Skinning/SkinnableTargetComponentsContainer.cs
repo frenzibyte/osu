@@ -18,6 +18,7 @@ namespace osu.Game.Skinning
     public class SkinnableTargetComponentsContainer : Container, ISkinnableDrawable
     {
         public bool IsEditable => false;
+        public string RulesetName { get; set; }
 
         public bool UsesFixedAnchor { get; set; }
 

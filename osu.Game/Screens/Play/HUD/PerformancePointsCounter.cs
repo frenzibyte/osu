@@ -37,6 +37,7 @@ namespace osu.Game.Screens.Play.HUD
 {
     public class PerformancePointsCounter : RollingCounter<int>, ISkinnableDrawable
     {
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         protected override bool IsRollingProportional => true;

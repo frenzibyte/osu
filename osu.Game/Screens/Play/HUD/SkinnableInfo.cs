@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +11,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
 using osu.Game.Configuration;
 using osu.Game.Extensions;
+using osu.Game.Rulesets;
 using osu.Game.Skinning;
 using osuTK;
 
@@ -24,7 +23,9 @@ namespace osu.Game.Screens.Play.HUD
     [Serializable]
     public class SkinnableInfo
     {
-        public Type Type { get; set; }
+        public Type Type { get; set; } = null!; // 'null!' required due to JSON constructor.
+
+        public string? RulesetName { get; set; }
 
         public Vector2 Position { get; set; }
 
@@ -63,7 +64,10 @@ namespace osu.Game.Screens.Play.HUD
             Origin = component.Origin;
 
             if (component is ISkinnableDrawable skinnable)
+            {
+                RulesetName = skinnable.RulesetName;
                 UsesFixedAnchor = skinnable.UsesFixedAnchor;
+            }
 
             foreach (var (_, property) in component.GetSettingsSourceProperties())
             {

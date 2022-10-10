@@ -22,6 +22,7 @@ namespace osu.Game.Screens.Play.HUD
 {
     public class UnstableRateCounter : RollingCounter<int>, ISkinnableDrawable
     {
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         protected override double RollingDuration => 750;

@@ -65,6 +65,7 @@ namespace osu.Game.Skinning
             return new Sprite { Texture = texture };
         }
 
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         internal class SpriteComponent : ISkinComponent

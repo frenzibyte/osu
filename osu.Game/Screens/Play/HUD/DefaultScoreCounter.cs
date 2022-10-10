@@ -18,6 +18,7 @@ namespace osu.Game.Screens.Play.HUD
             Origin = Anchor.TopCentre;
         }
 
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         [BackgroundDependencyLoader]

@@ -58,6 +58,7 @@ namespace osu.Game.Skinning
             set => counterContainer.Alpha = value ? 1 : 0;
         }
 
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         public LegacyComboCounter()

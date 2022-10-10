@@ -27,6 +27,7 @@ namespace osu.Game.Screens.Play.HUD.HitErrorMeters
         [Resolved(canBeNull: true)]
         private GameplayClockContainer gameplayClockContainer { get; set; }
 
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         [BackgroundDependencyLoader(true)]

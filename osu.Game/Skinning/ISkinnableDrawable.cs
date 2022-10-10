@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.TypeExtensions;
@@ -19,6 +17,11 @@ namespace osu.Game.Skinning
         /// Whether this component should be editable by an end user.
         /// </summary>
         bool IsEditable => true;
+
+        /// <summary>
+        /// The ruleset this skinnable drawable belongs to.
+        /// </summary>
+        string? RulesetName { get; set; }
 
         /// <summary>
         /// In the context of the skin layout editor, whether this <see cref="ISkinnableDrawable"/> has a permanent anchor defined.

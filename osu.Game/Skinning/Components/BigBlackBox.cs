@@ -23,6 +23,7 @@ namespace osu.Game.Skinning.Components
     [UsedImplicitly]
     public class BigBlackBox : CompositeDrawable, ISkinnableDrawable
     {
+        public string RulesetName { get; set; }
         public bool UsesFixedAnchor { get; set; }
 
         [SettingSource("Spinning text", "Whether the big text should spin")]
