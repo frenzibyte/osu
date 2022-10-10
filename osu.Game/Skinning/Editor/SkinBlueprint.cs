@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Edit;
 using osuTK;
 using osuTK.Graphics;
@@ -39,8 +40,10 @@ namespace osu.Game.Skinning.Editor
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(RulesetStore rulesets)
         {
+            var ruleset = Item.RulesetName == null ? null : rulesets.GetRuleset(Item.RulesetName);
+
             InternalChildren = new Drawable[]
             {
                 box = new Container
@@ -65,7 +68,7 @@ namespace osu.Game.Skinning.Editor
                         },
                         new OsuSpriteText
                         {
-                            Text = Item.GetType().Name,
+                            Text = ruleset == null ? Item.GetType().Name : $"{Item.GetType().Name} ({ruleset.Name})",
                             Font = OsuFont.Default.With(size: 10, weight: FontWeight.Bold),
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.TopRight,

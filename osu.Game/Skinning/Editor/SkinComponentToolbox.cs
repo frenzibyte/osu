@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,6 +13,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
+using osu.Game.Rulesets;
 using osu.Game.Screens.Edit.Components;
 using osu.Game.Screens.Play.HUD;
 using osuTK;
@@ -20,7 +22,7 @@ namespace osu.Game.Skinning.Editor
 {
     public class SkinComponentToolbox : EditorSidebarSection
     {
-        public Action<Type>? RequestPlacement;
+        public Action<Type, Ruleset?>? RequestPlacement;
 
         private readonly CompositeDrawable? target;
 
@@ -46,16 +48,24 @@ namespace osu.Game.Skinning.Editor
             reloadComponents();
         }
 
+        [Resolved]
+        private RulesetStore rulesets { get; set; } = null!;
+
         private void reloadComponents()
         {
             fill.Clear();
 
-            var skinnableTypes = SkinnableInfo.GetAllAvailableDrawables();
-            foreach (var type in skinnableTypes)
+            foreach (var type in SkinnableInfo.GetAllAvailableDrawables())
                 attemptAddComponent(type);
+
+            foreach (var ruleset in rulesets.AvailableRulesets.Select(r => r.CreateInstance()))
+            {
+                foreach (var type in SkinnableInfo.GetAllAvailableDrawables(ruleset))
+                    attemptAddComponent(type, ruleset);
+            }
         }
 
-        private void attemptAddComponent(Type type)
+        private void attemptAddComponent(Type type, Ruleset? ruleset = null)
         {
             try
             {
@@ -67,7 +77,7 @@ namespace osu.Game.Skinning.Editor
 
                 fill.Add(new ToolboxComponentButton(instance, target)
                 {
-                    RequestPlacement = t => RequestPlacement?.Invoke(t)
+                    RequestPlacement = t => RequestPlacement?.Invoke(t, ruleset)
                 });
             }
             catch (DependencyNotRegisteredException)

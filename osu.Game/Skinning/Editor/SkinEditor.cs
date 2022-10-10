@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -26,6 +27,7 @@ using osu.Game.Graphics.UserInterface;
 using osu.Game.Localisation;
 using osu.Game.Overlays;
 using osu.Game.Overlays.OSD;
+using osu.Game.Rulesets;
 using osu.Game.Screens.Edit.Components;
 using osu.Game.Screens.Edit.Components.Menus;
 
@@ -271,10 +273,12 @@ namespace osu.Game.Skinning.Editor
             hasBegunMutating = true;
         }
 
-        private void placeComponent(Type type)
+        private void placeComponent(Type type, [CanBeNull] Ruleset ruleset = null)
         {
             if (!(Activator.CreateInstance(type) is ISkinnableDrawable component))
                 throw new InvalidOperationException($"Attempted to instantiate a component for placement which was not an {typeof(ISkinnableDrawable)}.");
+
+            component.RulesetName = ruleset?.ShortName;
 
             placeComponent(component);
         }
