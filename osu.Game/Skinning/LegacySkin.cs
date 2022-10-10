@@ -17,6 +17,7 @@ using osu.Game.Beatmaps.Formats;
 using osu.Game.Database;
 using osu.Game.Extensions;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
@@ -331,7 +332,7 @@ namespace osu.Game.Skinning
                 case SkinnableTargetComponent target:
                     switch (target.Target)
                     {
-                        case SkinnableTarget.MainHUDComponents:
+                        case SkinnableTarget.MainHUDComponents when target.Ruleset == null:
                             var skinnableTargetWrapper = new SkinnableTargetComponentsContainer(container =>
                             {
                                 var score = container.OfType<LegacyScoreCounter>().FirstOrDefault();
@@ -364,7 +365,6 @@ namespace osu.Game.Skinning
                             {
                                 Children = new Drawable[]
                                 {
-                                    new LegacyComboCounter(),
                                     new LegacyScoreCounter(),
                                     new LegacyAccuracyCounter(),
                                     new LegacyHealthDisplay(),
@@ -374,6 +374,12 @@ namespace osu.Game.Skinning
                             };
 
                             return skinnableTargetWrapper;
+
+                        case SkinnableTarget.MainHUDComponents when target.Ruleset is not ILegacyRuleset:
+                            return new SkinnableTargetComponentsContainer
+                            {
+                                Child = new LegacyComboCounter(),
+                            };
                     }
 
                     return null;

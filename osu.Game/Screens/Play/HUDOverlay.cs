@@ -17,6 +17,7 @@ using osu.Game.Configuration;
 using osu.Game.Input.Bindings;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Notifications;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
@@ -92,10 +93,7 @@ namespace osu.Game.Screens.Play
             Children = new Drawable[]
             {
                 CreateFailingLayer(),
-                mainComponents = new MainComponentsContainer
-                {
-                    AlwaysPresent = true,
-                },
+                mainComponents = new HUDComponentsContainer(drawableRuleset.Ruleset) { AlwaysPresent = true },
                 topRightElements = new FillFlowContainer
                 {
                     Anchor = Anchor.TopRight,
@@ -372,15 +370,15 @@ namespace osu.Game.Screens.Play
             }
         }
 
-        private class MainComponentsContainer : SkinnableTargetContainer
+        private class HUDComponentsContainer : SkinnableTargetContainer
         {
             private Bindable<ScoringMode> scoringMode;
 
             [Resolved]
             private OsuConfigManager config { get; set; }
 
-            public MainComponentsContainer()
-                : base(SkinnableTarget.MainHUDComponents)
+            public HUDComponentsContainer(Ruleset ruleset)
+                : base(SkinnableTarget.MainHUDComponents, ruleset)
             {
                 RelativeSizeAxes = Axes.Both;
             }

@@ -30,6 +30,33 @@ namespace osu.Game.Rulesets.Osu.Skinning.Legacy
 
         public override Drawable GetDrawableComponent(ISkinComponent component)
         {
+            if (component is SkinnableTargetComponent targetComponent && targetComponent.Ruleset is OsuRuleset)
+            {
+                switch (targetComponent.Target)
+                {
+                    case SkinnableTarget.MainHUDComponents:
+                        var components = (SkinnableTargetComponentsContainer)base.GetDrawableComponent(targetComponent);
+                        if (components != null)
+                            return components;
+
+                        // skinnable target + beatmap skin is weird.
+                        if (Skin is LegacyBeatmapSkin)
+                            return null;
+
+                        return new SkinnableTargetComponentsContainer
+                        {
+                            Children = new Drawable[]
+                            {
+                                new LegacyComboCounter
+                                {
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                }
+                            }
+                        };
+                }
+            }
+
             if (component is OsuSkinComponent osuComponent)
             {
                 switch (osuComponent.Component)
