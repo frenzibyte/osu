@@ -1,21 +1,23 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using System.Threading;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets;
 
 namespace osu.Game.Skinning
 {
     public class SkinnableTargetContainer : SkinReloadableDrawable, ISkinnableTarget
     {
-        private SkinnableTargetComponentsContainer content;
+        private SkinnableTargetComponentsContainer? mainContent;
+        private SkinnableTargetComponentsContainer? rulesetContent;
 
         public SkinnableTarget Target { get; }
+        public Ruleset? Ruleset { get; }
 
         public IBindableList<ISkinnableDrawable> Components => components;
 
@@ -25,11 +27,12 @@ namespace osu.Game.Skinning
 
         public bool ComponentsLoaded { get; private set; }
 
-        private CancellationTokenSource cancellationSource;
+        private CancellationTokenSource? cancellationSource;
 
-        public SkinnableTargetContainer(SkinnableTarget target)
+        public SkinnableTargetContainer(SkinnableTarget target, Ruleset? ruleset = null)
         {
             Target = target;
+            Ruleset = ruleset;
         }
 
         /// <summary>
@@ -41,17 +44,25 @@ namespace osu.Game.Skinning
             components.Clear();
             ComponentsLoaded = false;
 
-            content = CurrentSkin.GetDrawableComponent(new SkinnableTargetComponent(Target)) as SkinnableTargetComponentsContainer;
+            mainContent = CurrentSkin.GetDrawableComponent(new SkinnableTargetComponent(Target)) as SkinnableTargetComponentsContainer;
+            rulesetContent = CurrentSkin.GetDrawableComponent(new SkinnableTargetComponent(Target, Ruleset)) as SkinnableTargetComponentsContainer;
+
+            if (rulesetContent != null)
+            {
+                foreach (var component in rulesetContent.OfType<ISkinnableDrawable>())
+                    component.RulesetName = Ruleset.AsNonNull().ShortName;
+            }
 
             cancellationSource?.Cancel();
             cancellationSource = null;
 
-            if (content != null)
+            if (mainContent != null || rulesetContent != null)
             {
-                LoadComponentAsync(content, wrapper =>
+                LoadComponentsAsync(new[] { mainContent, rulesetContent }.Where(d => d != null), loaded =>
                 {
-                    AddInternal(wrapper);
-                    components.AddRange(wrapper.Children.OfType<ISkinnableDrawable>());
+                    AddRangeInternal(loaded);
+                    components.AddRange(loaded.SelectMany(w => w.AsNonNull().Children.OfType<ISkinnableDrawable>()));
+
                     ComponentsLoaded = true;
                 }, (cancellationSource = new CancellationTokenSource()).Token);
             }
@@ -64,6 +75,7 @@ namespace osu.Game.Skinning
         /// <exception cref="ArgumentException">Thrown if the provided instance is not a <see cref="Drawable"/>.</exception>
         public void Add(ISkinnableDrawable component)
         {
+            var content = getContent(component);
             if (content == null)
                 throw new NotSupportedException("Attempting to add a new component to a target container which is not supported by the current skin.");
 
@@ -79,6 +91,7 @@ namespace osu.Game.Skinning
         /// <exception cref="ArgumentException">Thrown if the provided instance is not a <see cref="Drawable"/>.</exception>
         public void Remove(ISkinnableDrawable component)
         {
+            var content = getContent(component);
             if (content == null)
                 throw new NotSupportedException("Attempting to remove a new component from a target container which is not supported by the current skin.");
 
@@ -95,5 +108,7 @@ namespace osu.Game.Skinning
 
             Reload();
         }
+
+        private SkinnableTargetComponentsContainer? getContent(ISkinnableDrawable component) => component.RulesetName != null ? rulesetContent : mainContent;
     }
 }
