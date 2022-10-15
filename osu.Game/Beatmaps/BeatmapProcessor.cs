@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Linq;
+using JetBrains.Annotations;
 using osu.Game.Rulesets.Objects.Types;
 
 namespace osu.Game.Beatmaps
@@ -14,10 +15,12 @@ namespace osu.Game.Beatmaps
     public class BeatmapProcessor : IBeatmapProcessor
     {
         public IBeatmap Beatmap { get; }
+        public BeatmapInfo BeatmapInfo { get; }
 
-        public BeatmapProcessor(IBeatmap beatmap)
+        public BeatmapProcessor(IBeatmap beatmap, [CanBeNull] BeatmapInfo beatmapInfo = null)
         {
             Beatmap = beatmap;
+            BeatmapInfo = beatmapInfo ?? beatmap.BeatmapInfo;
         }
 
         public virtual void PreProcess()

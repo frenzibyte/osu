@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Catch.UI;
@@ -20,8 +21,8 @@ namespace osu.Game.Rulesets.Catch.Beatmaps
 
         public bool HardRockOffsets { get; set; }
 
-        public CatchBeatmapProcessor(IBeatmap beatmap)
-            : base(beatmap)
+        public CatchBeatmapProcessor(IBeatmap beatmap, [CanBeNull] BeatmapInfo info = null)
+            : base(beatmap, info)
         {
         }
 

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using JetBrains.Annotations;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
@@ -16,8 +17,8 @@ namespace osu.Game.Rulesets.Osu.Beatmaps
     {
         private const int stack_distance = 3;
 
-        public OsuBeatmapProcessor(IBeatmap beatmap)
-            : base(beatmap)
+        public OsuBeatmapProcessor(IBeatmap beatmap, [CanBeNull] BeatmapInfo info = null)
+            : base(beatmap, info)
         {
         }
 
@@ -33,7 +34,7 @@ namespace osu.Game.Rulesets.Osu.Beatmaps
                 foreach (var h in osuBeatmap.HitObjects)
                     h.StackHeight = 0;
 
-                if (Beatmap.BeatmapInfo.BeatmapVersion >= 6)
+                if (BeatmapInfo.BeatmapVersion >= 6)
                     applyStacking(osuBeatmap, 0, osuBeatmap.HitObjects.Count - 1);
                 else
                     applyStackingOld(osuBeatmap);
@@ -65,7 +66,7 @@ namespace osu.Game.Rulesets.Osu.Beatmaps
                             continue;
 
                         double endTime = stackBaseObject.GetEndTime();
-                        double stackThreshold = objectN.TimePreempt * beatmap.BeatmapInfo.StackLeniency;
+                        double stackThreshold = objectN.TimePreempt * BeatmapInfo.StackLeniency;
 
                         if (objectN.StartTime - endTime > stackThreshold)
                             // We are no longer within stacking range of the next object.
@@ -110,7 +111,7 @@ namespace osu.Game.Rulesets.Osu.Beatmaps
                 OsuHitObject objectI = beatmap.HitObjects[i];
                 if (objectI.StackHeight != 0 || objectI is Spinner) continue;
 
-                double stackThreshold = objectI.TimePreempt * beatmap.BeatmapInfo.StackLeniency;
+                double stackThreshold = objectI.TimePreempt * BeatmapInfo.StackLeniency;
 
                 /* If this object is a hitcircle, then we enter this "special" case.
                     * It either ends with a stack of hitcircles only, or a stack of hitcircles that are underneath a slider.
@@ -206,7 +207,7 @@ namespace osu.Game.Rulesets.Osu.Beatmaps
 
                 for (int j = i + 1; j < beatmap.HitObjects.Count; j++)
                 {
-                    double stackThreshold = beatmap.HitObjects[i].TimePreempt * beatmap.BeatmapInfo.StackLeniency;
+                    double stackThreshold = beatmap.HitObjects[i].TimePreempt * BeatmapInfo.StackLeniency;
 
                     if (beatmap.HitObjects[j].StartTime - stackThreshold > startTime)
                         break;
