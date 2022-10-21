@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.EmptyFreeform.Tests
         {
             using (DesktopGameHost host = Host.GetSuitableDesktopHost(@"osu", new HostOptions { BindIPC = true }))
             {
-                host.Run(new OsuTestBrowser());
+                host.Run(new OsuDesktopTestBrowser());
                 return 0;
             }
         }

@@ -526,30 +526,36 @@ namespace osu.Game
         /// <remarks>Should be overriden per-platform to provide settings for platform-specific handlers.</remarks>
         public virtual SettingsSubsection CreateSettingsSubsectionFor(InputHandler handler)
         {
-            if (RuntimeInfo.IsDesktop)
-            {
-                switch (handler)
-                {
-                    case ITabletHandler th:
-                        return new TabletSettings(th);
-
-                    case MouseHandler mh:
-                        return new MouseSettings(mh);
-
-                    case JoystickHandler jh:
-                        return new JoystickSettings(jh);
-
-                    case TouchHandler:
-                        return new InputSection.HandlerSection(handler);
-                }
-            }
-
             switch (handler)
             {
                 case MidiHandler:
                     return new InputSection.HandlerSection(handler);
 
                 // return null for handlers that shouldn't have settings.
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// Creates an input settings subsection for an <see cref="InputHandler"/> specific to desktop platforms.
+        /// </summary>
+        internal static SettingsSubsection CreateDesktopSettingsSubsectionFor(InputHandler handler)
+        {
+            switch (handler)
+            {
+                case ITabletHandler th:
+                    return new TabletSettings(th);
+
+                case MouseHandler mh:
+                    return new MouseSettings(mh);
+
+                case JoystickHandler jh:
+                    return new JoystickSettings(jh);
+
+                case TouchHandler:
+                    return new InputSection.HandlerSection(handler);
+
                 default:
                     return null;
             }

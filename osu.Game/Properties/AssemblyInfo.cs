@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 // Note, that we omit visual tests as they are meant to test the framework
 // behavior "in the wild".
 
+[assembly: InternalsVisibleTo("osu.Desktop")]
 [assembly: InternalsVisibleTo("osu.Game.Tests")]
 [assembly: InternalsVisibleTo("osu.Game.Tests.Dynamic")]
 [assembly: InternalsVisibleTo("osu.Game.Tests.iOS")]

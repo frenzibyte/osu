@@ -16,7 +16,7 @@ namespace osu.Game.Tests
         {
             using (DesktopGameHost host = Host.GetSuitableDesktopHost(@"osu-development", new HostOptions { BindIPC = true, }))
             {
-                host.Run(new OsuTestBrowser());
+                host.Run(new OsuDesktopTestBrowser());
                 return 0;
             }
         }

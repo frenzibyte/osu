@@ -18,9 +18,11 @@ using osu.Framework;
 using osu.Framework.Logging;
 using osu.Game.Updater;
 using osu.Desktop.Windows;
+using osu.Framework.Input.Handlers;
 using osu.Framework.Threading;
 using osu.Game.IO;
 using osu.Game.IPC;
+using osu.Game.Overlays.Settings;
 using osu.Game.Utils;
 using SDL2;
 
@@ -141,6 +143,8 @@ namespace osu.Desktop
         }
 
         protected override BatteryInfo CreateBatteryInfo() => new SDL2BatteryInfo();
+
+        public override SettingsSubsection CreateSettingsSubsectionFor(InputHandler handler) => CreateDesktopSettingsSubsectionFor(handler) ?? base.CreateSettingsSubsectionFor(handler);
 
         private readonly List<string> importableFiles = new List<string>();
         private ScheduledDelegate? importSchedule;
