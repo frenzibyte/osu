@@ -883,12 +883,14 @@ namespace osu.Game.Screens.Edit
 
             if (shouldDisableSamples)
             {
+                Logger.Log($"Disabling sample playback due to: 1. {clock.SeekingOrStopped.Value}, 2. {currentScreen is not ComposeScreen}, 3. {editorBeatmap.UpdateInProgress.Value}, 4. {dialogOverlay?.CurrentDialog != null} ({dialogOverlay?.CurrentDialog?.ToString() ?? @"null"})");
                 samplePlaybackDisabled.Value = true;
             }
             else
             {
                 // Debounce re-enabling arbitrarily high enough to avoid flip-flopping during beatmap updates
                 // or rapid user seeks.
+                Logger.Log($"Scheduling enable of sample playback at {Time.Current + 50}ms");
                 playbackDisabledDebounce = Scheduler.AddDelayed(() => samplePlaybackDisabled.Value = false, 50);
             }
         }
