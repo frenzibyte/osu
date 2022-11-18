@@ -443,6 +443,7 @@ namespace osu.Game.Screens.Edit
         protected override void Update()
         {
             base.Update();
+            Logger.Log($"Updating Editor, clock time = {Clock.CurrentTime}, editor clock time = {clock.CurrentTime}, editor clock time accurate = {clock.CurrentTimeAccurate}");
             clock.ProcessFrame();
         }
 
