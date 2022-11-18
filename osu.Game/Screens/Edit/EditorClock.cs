@@ -11,6 +11,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
+using osu.Framework.Logging;
 using osu.Framework.Timing;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
@@ -280,12 +281,16 @@ namespace osu.Game.Screens.Edit
                 // we are either running a seek tween or doing an immediate seek.
                 // in the case of an immediate seek the seeking bool will be set to false after one update.
                 // this allows for silencing hit sounds and the likes.
+                Logger.Log($"Updating seek state to {IsSeeking} due to:\n{string.Join("\n", Transforms.Select((t, i) => $" {i + 1}. {t}"))}");
                 seekingOrStopped.Value = IsSeeking;
             }
         }
 
         private void transformSeekTo(double seek, double duration = 0, Easing easing = Easing.None)
-            => this.TransformTo(this.PopulateTransform(new TransformSeek(), Math.Clamp(seek, 0, TrackLength), duration, easing));
+        {
+            Logger.Log($"Seeking smoothly to {Math.Clamp(seek, 0, TrackLength)}ms ({seek}, {duration}, {easing}): {new StackTrace()}");
+            this.TransformTo(this.PopulateTransform(new TransformSeek(), Math.Clamp(seek, 0, TrackLength), duration, easing));
+        }
 
         private double currentTime
         {
