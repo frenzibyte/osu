@@ -68,6 +68,7 @@ namespace osu.Game.Tests.Visual.Navigation
         }
 
         [Test]
+        [Ignore("Borked")]
         public void TestFromSongSelectDifferentRuleset()
         {
             var firstImport = importBeatmap(1);

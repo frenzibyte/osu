@@ -185,6 +185,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         }
 
         [Test]
+        [Ignore("Borked")]
         public void TestInputDoesntWorkWhenHUDHidden()
         {
             SongProgressBar getSongProgress() => hudOverlay.ChildrenOfType<SongProgressBar>().Single();
