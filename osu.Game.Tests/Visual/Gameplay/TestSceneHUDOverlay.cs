@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osu.Framework.Testing;
 using osu.Framework.Timing;
 using osu.Game.Configuration;
@@ -185,7 +186,6 @@ namespace osu.Game.Tests.Visual.Gameplay
         }
 
         [Test]
-        [Ignore("Borked")]
         public void TestInputDoesntWorkWhenHUDHidden()
         {
             SongProgressBar getSongProgress() => hudOverlay.ChildrenOfType<SongProgressBar>().Single();
@@ -197,6 +197,10 @@ namespace osu.Game.Tests.Visual.Gameplay
             AddStep("bind seek", () =>
             {
                 seeked = false;
+
+                Logger.Log($"hud overlay state: {hudOverlay.LoadState}, alpha = {hudOverlay.Alpha}");
+                Logger.Log($"components state: {hudOverlay.ChildrenOfType<SkinnableTargetContainer>().Single().LoadState}, alpha = {hudOverlay.ChildrenOfType<SkinnableTargetContainer>().Single().Alpha}");
+                Logger.Log($"components count: {hudOverlay.ChildrenOfType<SkinnableTargetContainer>().Single().Components.Count}");
 
                 var progress = getSongProgress();
 
