@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -568,7 +569,7 @@ namespace osu.Game
             if (IsLoaded && !ThreadSafety.IsUpdateThread)
                 throw new InvalidOperationException("Global beatmap bindable must be changed from update thread.");
 
-            Logger.Log($"Game-wide working beatmap updated to {beatmap.NewValue}");
+            Logger.Log($"Game-wide working beatmap updated to {beatmap.NewValue}: {new StackTrace()}");
         }
 
         private void onRulesetChanged(ValueChangedEvent<RulesetInfo> r)
