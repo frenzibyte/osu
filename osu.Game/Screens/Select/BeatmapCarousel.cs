@@ -231,7 +231,10 @@ namespace osu.Game.Screens.Select
         {
             // If loading test beatmaps, avoid overwriting with realm subscription callbacks.
             if (loadedTestBeatmaps)
+            {
+                Logger.Log("Beatmap carousel importer noticed test beatmaps loaded, ignoring.");
                 return;
+            }
 
             if (changes == null)
             {
@@ -260,10 +263,16 @@ namespace osu.Game.Screens.Select
             }
 
             foreach (int i in changes.NewModifiedIndices)
+            {
+                Logger.Log($"Beatmap carousel importer noticed new/modified beatmap: {sender[i]}");
                 UpdateBeatmapSet(sender[i].Detach());
+            }
 
             foreach (int i in changes.InsertedIndices)
+            {
+                Logger.Log($"Beatmap carousel importer noticed inserted beatmap: {sender[i]}");
                 UpdateBeatmapSet(sender[i].Detach());
+            }
 
             if (changes.DeletedIndices.Length > 0 && SelectedBeatmapInfo != null)
             {
@@ -348,6 +357,8 @@ namespace osu.Game.Screens.Select
 
         public void UpdateBeatmapSet(BeatmapSetInfo beatmapSet) => Schedule(() =>
         {
+            Logger.Log($"Beatmap carousel updating beatmap: {beatmapSet}");
+
             Guid? previouslySelectedID = null;
 
             // If the selected beatmap is about to be removed, store its ID so it can be re-selected if required
@@ -432,6 +443,7 @@ namespace osu.Game.Screens.Select
                 return true;
             }
 
+            Logger.Log($"Beatmap carousel could not find {beatmapInfo} for selection. Existing beatmaps:\n{string.Join('\n', beatmapSets.Select(s => $" - {s}"))}");
             return false;
         }
 
