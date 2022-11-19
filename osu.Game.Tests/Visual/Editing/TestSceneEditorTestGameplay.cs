@@ -123,6 +123,8 @@ namespace osu.Game.Tests.Visual.Editing
             });
 
             AddStep("start track", () => EditorClock.Start());
+            AddAssert("track running", () => EditorClock.Track.Value.IsRunning);
+            AddAssert("clock running", () => EditorClock.IsRunning);
             AddAssert("sample playback re-enabled", () => !Editor.SamplePlaybackDisabled.Value);
         }
 
