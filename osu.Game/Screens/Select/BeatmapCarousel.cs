@@ -274,7 +274,7 @@ namespace osu.Game.Screens.Select
 
             foreach (int i in changes.InsertedIndices)
             {
-                Logger.Log($"Beatmap carousel importer noticed inserted beatmap: {sender[i]}");
+                Logger.Log($"Beatmap carousel importer noticed inserted beatmap: {sender[i]}. Time is {Time.Current}ms");
                 UpdateBeatmapSet(sender[i].Detach());
             }
 
@@ -447,7 +447,7 @@ namespace osu.Game.Screens.Select
                 return true;
             }
 
-            Logger.Log($"Beatmap carousel could not find {beatmapInfo} for selection. Existing beatmaps:\n{string.Join('\n', beatmapSets.Select(s => $" - {s}"))}");
+            Logger.Log($"Beatmap carousel could not find {beatmapInfo} for selection. Time is {Time.Current}ms. Existing beatmaps:\n{string.Join('\n', beatmapSets.Select(s => $" - {s}"))}");
             return false;
         }
 
