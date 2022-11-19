@@ -205,6 +205,8 @@ namespace osu.Game.Screens.Select
         {
             base.LoadComplete();
 
+            Logger.Log("Beatmap carousel loaded");
+
             subscriptionSets = realm.RegisterForNotifications(getBeatmapSets, beatmapSetsChanged);
             subscriptionBeatmaps = realm.RegisterForNotifications(r => r.All<BeatmapInfo>().Where(b => !b.Hidden), beatmapsChanged);
 
@@ -257,6 +259,8 @@ namespace osu.Game.Screens.Select
                     if (!realmSets.Contains(id))
                         removeBeatmapSet(id);
                 }
+
+                Logger.Log("Beatmap carousel initial beatmaps populated");
 
                 signalBeatmapsLoaded();
                 return;

@@ -823,6 +823,8 @@ namespace osu.Game.Screens.Select
             if (boundLocalBindables)
                 return;
 
+            Logger.Log("Song select binding bindables");
+
             // manual binding to parent ruleset to allow for delayed load in the incoming direction.
             transferRulesetValue();
 
