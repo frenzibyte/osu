@@ -275,6 +275,7 @@ namespace osu.Game.Screens.Edit
                 {
                     // seeking in the editor can happen while the track isn't running.
                     // in this case we always want to expose ourselves as seeking (to avoid sample playback).
+                    Logger.Log($"Failed to update seek-stop state due to track stopped ({track.Value?.IsRunning}, {Clock.IsRunning})");
                     return;
                 }
 
@@ -284,6 +285,8 @@ namespace osu.Game.Screens.Edit
                 Logger.Log($"Updating seek state to {IsSeeking} due to:\n{string.Join("\n", Transforms.Select((t, i) => $" {i + 1}. {t}"))}");
                 seekingOrStopped.Value = IsSeeking;
             }
+            else
+                Logger.Log("What the fuck is going on here.");
         }
 
         private void transformSeekTo(double seek, double duration = 0, Easing easing = Easing.None)
