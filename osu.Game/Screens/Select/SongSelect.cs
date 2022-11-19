@@ -425,6 +425,7 @@ namespace osu.Game.Screens.Select
                 // There was possibly a ruleset mismatch. This is a case we can help things along by updating the game-wide ruleset to match.
                 if (!beatmap.BeatmapInfo.Ruleset.Equals(decoupledRuleset.Value))
                 {
+                    Logger.Log($"Song select noticed mismatch in ruleset, updating to {beatmap.BeatmapInfo.Ruleset}");
                     Ruleset.Value = beatmap.BeatmapInfo.Ruleset;
                     transferRulesetValue();
                 }
@@ -453,6 +454,8 @@ namespace osu.Game.Screens.Select
             if (beatmapInfo?.Equals(beatmapInfoNoDebounce) == true)
                 return;
 
+            Logger.Log($"Song select updating selected beatmap from {beatmapInfoNoDebounce} to {beatmapInfo}");
+
             beatmapInfoNoDebounce = beatmapInfo;
             performUpdateSelected();
         }
@@ -465,6 +468,8 @@ namespace osu.Game.Screens.Select
             if (ruleset?.Equals(rulesetNoDebounce) == true)
                 return;
 
+            Logger.Log($"Song select updating selected ruleset from {rulesetNoDebounce} to {ruleset}");
+
             rulesetNoDebounce = ruleset;
             performUpdateSelected();
         }
@@ -476,6 +481,8 @@ namespace osu.Game.Screens.Select
         {
             var beatmap = beatmapInfoNoDebounce;
             var ruleset = rulesetNoDebounce;
+
+            Logger.Log($"Song select performing update from selection change with beatmap:{beatmap?.ID.ToString() ?? "null"} ruleset:{ruleset?.ShortName ?? "null"}");
 
             selectionChangedDebounce?.Cancel();
 

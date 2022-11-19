@@ -17,6 +17,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Layout;
+using osu.Framework.Logging;
 using osu.Framework.Threading;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
@@ -387,11 +388,16 @@ namespace osu.Game.Screens.Select
         /// <returns>True if a selection was made, False if it wasn't.</returns>
         public bool SelectBeatmap(BeatmapInfo? beatmapInfo, bool bypassFilters = true)
         {
+            Logger.Log($@"Beatmap carousel beginning selection of {beatmapInfo?.ToString() ?? "null"}" + (bypassFilters ? @" (filters bypassed)" : @""));
+
             // ensure that any pending events from BeatmapManager have been run before attempting a selection.
             Scheduler.Update();
 
             if (beatmapInfo?.Hidden != false)
+            {
+                Logger.Log($"Beatmap carousel failed to select {beatmapInfo?.ToString() ?? "null"} due to being hidden");
                 return false;
+            }
 
             foreach (CarouselBeatmapSet set in beatmapSets)
             {
@@ -405,8 +411,12 @@ namespace osu.Game.Screens.Select
                     continue;
 
                 if (!bypassFilters && item.Filtered.Value)
+                {
+                    Logger.Log($"Beatmap carousel failed to select {beatmapInfo} due to being filtered");
                     return false;
+                }
 
+                Logger.Log($"Beatmap carousel finishing selection of {beatmapInfo}");
                 select(item);
 
                 // if we got here and the set is filtered, it means we were bypassing filters.

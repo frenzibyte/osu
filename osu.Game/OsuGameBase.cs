@@ -569,7 +569,7 @@ namespace osu.Game
             if (IsLoaded && !ThreadSafety.IsUpdateThread)
                 throw new InvalidOperationException("Global beatmap bindable must be changed from update thread.");
 
-            Logger.Log($"Game-wide working beatmap updated to {beatmap.NewValue}: {new StackTrace()}");
+            Logger.Log($"Game-wide working beatmap updated to {beatmap.NewValue}");
         }
 
         private void onRulesetChanged(ValueChangedEvent<RulesetInfo> r)
@@ -627,6 +627,8 @@ namespace osu.Game
 
             if (!SelectedMods.Disabled)
                 SelectedMods.Value = previouslySelectedMods.Select(m => instance.CreateModFromAcronym(m.Acronym)).Where(m => m != null).ToArray();
+
+            Logger.Log($"Game-wide ruleset updated to {r.NewValue}");
 
             void revertRulesetChange() => Ruleset.Value = r.OldValue?.Available == true ? r.OldValue : RulesetStore.AvailableRulesets.First();
         }
