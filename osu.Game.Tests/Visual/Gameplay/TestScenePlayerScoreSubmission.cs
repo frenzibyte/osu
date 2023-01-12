@@ -168,6 +168,17 @@ namespace osu.Game.Tests.Visual.Gameplay
         }
 
         [Test]
+        [FlakyTest]
+        /*
+         *
+         * Fail rate around 19%
+         *
+         * TearDown : osu.Framework.Testing.Drawables.Steps.AssertButton+TracedException : ensure failing submission
+         *   --TearDown
+         *      at osu.Framework.Threading.ScheduledDelegate.RunTaskInternal()
+         *      at osu.Framework.Threading.Scheduler.Update()
+         *      at osu.Framework.Graphics.Drawable.UpdateSubTree()
+         */
         public void TestSubmissionOnFail()
         {
             prepareTestAPI(true);
@@ -198,6 +209,17 @@ namespace osu.Game.Tests.Visual.Gameplay
         }
 
         [Test]
+        [FlakyTest]
+        /*
+         *
+         * Fail rate around 15%
+         *
+         * TearDown : osu.Framework.Testing.Drawables.Steps.AssertButton+TracedException : ensure failing submission
+         *   --TearDown
+         *      at osu.Framework.Threading.ScheduledDelegate.RunTaskInternal()
+         *      at osu.Framework.Threading.Scheduler.Update()
+         *      at osu.Framework.Graphics.Drawable.UpdateSubTree()
+         */
         public void TestSubmissionOnExit()
         {
             prepareTestAPI(true);
