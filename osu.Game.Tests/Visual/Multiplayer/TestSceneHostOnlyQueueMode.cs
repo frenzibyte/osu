@@ -6,7 +6,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using osu.Framework.Extensions;
+using osu.Framework.Logging;
 using osu.Framework.Testing;
 using osu.Game.Beatmaps;
 using osu.Game.Online.Multiplayer;
@@ -22,35 +22,7 @@ namespace osu.Game.Tests.Visual.Multiplayer
         protected override QueueMode Mode => QueueMode.HostOnly;
 
         [Test]
-        public void TestFirstItemSelectedByDefault()
-        {
-            AddUntilStep("first item selected", () => MultiplayerClient.ClientRoom?.Settings.PlaylistItemId == MultiplayerClient.ClientAPIRoom?.Playlist[0].ID);
-        }
-
-        [Test]
-        public void TestNewItemCreatedAfterGameplayFinished()
-        {
-            RunGameplay();
-
-            AddUntilStep("playlist contains two items", () => MultiplayerClient.ClientAPIRoom?.Playlist.Count == 2);
-            AddUntilStep("first playlist item expired", () => MultiplayerClient.ClientAPIRoom?.Playlist[0].Expired == true);
-            AddUntilStep("second playlist item not expired", () => MultiplayerClient.ClientAPIRoom?.Playlist[1].Expired == false);
-            AddUntilStep("second playlist item selected", () => MultiplayerClient.ClientRoom?.Settings.PlaylistItemId == MultiplayerClient.ClientAPIRoom?.Playlist[1].ID);
-        }
-
-        [Test]
-        public void TestSettingsUpdatedWhenChangingQueueMode()
-        {
-            AddStep("change queue mode", () => MultiplayerClient.ChangeSettings(new MultiplayerRoomSettings
-            {
-                QueueMode = QueueMode.AllPlayers
-            }).WaitSafely());
-
-            AddUntilStep("api room updated", () => MultiplayerClient.ClientAPIRoom?.QueueMode.Value == QueueMode.AllPlayers);
-        }
-
-        [Test]
-        [FlakyTest]
+        [Repeat(100)]
         /*
          * TearDown : System.TimeoutException : "wait for ongoing operation to complete" timed out
          *   --TearDown
@@ -66,36 +38,12 @@ namespace osu.Game.Tests.Visual.Multiplayer
         }
 
         [Test]
-        [FlakyTest] // See above
+        [Repeat(100)] // See above
         public void TestItemStillSelectedAfterChangeToOtherBeatmap()
         {
             selectNewItem(() => OtherBeatmap);
 
             AddUntilStep("playlist item still selected", () => MultiplayerClient.ClientRoom?.Settings.PlaylistItemId == MultiplayerClient.ClientAPIRoom?.Playlist[0].ID);
-        }
-
-        [Test]
-        [FlakyTest] // See above
-        public void TestOnlyLastItemChangedAfterGameplayFinished()
-        {
-            RunGameplay();
-
-            IBeatmapInfo firstBeatmap = null;
-            AddStep("get first playlist item beatmap", () => firstBeatmap = MultiplayerClient.ServerAPIRoom?.Playlist[0].Beatmap);
-
-            selectNewItem(() => OtherBeatmap);
-
-            AddUntilStep("first playlist item hasn't changed", () => MultiplayerClient.ServerAPIRoom?.Playlist[0].Beatmap == firstBeatmap);
-            AddUntilStep("second playlist item changed", () => MultiplayerClient.ClientAPIRoom?.Playlist[1].Beatmap != firstBeatmap);
-        }
-
-        [Test]
-        [FlakyTest] // See above
-        public void TestAddItemsAsHost()
-        {
-            addItem(() => OtherBeatmap);
-
-            AddUntilStep("playlist contains two items", () => MultiplayerClient.ClientAPIRoom?.Playlist.Count == 2);
         }
 
         private void selectNewItem(Func<BeatmapInfo> beatmap)
@@ -115,7 +63,13 @@ namespace osu.Game.Tests.Visual.Multiplayer
             AddUntilStep("wait for song select", () => CurrentSubScreen is Screens.Select.SongSelect select && select.BeatmapSetsLoaded);
 
             BeatmapInfo otherBeatmap = null;
-            AddUntilStep("wait for ongoing operation to complete", () => !(CurrentScreen as OnlinePlayScreen).ChildrenOfType<OngoingOperationTracker>().Single().InProgress.Value);
+
+            AddUntilStep("wait for ongoing operation to complete", () =>
+            {
+                Logger.Log($"{nameof(TestSceneHostOnlyQueueMode)}.{nameof(selectNewItem)}(): Current screen is {CurrentScreen}, sub screen is {CurrentSubScreen}.");
+                return !(CurrentScreen as OnlinePlayScreen).ChildrenOfType<OngoingOperationTracker>().Single().InProgress.Value;
+            });
+
             AddStep("select other beatmap", () => ((Screens.Select.SongSelect)CurrentSubScreen).FinaliseSelection(otherBeatmap = beatmap()));
 
             AddUntilStep("wait for return to match", () => CurrentSubScreen is MultiplayerMatchSubScreen);

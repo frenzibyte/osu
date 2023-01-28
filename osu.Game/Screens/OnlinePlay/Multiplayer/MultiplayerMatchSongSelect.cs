@@ -73,9 +73,12 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer
 
             // If the client is already in a room, update via the client.
             // Otherwise, update the playlist directly in preparation for it to be submitted to the API on match creation.
+            Logger.Log($"{nameof(SelectItem)}: Client room is {client.Room}");
+
             if (client.Room != null)
             {
                 selectionOperation = operationTracker.BeginOperation();
+                Logger.Log($"{nameof(SelectItem)}: Beginning operation of selection");
 
                 var multiplayerItem = new MultiplayerPlaylistItem
                 {

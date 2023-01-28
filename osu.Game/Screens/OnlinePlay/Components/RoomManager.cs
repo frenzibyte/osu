@@ -50,6 +50,7 @@ namespace osu.Game.Screens.OnlinePlay.Components
 
             req.Success += result =>
             {
+                Logger.Log($"Room creation request of {room.Name.Value} succeeded");
                 joinedRoom.Value = room;
 
                 AddOrUpdateRoom(result);
@@ -61,9 +62,11 @@ namespace osu.Game.Screens.OnlinePlay.Components
 
             req.Failure += exception =>
             {
+                Logger.Error(exception, $"Room creation request of {room.Name.Value} failed!");
                 onError?.Invoke(req.Response?.Error ?? exception.Message);
             };
 
+            Logger.Log($"Queuing create room request {room.Name.Value}");
             api.Queue(req);
         }
 

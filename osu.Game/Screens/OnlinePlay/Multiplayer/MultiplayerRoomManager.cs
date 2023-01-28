@@ -58,7 +58,14 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer
             multiplayerClient.JoinRoom(room, password).ContinueWith(t =>
             {
                 if (t.IsCompletedSuccessfully)
-                    Schedule(() => onSuccess?.Invoke(room));
+                {
+                    Logger.Log("Scheduling invocation of success event");
+                    Schedule(() =>
+                    {
+                        Logger.Log("Invoking success event");
+                        onSuccess?.Invoke(room);
+                    });
+                }
                 else if (t.IsFaulted)
                 {
                     const string message = "Failed to join multiplayer room.";

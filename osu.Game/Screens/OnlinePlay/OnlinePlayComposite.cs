@@ -6,11 +6,13 @@
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Online.Multiplayer;
 using osu.Game.Online.Rooms;
 using osu.Game.Screens.OnlinePlay.Match;
+using Logger = osu.Framework.Logging.Logger;
 
 namespace osu.Game.Screens.OnlinePlay
 {
@@ -91,6 +93,12 @@ namespace osu.Game.Screens.OnlinePlay
 
         [Resolved(CanBeNull = true)]
         private IBindable<PlaylistItem> subScreenSelectedItem { get; set; }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            Logger.Log($"Loading {GetType().ReadableName()} currently.");
+        }
 
         protected override void LoadComplete()
         {

@@ -11,6 +11,7 @@ using osu.Framework.Extensions.ExceptionExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
@@ -427,15 +428,21 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer.Match
 
             private void hideError() => ErrorText.FadeOut(50);
 
-            private void onSuccess(Room room) => Schedule(() =>
+            private void onSuccess(Room room)
             {
-                Debug.Assert(applyingSettingsOperation != null);
+                Logger.Log("Received success from room manager, scheduling operation disposal");
+                Schedule(() =>
+                {
+                    Logger.Log("Disposing operation");
 
-                SettingsApplied?.Invoke();
+                    Debug.Assert(applyingSettingsOperation != null);
 
-                applyingSettingsOperation.Dispose();
-                applyingSettingsOperation = null;
-            });
+                    SettingsApplied?.Invoke();
+
+                    applyingSettingsOperation.Dispose();
+                    applyingSettingsOperation = null;
+                });
+            }
 
             private void onError(string text) => Schedule(() =>
             {

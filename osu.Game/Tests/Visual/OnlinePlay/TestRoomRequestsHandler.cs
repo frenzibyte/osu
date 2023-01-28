@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Newtonsoft.Json;
+using osu.Framework.Logging;
 using osu.Game.Beatmaps;
 using osu.Game.Online.API;
 using osu.Game.Online.API.Requests;
@@ -48,6 +49,8 @@ namespace osu.Game.Tests.Visual.OnlinePlay
             switch (request)
             {
                 case CreateRoomRequest createRoomRequest:
+                    Logger.Log("Fulfilling room creation request");
+
                     var apiRoom = cloneRoom(createRoomRequest.Room);
 
                     // Passwords are explicitly not copied between rooms.
@@ -59,19 +62,24 @@ namespace osu.Game.Tests.Visual.OnlinePlay
                     var responseRoom = new APICreatedRoom();
                     responseRoom.CopyFrom(createResponseRoom(apiRoom, false));
 
+                    Logger.Log("Triggering success of room creation request");
                     createRoomRequest.TriggerSuccess(responseRoom);
                     return true;
 
                 case JoinRoomRequest joinRoomRequest:
                 {
+                    Logger.Log("Fulfilling room join request");
+
                     var room = ServerSideRooms.Single(r => r.RoomID.Value == joinRoomRequest.Room.RoomID.Value);
 
                     if (joinRoomRequest.Password != room.Password.Value)
                     {
+                        Logger.Log($"Triggering failure of room join request, {joinRoomRequest.Password} != {room.Password.Value}");
                         joinRoomRequest.TriggerFailure(new InvalidOperationException("Invalid password."));
                         return true;
                     }
 
+                    Logger.Log("Triggering success of room join request");
                     joinRoomRequest.TriggerSuccess();
                     return true;
                 }

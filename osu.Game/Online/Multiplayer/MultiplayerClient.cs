@@ -174,8 +174,12 @@ namespace osu.Game.Online.Multiplayer
 
             var cancellationSource = joinCancellationSource = new CancellationTokenSource();
 
+            Logger.Log($"Joining room {room.Name.Value}, queueing to task chain");
+
             await joinOrLeaveTaskChain.Add(async () =>
             {
+                Logger.Log($"Executing join of room {room.Name.Value}");
+
                 Debug.Assert(room.RoomID.Value != null);
 
                 // Join the server-side room.
@@ -728,19 +732,21 @@ namespace osu.Game.Online.Multiplayer
                 if (Room == null)
                     return;
 
+                Debug.Assert(APIRoom != null);
+
+                Room.Playlist[Room.Playlist.IndexOf(Room.Playlist.Single(existing => existing.ID == item.ID))] = item;
+
+                int existingIndex = APIRoom.Playlist.IndexOf(APIRoom.Playlist.Single(existing => existing.ID == item.ID));
+
                 try
                 {
-                    Debug.Assert(APIRoom != null);
-
-                    Room.Playlist[Room.Playlist.IndexOf(Room.Playlist.Single(existing => existing.ID == item.ID))] = item;
-
-                    int existingIndex = APIRoom.Playlist.IndexOf(APIRoom.Playlist.Single(existing => existing.ID == item.ID));
+                    Logger.Log($"{nameof(MultiplayerClient)}: Removing item at index {existingIndex} from playlist");
                     APIRoom.Playlist.RemoveAt(existingIndex);
                     APIRoom.Playlist.Insert(existingIndex, createPlaylistItem(item));
                 }
                 catch (Exception ex)
                 {
-                    throw new AggregateException($"Item: {JsonConvert.SerializeObject(createPlaylistItem(item))}\n\nRoom:{JsonConvert.SerializeObject(APIRoom)}", ex);
+                    throw new AggregateException($"Index: {existingIndex}\n\nItem: {JsonConvert.SerializeObject(createPlaylistItem(item))}\n\nRoom:{JsonConvert.SerializeObject(APIRoom)}", ex);
                 }
 
                 ItemChanged?.Invoke(item);

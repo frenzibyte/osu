@@ -4,8 +4,10 @@
 #nullable disable
 
 using System;
+using System.Diagnostics;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Logging;
 
 namespace osu.Game.Screens.OnlinePlay
 {
@@ -41,6 +43,8 @@ namespace osu.Game.Screens.OnlinePlay
             if (leasedInProgress != null)
                 throw new InvalidOperationException("Cannot begin operation while another is in progress.");
 
+            Logger.Log($"Operation has been begun:\n{new StackTrace()}");
+
             leasedInProgress = inProgress.BeginLease(true);
             leasedInProgress.Value = true;
 
@@ -49,6 +53,8 @@ namespace osu.Game.Screens.OnlinePlay
 
         private void endOperationWithKnownLease(LeasedBindable<bool> lease)
         {
+            Logger.Log($"Operation has been ended:\n{new StackTrace()}");
+
             // for extra safety, marshal the end of operation back to the update thread if necessary.
             Scheduler.Add(() =>
             {
