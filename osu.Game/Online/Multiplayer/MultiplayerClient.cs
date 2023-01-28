@@ -186,9 +186,13 @@ namespace osu.Game.Online.Multiplayer
                 var joinedRoom = await JoinRoom(room.RoomID.Value.Value, password ?? room.Password.Value).ConfigureAwait(false);
                 Debug.Assert(joinedRoom != null);
 
+                Logger.Log($"Populating users for room {room.Name.Value}");
+
                 // Populate users.
                 Debug.Assert(joinedRoom.Users != null);
                 await Task.WhenAll(joinedRoom.Users.Select(PopulateUser)).ConfigureAwait(false);
+
+                Logger.Log($"Scheduling update-thread stuff for joining room {room.Name.Value}");
 
                 // Update the stored room (must be done on update thread for thread-safety).
                 await runOnUpdateThreadAsync(() =>

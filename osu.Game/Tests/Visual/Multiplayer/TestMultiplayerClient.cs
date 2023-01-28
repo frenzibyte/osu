@@ -10,6 +10,7 @@ using MessagePack;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
+using osu.Framework.Logging;
 using osu.Game.Online;
 using osu.Game.Online.API;
 using osu.Game.Online.API.Requests.Responses;
@@ -253,6 +254,7 @@ namespace osu.Game.Tests.Visual.Multiplayer
             // emulate the server sending this after the join room. scheduler required to make sure the join room event is fired first (in Join).
             changeMatchType(ServerRoom.Settings.MatchType).WaitSafely();
 
+            Logger.Log($"Setting room to joined, current room is {ClientAPIRoom?.Name.Value} {ServerAPIRoom?.Name.Value}");
             RoomJoined = true;
         }
 
