@@ -52,6 +52,14 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer.Match
             SettingsApplied = Hide
         };
 
+        private int updateCount;
+
+        public override bool UpdateSubTree()
+        {
+            Logger.Log($"[{updateCount++}]: Updating {nameof(MultiplayerMatchSettingsOverlay)} at sub tree ({IsPresent}, {RequiresChildrenUpdate})");
+            return base.UpdateSubTree();
+        }
+
         protected partial class MatchSettings : OnlinePlayComposite
         {
             private const float disabled_alpha = 0.2f;
@@ -375,6 +383,14 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer.Match
                 base.Update();
 
                 ApplyButton.Enabled.Value = Playlist.Count > 0 && NameField.Text.Length > 0 && !operationInProgress.Value;
+            }
+
+            private int updateCount;
+
+            public override bool UpdateSubTree()
+            {
+                Logger.Log($"[{updateCount++}] Updating {nameof(MatchSettings)} at sub tree ({IsPresent}, {RequiresChildrenUpdate}, {Scheduler.HasPendingTasks})");
+                return base.UpdateSubTree();
             }
 
             private void apply()
