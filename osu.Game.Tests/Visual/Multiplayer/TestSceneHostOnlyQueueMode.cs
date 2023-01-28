@@ -23,13 +23,6 @@ namespace osu.Game.Tests.Visual.Multiplayer
 
         [Test]
         [Repeat(100)]
-        /*
-         * TearDown : System.TimeoutException : "wait for ongoing operation to complete" timed out
-         *   --TearDown
-         *      at osu.Framework.Testing.Drawables.Steps.UntilStepButton.<>c__DisplayClass11_0.<.ctor>b__0()
-         *      at osu.Framework.Testing.Drawables.Steps.StepButton.PerformStep(Boolean userTriggered)
-         *      at osu.Framework.Testing.TestScene.runNextStep(Action onCompletion, Action`1 onError, Func`2 stopCondition)
-         */
         public void TestItemStillSelectedAfterChangeToSameBeatmap()
         {
             selectNewItem(() => InitialBeatmap);
@@ -38,7 +31,7 @@ namespace osu.Game.Tests.Visual.Multiplayer
         }
 
         [Test]
-        [Repeat(100)] // See above
+        [Repeat(100)]
         public void TestItemStillSelectedAfterChangeToOtherBeatmap()
         {
             selectNewItem(() => OtherBeatmap);
@@ -64,12 +57,6 @@ namespace osu.Game.Tests.Visual.Multiplayer
 
             BeatmapInfo otherBeatmap = null;
 
-            AddUntilStep("wait for ongoing operation to complete", () =>
-            {
-                Logger.Log($"{nameof(TestSceneHostOnlyQueueMode)}.{nameof(selectNewItem)}(): Current screen is {CurrentScreen}, sub screen is {CurrentSubScreen}.");
-                return !(CurrentScreen as OnlinePlayScreen).ChildrenOfType<OngoingOperationTracker>().Single().InProgress.Value;
-            });
-
             AddStep("select other beatmap", () => ((Screens.Select.SongSelect)CurrentSubScreen).FinaliseSelection(otherBeatmap = beatmap()));
 
             AddUntilStep("wait for return to match", () => CurrentSubScreen is MultiplayerMatchSubScreen);
@@ -85,7 +72,6 @@ namespace osu.Game.Tests.Visual.Multiplayer
             });
 
             AddUntilStep("wait for song select", () => CurrentSubScreen is Screens.Select.SongSelect select && select.BeatmapSetsLoaded);
-            AddUntilStep("wait for ongoing operation to complete", () => !(CurrentScreen as OnlinePlayScreen).ChildrenOfType<OngoingOperationTracker>().Single().InProgress.Value);
             AddStep("select other beatmap", () => ((Screens.Select.SongSelect)CurrentSubScreen).FinaliseSelection(beatmap()));
             AddUntilStep("wait for return to match", () => CurrentSubScreen is MultiplayerMatchSubScreen);
         }
