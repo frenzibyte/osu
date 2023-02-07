@@ -9,11 +9,13 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Allocation;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shaders.Types;
 
 namespace osu.Game.Graphics.Backgrounds
 {
@@ -227,6 +229,8 @@ namespace osu.Game.Graphics.Backgrounds
                 parts.AddRange(Source.parts);
             }
 
+            private IUniformBuffer<TriangleBorderParameters>? parametersBuffer;
+
             public override void Draw(IRenderer renderer)
             {
                 base.Draw(renderer);
@@ -240,9 +244,15 @@ namespace osu.Game.Graphics.Backgrounds
                     vertexBatch = renderer.CreateQuadBatch<TexturedVertex2D>(Source.AimCount, 1);
                 }
 
+                parametersBuffer ??= renderer.CreateUniformBuffer<TriangleBorderParameters>();
+                parametersBuffer.Data = new TriangleBorderParameters
+                {
+                    Thickness = thickness,
+                    TexelSize = texelSize,
+                };
+
                 shader.Bind();
-                shader.GetUniform<float>("thickness").UpdateValue(ref thickness);
-                shader.GetUniform<float>("texelSize").UpdateValue(ref texelSize);
+                shader.AssignUniformBlock("m_TriangleBorderParameters", parametersBuffer);
 
                 Vector2 relativeSize = Vector2.Divide(triangleSize, size);
 
@@ -303,6 +313,14 @@ namespace osu.Game.Graphics.Backgrounds
                 base.Dispose(isDisposing);
 
                 vertexBatch?.Dispose();
+            }
+
+            [StructLayout(LayoutKind.Sequential, Pack = 1)]
+            private record struct TriangleBorderParameters
+            {
+                public UniformFloat Thickness;
+                public UniformFloat TexelSize;
+                private readonly UniformPadding _, __;
             }
         }
 

@@ -76,7 +76,7 @@ namespace osu.Game.Skinning
 
                     // osu-stable performs audio lookups in order of wav -> mp3 -> ogg.
                     // The GetSampleStore() call above internally adds wav and mp3, so ogg is added at the end to ensure expected ordering.
-                    samples.AddExtension(@"ogg");
+                    // samples.AddExtension(@"ogg");
                 }
 
                 Samples = samples;

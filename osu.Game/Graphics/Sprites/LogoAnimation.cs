@@ -3,10 +3,12 @@
 
 #nullable disable
 
+using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
+using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Graphics.Sprites;
 
 namespace osu.Game.Graphics.Sprites
@@ -55,11 +57,23 @@ namespace osu.Game.Graphics.Sprites
                 progress = source.animationProgress;
             }
 
+            private IUniformBuffer<LogoAnimationParameters> parametersBuffer;
+
             protected override void Blit(IRenderer renderer)
             {
-                TextureShader.GetUniform<float>("progress").UpdateValue(ref progress);
+                parametersBuffer ??= renderer.CreateUniformBuffer<LogoAnimationParameters>();
+                parametersBuffer.Data = new LogoAnimationParameters { Progress = progress };
+
+                TextureShader.AssignUniformBlock(@"m_LogoAnimationParameters", parametersBuffer);
 
                 base.Blit(renderer);
+            }
+
+            [StructLayout(LayoutKind.Sequential, Pack = 1)]
+            private record struct LogoAnimationParameters
+            {
+                public UniformFloat Progress;
+                private readonly UniformPadding _, __, ___;
             }
 
             protected override bool CanDrawOpaqueInterior => false;

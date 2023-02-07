@@ -13,7 +13,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Containers.Markdown;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics.Containers.Markdown.Footnotes;
 using osu.Game.Overlays;
 using osu.Game.Users;
@@ -41,13 +40,6 @@ namespace osu.Game.Graphics.Containers.Markdown
         protected override void AddFootnoteLink(FootnoteLink footnoteLink) => AddDrawable(new OsuMarkdownFootnoteLink(footnoteLink));
 
         protected override void AddFootnoteBacklink(FootnoteLink footnoteBacklink) => AddDrawable(new OsuMarkdownFootnoteBacklink(footnoteBacklink));
-
-        protected override void ApplyEmphasisedCreationParameters(SpriteText spriteText, bool bold, bool italic)
-        {
-            base.ApplyEmphasisedCreationParameters(spriteText, bold, italic);
-
-            spriteText.Font = spriteText.Font.With(weight: bold ? FontWeight.Bold : FontWeight.Regular, italics: italic);
-        }
 
         protected override void AddCustomComponent(CustomContainerInline inline)
         {
