@@ -12,6 +12,11 @@
     <PackageIcon>icon.png</PackageIcon>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- Fody does not handle Android build well, and warns when unchanged.
+         Since Realm objects are not declared directly in Android projects, simply disable Fody. -->
+    <DisableFody>true</DisableFody>
+  </PropertyGroup>
   <ItemGroup Label="Icon">
     <None Include="..\assets\lazer-nuget.png">
       <Pack>True</Pack>
