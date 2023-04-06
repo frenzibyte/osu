@@ -16,6 +16,8 @@
     <RuntimeIdentifier>iossimulator-x64</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ppy.osu.Framework.iOS" Version="2023.403.0" />
+    <ProjectReference Include="..\..\osu-framework\osu.Framework\osu.Framework.csproj" />
+    <ProjectReference Include="..\..\osu-framework\osu.Framework.iOS\osu.Framework.iOS.csproj" />
   </ItemGroup>
+  <Import Project="..\osu-framework\osu.Framework.iOS.props" />
 </Project>
