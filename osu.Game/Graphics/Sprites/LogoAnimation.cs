@@ -117,19 +117,20 @@ namespace osu.Game.Graphics.Sprites
             {
                 public UniformFloat Progress;
                 private readonly UniformPadding12 pad1;
+                private readonly UniformPadding2 pad2;
             }
 
             [StructLayout(LayoutKind.Sequential)]
             private struct LogoAnimationVertex : IEquatable<LogoAnimationVertex>, IVertex
             {
-                [VertexMember(2, VertexAttribPointerType.Float)]
-                public Vector2 Position;
+                [VertexMember(2, VertexAttribPointerType.HalfFloat)]
+                public Vector2h Position;
 
-                [VertexMember(4, VertexAttribPointerType.Float)]
-                public Color4 Colour;
+                [VertexMember(4, VertexAttribPointerType.HalfFloat)]
+                public Vector4h Colour;
 
-                [VertexMember(2, VertexAttribPointerType.Float)]
-                public Vector2 TexturePosition;
+                [VertexMember(2, VertexAttribPointerType.HalfFloat)]
+                public Vector2h TexturePosition;
 
                 public readonly bool Equals(LogoAnimationVertex other) =>
                     Position.Equals(other.Position)

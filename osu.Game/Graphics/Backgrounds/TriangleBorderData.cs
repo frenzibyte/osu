@@ -11,6 +11,6 @@ namespace osu.Game.Graphics.Backgrounds
     {
         public UniformFloat Thickness;
         public UniformFloat TexelSize;
-        private readonly UniformPadding8 pad1;
+        private readonly UniformPadding12 pad1;
     }
 }

@@ -15,11 +15,11 @@ namespace osu.Game.Graphics.OpenGL.Vertices
     [StructLayout(LayoutKind.Sequential)]
     public struct PositionAndColourVertex : IEquatable<PositionAndColourVertex>, IVertex
     {
-        [VertexMember(2, VertexAttribPointerType.Float)]
-        public Vector2 Position;
+        [VertexMember(2, VertexAttribPointerType.HalfFloat)]
+        public Vector2h Position;
 
-        [VertexMember(4, VertexAttribPointerType.Float)]
-        public Color4 Colour;
+        [VertexMember(4, VertexAttribPointerType.HalfFloat)]
+        public Vector4h Colour;
 
         public bool Equals(PositionAndColourVertex other)
             => Position.Equals(other.Position)

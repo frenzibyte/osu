@@ -126,7 +126,7 @@ namespace osu.Game.Screens
             private void load(ShaderManager manager)
             {
                 loadTargets.Add(manager.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.TEXTURE));
-                loadTargets.Add(manager.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.BLUR));
+                loadTargets.Add(manager.Load(VertexShaderDescriptor.BLUR, FragmentShaderDescriptor.BLUR));
 
                 loadTargets.Add(manager.Load(@"CursorTrail", FragmentShaderDescriptor.TEXTURE));
 

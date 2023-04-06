@@ -349,27 +349,27 @@ namespace osu.Game.Rulesets.Osu.Skinning
 
                 quadBatch.Add(new TexturedVertex2D
                 {
-                    Position = localTopLeft,
-                    TexturePosition = textureRect.TopLeft,
-                    Colour = Color4Extensions.Multiply(ColourAtPosition(localTopLeft), colour),
+                    Position = new Vector2h(localTopLeft),
+                    TexturePosition = new Vector2h(textureRect.TopLeft),
+                    Colour = new Vector4h(Color4Extensions.Multiply(ColourAtPosition(localTopLeft), colour).ToVector()),
                 });
                 quadBatch.Add(new TexturedVertex2D
                 {
-                    Position = localTopRight,
-                    TexturePosition = textureRect.TopRight,
-                    Colour = Color4Extensions.Multiply(ColourAtPosition(localTopRight), colour),
+                    Position = new Vector2h(localTopRight),
+                    TexturePosition = new Vector2h(textureRect.TopRight),
+                    Colour = new Vector4h(Color4Extensions.Multiply(ColourAtPosition(localTopRight), colour).ToVector()),
                 });
                 quadBatch.Add(new TexturedVertex2D
                 {
-                    Position = localBotRight,
-                    TexturePosition = textureRect.BottomRight,
-                    Colour = Color4Extensions.Multiply(ColourAtPosition(localBotRight), colour),
+                    Position = new Vector2h(localBotRight),
+                    TexturePosition = new Vector2h(textureRect.BottomRight),
+                    Colour = new Vector4h(Color4Extensions.Multiply(ColourAtPosition(localBotRight), colour).ToVector()),
                 });
                 quadBatch.Add(new TexturedVertex2D
                 {
-                    Position = localBotLeft,
-                    TexturePosition = textureRect.BottomLeft,
-                    Colour = Color4Extensions.Multiply(ColourAtPosition(localBotLeft), colour),
+                    Position = new Vector2h(localBotLeft),
+                    TexturePosition = new Vector2h(textureRect.BottomLeft),
+                    Colour = new Vector4h(Color4Extensions.Multiply(ColourAtPosition(localBotLeft), colour).ToVector()),
                 });
             }
 
