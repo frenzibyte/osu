@@ -25,6 +25,11 @@ namespace osu.Game.Users.Drawables
         public bool ShowPlaceholderOnUnknown = true;
 
         /// <summary>
+        /// Whether to show a tooltip of the country's name when hovering over the flag.
+        /// </summary>
+        public bool ShowTooltip = true;
+
+        /// <summary>
         /// Perform an action in addition to showing the country ranking.
         /// This should be used to perform auxiliary tasks and not as a primary action for clicking a flag (to maintain a consistent UX).
         /// </summary>
@@ -47,7 +52,8 @@ namespace osu.Game.Users.Drawables
                 {
                     new DrawableFlag(countryCode)
                     {
-                        RelativeSizeAxes = Axes.Both
+                        RelativeSizeAxes = Axes.Both,
+                        ShowTooltip = ShowTooltip,
                     },
                     new HoverClickSounds()
                 }

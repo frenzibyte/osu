@@ -6,6 +6,7 @@ using System.Globalization;
 using osu.Framework.Configuration;
 using osu.Framework.Localisation;
 using osu.Game.Localisation;
+using osu.Game.Users;
 
 namespace osu.Game.Extensions
 {
@@ -43,6 +44,111 @@ namespace osu.Game.Extensions
             }
 
             return Enum.TryParse(cultureCode.Replace("-", "_"), out language);
+        }
+
+        /// <summary>
+        /// Returns the <see cref="CountryCode"/> of a country that represents the supplied <paramref name="language"/>.
+        /// </summary>
+        public static CountryCode GetRepresentingCountry(this Language language)
+        {
+            switch (language)
+            {
+                case Language.en:
+                    return CountryCode.GB;
+
+                case Language.be:
+                    return CountryCode.BY;
+
+                case Language.bg:
+                    return CountryCode.BG;
+
+                case Language.cs:
+                    return CountryCode.CZ;
+
+                case Language.da:
+                    return CountryCode.DK;
+
+                case Language.de:
+                    return CountryCode.DE;
+
+                case Language.el:
+                    return CountryCode.GR;
+
+                case Language.es:
+                    return CountryCode.ES;
+
+                case Language.fi:
+                    return CountryCode.FI;
+
+                case Language.fr:
+                    return CountryCode.FR;
+
+                case Language.hu:
+                    return CountryCode.HU;
+
+                case Language.id:
+                    return CountryCode.ID;
+
+                case Language.it:
+                    return CountryCode.IT;
+
+                case Language.ja:
+                    return CountryCode.JP;
+
+                case Language.ko:
+                    return CountryCode.KR;
+
+                case Language.nl:
+                    return CountryCode.NL;
+
+                case Language.no:
+                    return CountryCode.NO;
+
+                case Language.pl:
+                    return CountryCode.PL;
+
+                case Language.pt:
+                    return CountryCode.PT;
+
+                case Language.pt_br:
+                    return CountryCode.BR;
+
+                case Language.ro:
+                    return CountryCode.RO;
+
+                case Language.ru:
+                    return CountryCode.RU;
+
+                case Language.sk:
+                    return CountryCode.SK;
+
+                case Language.sv:
+                    return CountryCode.SE;
+
+                case Language.th:
+                    return CountryCode.TH;
+
+                case Language.tr:
+                    return CountryCode.TR;
+
+                case Language.uk:
+                    return CountryCode.UA;
+
+                case Language.vi:
+                    return CountryCode.VN;
+
+                case Language.zh:
+                    return CountryCode.CN;
+
+                case Language.zh_hant:
+                    return CountryCode.TW;
+
+                case Language.debug:
+                    return CountryCode.Unknown;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(language), language, null);
+            }
         }
 
         /// <summary>

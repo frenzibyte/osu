@@ -33,7 +33,7 @@ namespace osu.Game.Overlays
         [Resolved]
         private IAPIProvider api { get; set; }
 
-        private readonly Bindable<Language> currentLanguage = new Bindable<Language>();
+        private readonly Bindable<Language> language = new Bindable<Language>();
 
         private GetWikiRequest request;
 
@@ -74,13 +74,14 @@ namespace osu.Game.Overlays
             path.BindValueChanged(_ => updatePage());
             wikiData.BindTo(Header.WikiPageData);
 
-            currentLanguage.BindTo(Header.LanguageDropdown.Current);
-            currentLanguage.BindValueChanged(_ => updatePage());
+            language.BindTo(Header.LanguageDropdown.Current);
+            language.BindValueChanged(_ => updatePage());
+
             languageConfig.BindValueChanged(s =>
             {
                 if (LanguageExtensions.TryParseCultureCode(s.NewValue, out var language))
                 {
-                    currentLanguage.Value = language;
+                    this.language.Value = language;
                 }
             }, true);
         }
@@ -130,7 +131,7 @@ namespace osu.Game.Overlays
 
             string[] values = path.Value.Split('/', 2);
             string requestPath;
-            Language requestLanguage = currentLanguage.Value;
+            Language requestLanguage = this.language.Value;
 
             // Parse the language first to determine whether the currently requested language is consistent with the content language.
             if (values.Length > 1 && LanguageExtensions.TryParseCultureCode(values[0], out var language))
@@ -173,13 +174,15 @@ namespace osu.Game.Overlays
         private void onSuccess(APIWikiPage response)
         {
             wikiData.Value = response;
-            Header.LanguageDropdown.UpdateDropdown(response.AvailableLocales);
             path.Value = response.Path;
 
+            Header.LanguageDropdown.Items = response.AvailableLocales
+                                                    .Select(locale => LanguageExtensions.TryParseCultureCode(locale, out var lang) ? lang : (Language?)null)
+                                                    .Where(l => l != null)
+                                                    .Cast<Language>();
+
             if (LanguageExtensions.TryParseCultureCode(response.Locale, out var pageLanguage))
-            {
-                currentLanguage.Value = pageLanguage;
-            }
+                language.Value = pageLanguage;
 
             if (response.Layout == index_path)
             {

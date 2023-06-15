@@ -17,7 +17,21 @@ namespace osu.Game.Users.Drawables
     {
         private readonly CountryCode countryCode;
 
-        public LocalisableString TooltipText => countryCode == CountryCode.Unknown ? string.Empty : countryCode.GetDescription();
+        public LocalisableString TooltipText
+        {
+            get
+            {
+                if (countryCode == CountryCode.Unknown || !ShowTooltip)
+                    return string.Empty;
+
+                return countryCode.GetDescription();
+            }
+        }
+
+        /// <summary>
+        /// Whether to show a tooltip of the country's name when hovering over the flag.
+        /// </summary>
+        public bool ShowTooltip { get; set; } = true;
 
         public DrawableFlag(CountryCode countryCode)
         {
