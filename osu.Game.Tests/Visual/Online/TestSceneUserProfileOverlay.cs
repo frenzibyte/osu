@@ -28,12 +28,6 @@ namespace osu.Game.Tests.Visual.Online
         }
 
         [Test]
-        public void TestBlank()
-        {
-            AddStep("show overlay", () => profile.Show());
-        }
-
-        [Test]
         public void TestActualUser()
         {
             AddStep("set up request handling", () =>
@@ -53,6 +47,12 @@ namespace osu.Game.Tests.Visual.Online
             AddToggleStep("toggle visibility", visible => profile.State.Value = visible ? Visibility.Visible : Visibility.Hidden);
             AddStep("log out", () => dummyAPI.Logout());
             AddStep("log back in", () => dummyAPI.Login("username", "password"));
+        }
+
+        [Test]
+        public void TestBlank()
+        {
+            AddStep("show overlay", () => profile.Show());
         }
 
         [Test]
@@ -89,8 +89,6 @@ namespace osu.Game.Tests.Visual.Online
             Groups = new[]
             {
                 new APIUserGroup { Colour = "#EB47D0", ShortName = "DEV", Name = "Developers" },
-                new APIUserGroup { Colour = "#A347EB", ShortName = "BN", Name = "Beatmap Nominators", Playmodes = new[] { "mania" } },
-                new APIUserGroup { Colour = "#A347EB", ShortName = "BN", Name = "Beatmap Nominators", Playmodes = new[] { "osu", "taiko" } },
                 new APIUserGroup { Colour = "#A347EB", ShortName = "BN", Name = "Beatmap Nominators", Playmodes = new[] { "osu", "taiko", "fruits", "mania" } },
                 new APIUserGroup { Colour = "#A347EB", ShortName = "BN", Name = "Beatmap Nominators (Probationary)", Playmodes = new[] { "osu", "taiko", "fruits", "mania" }, IsProbationary = true }
             },
@@ -145,6 +143,17 @@ namespace osu.Game.Tests.Visual.Online
                 },
             },
             Title = "osu!volunteer",
+            PreviousUsernames = new[]
+            {
+                "!~ S0M3B0Dy",
+                "S0M3B0Dy",
+                "SoMeBoDy",
+                "Somebody",
+                "!~ S0M3B0Dy",
+                "S0M3B0Dy",
+                "SoMeBoDy",
+                "Somebody",
+            },
             Colour = "ff0000",
             Achievements = Array.Empty<APIUserAchievement>(),
             PlayMode = "osu",

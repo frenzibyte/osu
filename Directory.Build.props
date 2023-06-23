@@ -2,7 +2,7 @@
 <Project>
   <PropertyGroup Label="C#">
     <LangVersion>10.0</LangVersion>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+<!--    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>

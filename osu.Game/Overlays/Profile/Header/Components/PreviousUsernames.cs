@@ -11,7 +11,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Resources.Localisation.Web;
 using osuTK;
@@ -21,78 +20,79 @@ namespace osu.Game.Overlays.Profile.Header.Components
     public partial class PreviousUsernames : CompositeDrawable
     {
         private const int duration = 200;
-        private const int margin = 10;
-        private const int width = 310;
+        private const int width = 300;
         private const int move_offset = 15;
+        private const int icon_size = 15;
 
         public readonly Bindable<APIUser?> User = new Bindable<APIUser?>();
 
-        private readonly TextFlowContainer text;
+        private readonly Container content;
+
+        // private readonly TextFlowContainer text;
         private readonly Box background;
-        private readonly SpriteText header;
+
+        private readonly TextFlowContainer textFlow;
+
+        // private readonly SpriteText header;
 
         public PreviousUsernames()
         {
-            HoverIconContainer hoverIcon;
-
             AutoSizeAxes = Axes.Y;
             Width = width;
-            Masking = true;
-            CornerRadius = 5;
 
-            AddRangeInternal(new Drawable[]
+            InternalChild = content = new Container
             {
-                background = new Box
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Masking = true,
+                CornerRadius = 5,
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                },
-                new GridContainer
-                {
-                    AutoSizeAxes = Axes.Y,
-                    RelativeSizeAxes = Axes.X,
-                    RowDimensions = new[]
+                    background = new Box
                     {
-                        new Dimension(GridSizeMode.AutoSize),
-                        new Dimension(GridSizeMode.AutoSize)
+                        Alpha = 0f,
+                        RelativeSizeAxes = Axes.Both,
                     },
-                    ColumnDimensions = new[]
+                    new FillFlowContainer
                     {
-                        new Dimension(GridSizeMode.AutoSize),
-                        new Dimension()
-                    },
-                    Content = new[]
-                    {
-                        new Drawable[]
-                        {
-                            hoverIcon = new HoverIconContainer(),
-                            header = new OsuSpriteText
-                            {
-                                Anchor = Anchor.BottomLeft,
-                                Origin = Anchor.BottomLeft,
-                                Text = UsersStrings.ShowPreviousUsernames,
-                                Font = OsuFont.GetFont(size: 10, italics: true)
-                            }
-                        },
-                        new Drawable[]
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Direction = FillDirection.Horizontal,
+                        Padding = new MarginPadding(10f),
+                        Spacing = new Vector2(10f),
+                        Children = new Drawable[]
                         {
                             new Container
                             {
-                                RelativeSizeAxes = Axes.Both,
+                                Size = new Vector2(icon_size),
+                                Children = new Drawable[]
+                                {
+                                    new SpriteIcon
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Icon = FontAwesome.Solid.IdCard,
+                                    },
+                                    new HoverContainer
+                                    {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Size = new Vector2(icon_size + 20f),
+                                        ActivateHover = showContent,
+                                        BypassAutoSizeAxes = Axes.Both,
+                                    }
+                                }
                             },
-                            text = new TextFlowContainer(s => s.Font = OsuFont.GetFont(size: 12, weight: FontWeight.Bold, italics: true))
+                            textFlow = new TextFlowContainer
                             {
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
-                                Direction = FillDirection.Full,
-                                Margin = new MarginPadding { Bottom = margin, Top = margin / 2f }
-                            }
+                                AlwaysPresent = true,
+                                Alpha = 0f,
+                            },
                         }
-                    }
-                }
-            });
-
-            hoverIcon.ActivateHover += showContent;
-            hideContent();
+                    },
+                },
+            };
         }
 
         [BackgroundDependencyLoader]
@@ -107,20 +107,25 @@ namespace osu.Game.Overlays.Profile.Header.Components
             User.BindValueChanged(onUserChanged, true);
         }
 
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => content.ReceivePositionalInputAt(screenSpacePos);
+
         private void onUserChanged(ValueChangedEvent<APIUser?> user)
         {
-            text.Text = string.Empty;
+            textFlow.Clear();
 
             string[]? usernames = user.NewValue?.PreviousUsernames;
 
-            if (usernames?.Any() ?? false)
+            if (usernames == null || !usernames.Any())
+                Hide();
+            else
             {
-                text.Text = string.Join(", ", usernames);
                 Show();
-                return;
-            }
 
-            Hide();
+                textFlow.AddText(UsersStrings.ShowPreviousUsernames, cp => cp.Font = cp.Font.With(size: 10, weight: FontWeight.Regular));
+                textFlow.NewLine();
+
+                textFlow.AddText(string.Join(", ", usernames), cp => cp.Font = cp.Font.With(size: 12, weight: FontWeight.Bold));
+            }
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
@@ -131,34 +136,25 @@ namespace osu.Game.Overlays.Profile.Header.Components
 
         private void showContent()
         {
-            text.FadeIn(duration, Easing.OutQuint);
-            header.FadeIn(duration, Easing.OutQuint);
-            background.FadeIn(duration, Easing.OutQuint);
-            this.MoveToY(-move_offset, duration, Easing.OutQuint);
+            // text.FadeIn(duration, Easing.OutQuint);
+            // header.FadeIn(duration, Easing.OutQuint);
+            background.FadeIn(300f, Easing.OutQuint);
+            textFlow.FadeIn(300f, Easing.OutQuint);
+            content.MoveToY(-30f, 300f, Easing.OutQuint);
         }
 
         private void hideContent()
         {
-            text.FadeOut(duration, Easing.OutQuint);
-            header.FadeOut(duration, Easing.OutQuint);
-            background.FadeOut(duration, Easing.OutQuint);
-            this.MoveToY(0, duration, Easing.OutQuint);
+            // text.FadeOut(300f, Easing.OutQuint);
+            // header.FadeOut(300f, Easing.OutQuint);
+            background.FadeOut(300f, Easing.OutQuint);
+            textFlow.FadeOut(300f, Easing.OutQuint);
+            content.MoveToY(0, 300f, Easing.OutQuint);
         }
 
-        private partial class HoverIconContainer : Container
+        private partial class HoverContainer : Container
         {
             public Action? ActivateHover;
-
-            public HoverIconContainer()
-            {
-                AutoSizeAxes = Axes.Both;
-                Child = new SpriteIcon
-                {
-                    Margin = new MarginPadding { Top = 6, Left = margin, Right = margin * 2 },
-                    Size = new Vector2(15),
-                    Icon = FontAwesome.Solid.IdCard,
-                };
-            }
 
             protected override bool OnHover(HoverEvent e)
             {
