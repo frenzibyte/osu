@@ -25,6 +25,11 @@ namespace osu.Game.Localisation
         public static LocalisableString Renderer => new TranslatableString(getKey(@"renderer"), @"Renderer");
 
         /// <summary>
+        /// "Render Scale"
+        /// </summary>
+        public static LocalisableString RenderScale => new TranslatableString(getKey(@"render_scale"), @"Render Scale");
+
+        /// <summary>
         /// "Frame limiter"
         /// </summary>
         public static LocalisableString FrameLimiter => new TranslatableString(getKey(@"frame_limiter"), @"Frame limiter");

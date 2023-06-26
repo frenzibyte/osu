@@ -39,6 +39,12 @@ namespace osu.Game.Overlays.Settings.Sections.Graphics
                     Items = host.GetPreferredRenderersForCurrentPlatform().OrderBy(t => t).Where(t => t != RendererType.Vulkan),
                     Keywords = new[] { @"compatibility", @"directx" },
                 },
+                new SettingsSlider<float>
+                {
+                    LabelText = GraphicsSettingsStrings.RenderScale,
+                    Current = config.GetBindable<float>(FrameworkSetting.RenderScale),
+                    Keywords = new[] { @"performance" },
+                },
                 // TODO: this needs to be a custom dropdown at some point
                 new SettingsEnumDropdown<FrameSync>
                 {
