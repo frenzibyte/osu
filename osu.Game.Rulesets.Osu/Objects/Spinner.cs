@@ -32,6 +32,11 @@ namespace osu.Game.Rulesets.Osu.Objects
         public int SpinsRequired { get; protected set; } = 1;
 
         /// <summary>
+        /// The first spin counted as bonus, usually three spins after completion.
+        /// </summary>
+        public int FirstBonusSpin => SpinsRequired + 2;
+
+        /// <summary>
         /// Number of spins available to give bonus, beyond <see cref="SpinsRequired"/>.
         /// </summary>
         public int MaximumBonusSpins { get; protected set; } = 1;
@@ -63,7 +68,7 @@ namespace osu.Game.Rulesets.Osu.Objects
 
                 double startTime = StartTime + (float)(i + 1) / totalSpins * Duration;
 
-                AddNested(i < SpinsRequired
+                AddNested(i < FirstBonusSpin
                     ? new SpinnerTick { StartTime = startTime, SpinnerDuration = Duration }
                     : new SpinnerBonusTick { StartTime = startTime, SpinnerDuration = Duration, Samples = new[] { CreateHitSampleInfo("spinnerbonus") } });
             }
