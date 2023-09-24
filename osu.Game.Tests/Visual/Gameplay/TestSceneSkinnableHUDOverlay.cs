@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -93,8 +94,10 @@ namespace osu.Game.Tests.Visual.Gameplay
                 {
                     hudOverlay = new HUDOverlay(null, Array.Empty<Mod>());
 
-                    // Add any key just to display the key counter visually.
-                    hudOverlay.InputCountController.Add(new KeyCounterKeyboardTrigger(Key.Space));
+                    hudOverlay.InputCountController.Add(new KeyCounterKeyboardTrigger(Key.Z).With(t => ((Bindable<int>)t.ActivationCount).Value = 284));
+                    hudOverlay.InputCountController.Add(new KeyCounterKeyboardTrigger(Key.Y).With(t => ((Bindable<int>)t.ActivationCount).Value = 231));
+                    hudOverlay.InputCountController.Add(new KeyCounterMouseTrigger(MouseButton.Button1));
+                    hudOverlay.InputCountController.Add(new KeyCounterMouseTrigger(MouseButton.Button2));
 
                     action?.Invoke(hudOverlay);
 
