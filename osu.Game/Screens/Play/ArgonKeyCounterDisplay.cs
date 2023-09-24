@@ -65,7 +65,7 @@ namespace osu.Game.Screens.Play
                     },
                     new ArgonKeyCounter(totalTrigger = new KeyCounterTotalTrigger())
                     {
-                        Margin = new MarginPadding { Left = -50 },
+                        Margin = new MarginPadding { Left = -40 },
                     },
                     new SmoothPath
                     {
