@@ -18,12 +18,13 @@ namespace osu.Game.Screens.Play
         private OsuSpriteText countText = null!;
 
         // These values were taken from Figma
-        private const float line_height = 3;
+        public const float LINE_HEIGHT = 3;
+
         private const float name_font_size = 10;
         private const float count_font_size = 14;
 
         // Make things look bigger without using Scale
-        private const float scale_factor = 1.5f;
+        public const float SCALE_FACTOR = 1.5f;
 
         [Resolved]
         private OsuColour colours { get; set; } = null!;
@@ -43,15 +44,15 @@ namespace osu.Game.Screens.Play
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     RelativeSizeAxes = Axes.X,
-                    Height = line_height * scale_factor,
+                    Height = LINE_HEIGHT * SCALE_FACTOR,
                     Alpha = 0.5f
                 },
                 keyNameText = new OsuSpriteText
                 {
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
-                    Position = new Vector2(0, -13) * scale_factor,
-                    Font = OsuFont.Torus.With(size: name_font_size * scale_factor, weight: FontWeight.Bold),
+                    Position = new Vector2(0, -13) * SCALE_FACTOR,
+                    Font = OsuFont.Torus.With(size: name_font_size * SCALE_FACTOR, weight: FontWeight.Bold),
                     Colour = colours.Blue0,
                     Text = Trigger.Name
                 },
@@ -59,14 +60,14 @@ namespace osu.Game.Screens.Play
                 {
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
-                    Font = OsuFont.Torus.With(size: count_font_size * scale_factor, weight: FontWeight.Bold),
+                    Font = OsuFont.Torus.With(size: count_font_size * SCALE_FACTOR, weight: FontWeight.Bold),
                 },
             };
 
             // Values from Figma didn't match visually
             // So these were just eyeballed
-            Height = 30 * scale_factor;
-            Width = 35 * scale_factor;
+            Height = 30 * SCALE_FACTOR;
+            Width = 35 * SCALE_FACTOR;
         }
 
         protected override void LoadComplete()
