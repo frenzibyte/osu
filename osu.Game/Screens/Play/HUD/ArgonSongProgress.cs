@@ -4,12 +4,16 @@
 using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Localisation.HUD;
 using osu.Game.Rulesets.Objects;
+using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Screens.Play.HUD
 {
@@ -30,41 +34,57 @@ namespace osu.Game.Screens.Play.HUD
 
         public ArgonSongProgress()
         {
-            Anchor = Anchor.BottomCentre;
-            Origin = Anchor.BottomCentre;
+            Anchor = Anchor.BottomLeft;
+            Origin = Anchor.BottomLeft;
             Masking = true;
             CornerRadius = 5;
             Children = new Drawable[]
             {
-                info = new SongProgressInfo
-                {
-                    Origin = Anchor.TopLeft,
-                    Name = "Info",
-                    Anchor = Anchor.TopLeft,
-                    RelativeSizeAxes = Axes.X,
-                    ShowProgress = false
-                },
-                bar = new ArgonSongProgressBar(bar_height)
-                {
-                    Name = "Seek bar",
-                    Origin = Anchor.BottomLeft,
-                    Anchor = Anchor.BottomLeft,
-                    OnSeek = time => player?.Seek(time),
-                },
-                graphContainer = new Container
+                new Circle
                 {
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
-                    Masking = true,
-                    CornerRadius = 5,
-                    Child = graph = new ArgonSongProgressGraph
+                    Colour = Color4.White.Opacity(0.5f),
+                    Size = new Vector2(48f, 2f),
+                    Y = -bar_height / 2f + 1f,
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding { Horizontal = 50f },
+                    Children = new Drawable[]
                     {
-                        Name = "Difficulty graph",
-                        RelativeSizeAxes = Axes.Both,
-                        Blending = BlendingParameters.Additive
-                    },
-                    RelativeSizeAxes = Axes.X,
-                },
+                        info = new SongProgressInfo
+                        {
+                            Origin = Anchor.TopLeft,
+                            Name = "Info",
+                            Anchor = Anchor.TopLeft,
+                            RelativeSizeAxes = Axes.X,
+                            ShowProgress = false
+                        },
+                        bar = new ArgonSongProgressBar(bar_height)
+                        {
+                            Name = "Seek bar",
+                            Origin = Anchor.BottomLeft,
+                            Anchor = Anchor.BottomLeft,
+                            OnSeek = time => player?.Seek(time),
+                        },
+                        graphContainer = new Container
+                        {
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Masking = true,
+                            CornerRadius = 5,
+                            Child = graph = new ArgonSongProgressGraph
+                            {
+                                Name = "Difficulty graph",
+                                RelativeSizeAxes = Axes.Both,
+                                Blending = BlendingParameters.Additive
+                            },
+                            RelativeSizeAxes = Axes.X,
+                        },
+                    }
+                }
             };
             RelativeSizeAxes = Axes.X;
         }

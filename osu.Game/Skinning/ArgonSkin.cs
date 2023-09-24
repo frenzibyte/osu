@@ -171,7 +171,6 @@ namespace osu.Game.Skinning
                                         const float padding = 10;
 
                                         songProgress.Position = new Vector2(0, -padding);
-                                        songProgress.Scale = new Vector2(0.9f, 1);
 
                                         if (keyCounter != null && hitError != null)
                                         {
