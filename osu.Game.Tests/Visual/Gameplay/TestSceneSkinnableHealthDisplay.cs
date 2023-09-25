@@ -19,6 +19,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         [Cached(typeof(HealthProcessor))]
         private HealthProcessor healthProcessor = new DrainingHealthProcessor(0);
 
+        protected override Drawable CreateArgonImplementation() => new ArgonHealthDisplay();
         protected override Drawable CreateDefaultImplementation() => new DefaultHealthDisplay();
         protected override Drawable CreateLegacyImplementation() => new LegacyHealthDisplay();
 

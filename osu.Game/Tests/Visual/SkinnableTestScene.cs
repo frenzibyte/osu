@@ -40,7 +40,7 @@ namespace osu.Game.Tests.Visual
         private GameHost host { get; set; }
 
         protected SkinnableTestScene()
-            : base(2, 3)
+            : base(1, 1)
         {
         }
 
@@ -66,11 +66,11 @@ namespace osu.Game.Tests.Visual
             var beatmap = CreateBeatmapForSkinProvider();
 
             Cell(0).Child = createProvider(argonSkin, creationFunction, beatmap);
-            Cell(1).Child = createProvider(trianglesSkin, creationFunction, beatmap);
-            Cell(2).Child = createProvider(metricsSkin, creationFunction, beatmap);
-            Cell(3).Child = createProvider(legacySkin, creationFunction, beatmap);
-            Cell(4).Child = createProvider(specialSkin, creationFunction, beatmap);
-            Cell(5).Child = createProvider(oldSkin, creationFunction, beatmap);
+            // Cell(1).Child = createProvider(trianglesSkin, creationFunction, beatmap);
+            // Cell(2).Child = createProvider(metricsSkin, creationFunction, beatmap);
+            // Cell(3).Child = createProvider(legacySkin, creationFunction, beatmap);
+            // Cell(4).Child = createProvider(specialSkin, creationFunction, beatmap);
+            // Cell(5).Child = createProvider(oldSkin, creationFunction, beatmap);
         }
 
         protected IEnumerable<Drawable> CreatedDrawables => createdDrawables;

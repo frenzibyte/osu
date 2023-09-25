@@ -122,6 +122,7 @@ namespace osu.Game.Skinning
                                     score.Origin = Anchor.TopCentre;
 
                                     // elements default to beneath the health bar
+                                    // todo: change this, argon health bar has changed.
                                     const float vertical_offset = 30;
 
                                     const float horizontal_padding = 20;
@@ -191,7 +192,6 @@ namespace osu.Game.Skinning
                                     new DefaultComboCounter(),
                                     new DefaultScoreCounter(),
                                     new DefaultAccuracyCounter(),
-                                    new DefaultHealthDisplay(),
                                     new ArgonSongProgress(),
                                     new ArgonKeyCounterDisplay(),
                                     new BarHitErrorMeter(),
