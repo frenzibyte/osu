@@ -82,34 +82,11 @@ namespace osu.Game.Rulesets.Objects
         [JsonIgnore]
         public bool Kiai { get; private set; }
 
-        private HitWindows hitWindows;
-
         /// <summary>
         /// The hit windows for this <see cref="HitObject"/>.
         /// </summary>
         [JsonIgnore]
-        public HitWindows HitWindows
-        {
-            get => hitWindows;
-            set
-            {
-                if (value != null)
-                {
-                    var defaultHitWindows = CreateHitWindows();
-
-                    foreach (var result in HitResultExtensions.ALL_TYPES.Where(r => r > HitResult.None && value.IsHitResultAllowed(r)))
-                    {
-                        if (!defaultHitWindows.IsHitResultAllowed(result))
-                        {
-                            throw new InvalidOperationException($@"The provided hit windows contains the result type '{result}' which is not supported by the ruleset. " +
-                                                                $@"To allow such type, consider updating the {nameof(HitWindows.IsHitResultAllowed)} method in the default hit windows of this object.");
-                        }
-                    }
-                }
-
-                hitWindows = value;
-            }
-        }
+        public HitWindows HitWindows { get; set; }
 
         private readonly List<HitObject> nestedHitObjects = new List<HitObject>();
 
@@ -173,7 +150,7 @@ namespace osu.Game.Rulesets.Objects
         {
             Kiai = controlPointInfo.EffectPointAt(StartTime + control_point_leniency).KiaiMode;
 
-            hitWindows ??= CreateHitWindows();
+            HitWindows ??= CreateHitWindows();
             HitWindows?.SetDifficulty(difficulty.OverallDifficulty);
         }
 
