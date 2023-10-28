@@ -457,7 +457,7 @@ namespace osu.Game.Rulesets.Osu.Tests
                 DefaultsApplied += _ =>
                 {
                     HeadCircle.HitWindows = new TestHitWindows();
-                    TailCircle.HitWindows = new TestHitWindows(HitResult.Perfect); // tail circle uses empty hit windows, which return "perfect" type on hit.
+                    TailCircle.HitWindows = new TestHitWindows();
 
                     HeadCircle.HitWindows.SetDifficulty(0);
                     TailCircle.HitWindows.SetDifficulty(0);
@@ -476,20 +476,15 @@ namespace osu.Game.Rulesets.Osu.Tests
 
         private class TestHitWindows : HitWindows
         {
-            private readonly HitResult upperType;
-
-            public TestHitWindows(HitResult upperType = HitResult.Great)
+            private static readonly DifficultyRange[] ranges =
             {
-                this.upperType = upperType;
-            }
-
-            public override bool IsHitResultAllowed(HitResult result) => result == upperType || result == HitResult.Miss;
-
-            protected override DifficultyRange[] GetRanges() => new[]
-            {
-                new DifficultyRange(upperType, 500, 500, 500),
+                new DifficultyRange(HitResult.Great, 500, 500, 500),
                 new DifficultyRange(HitResult.Miss, early_miss_window, early_miss_window, early_miss_window),
             };
+
+            public override bool IsHitResultAllowed(HitResult result) => result == HitResult.Great || result == HitResult.Miss;
+
+            protected override DifficultyRange[] GetRanges() => ranges;
         }
 
         private partial class ScoreAccessibleReplayPlayer : ReplayPlayer
