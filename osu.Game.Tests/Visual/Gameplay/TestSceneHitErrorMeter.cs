@@ -22,7 +22,6 @@ using osu.Game.Rulesets.Mania.Scoring;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Osu;
-using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Osu.Scoring;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Taiko.Scoring;
@@ -256,7 +255,7 @@ namespace osu.Game.Tests.Visual.Gameplay
 
         private void newJudgement(double offset = 0, HitResult result = HitResult.Perfect)
         {
-            scoreProcessor.ApplyResult(new JudgementResult(new HitCircle { HitWindows = drawableRuleset.HitWindows }, new Judgement())
+            scoreProcessor.ApplyResult(new JudgementResult(new HitObject { HitWindows = drawableRuleset.HitWindows }, new Judgement())
             {
                 TimeOffset = offset == 0 ? RNG.Next(-150, 150) : offset,
                 Type = result,
@@ -268,7 +267,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         {
             public HitWindows HitWindows;
 
-            public override IEnumerable<HitObject> Objects => new[] { new HitCircle { HitWindows = HitWindows } };
+            public override IEnumerable<HitObject> Objects => new[] { new HitObject { HitWindows = HitWindows } };
 
             public override event Action<JudgementResult> NewResult
             {
