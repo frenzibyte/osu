@@ -11,6 +11,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
+using osu.Framework.Logging;
 using osu.Game.Graphics.Sprites;
 using osuTK.Graphics;
 
@@ -79,6 +80,12 @@ namespace osu.Game.Graphics.UserInterface
         {
             updateState();
             base.OnHoverLost(e);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            Logger.Log($"Received click on drawable osu menu item \"{Item.Text.Value}\"");
+            return base.OnClick(e);
         }
 
         private void updateState()

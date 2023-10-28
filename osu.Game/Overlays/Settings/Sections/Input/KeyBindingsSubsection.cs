@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Localisation;
+using osu.Framework.Logging;
 using osu.Game.Database;
 using osu.Game.Input.Bindings;
 using osu.Game.Localisation;
@@ -57,13 +58,17 @@ namespace osu.Game.Overlays.Settings.Sections.Input
             {
                 Action = () =>
                 {
+                    Logger.Log("Called reset on all key bindings row.");
                     realm.Write(r =>
                     {
                         // can't use `RestoreDefaults()` for each key binding row here as it might trigger binding conflicts along the way.
                         foreach (var row in Children.OfType<KeyBindingRow>())
                         {
                             foreach (var (currentBinding, defaultBinding) in row.KeyBindings.Zip(row.Defaults))
+                            {
+                                Logger.Log($"Resetting key binding \"{(GlobalAction)currentBinding.Action}\" from \"{currentBinding.KeyCombinationString}\" back to \"{defaultBinding.ToString()}\"");
                                 r.Find<RealmKeyBinding>(currentBinding.ID)!.KeyCombinationString = defaultBinding.ToString();
+                            }
                         }
                     });
                     reloadAllBindings();

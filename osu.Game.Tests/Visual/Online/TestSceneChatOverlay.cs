@@ -653,14 +653,28 @@ namespace osu.Game.Tests.Visual.Online
 
         private void joinTestChannel(int i)
         {
+            int iterations = 0;
             AddStep($"Join test channel {i}", () => channelManager.JoinChannel(testChannels[i]));
-            AddUntilStep("wait for join completed", () => testChannels[i].Joined.Value);
+            AddUntilStep("wait for join completed", () =>
+            {
+                iterations++;
+                if (iterations >= 200)
+                    throw new Exception("Caught it.");
+                return testChannels[i].Joined.Value;
+            });
         }
 
         private void joinChannel(Channel channel)
         {
+            int iterations = 0;
             AddStep($"Join channel {channel}", () => channelManager.JoinChannel(channel));
-            AddUntilStep("wait for join completed", () => channel.Joined.Value);
+            AddUntilStep("wait for join completed", () =>
+            {
+                iterations++;
+                if (iterations >= 200)
+                    throw new Exception("Caught it.");
+                return channel.Joined.Value;
+            });
         }
 
         private void waitForChannel1Visible() =>

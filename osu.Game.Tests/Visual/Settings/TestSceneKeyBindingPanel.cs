@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
@@ -238,6 +239,9 @@ namespace osu.Game.Tests.Visual.Settings
             AddStep("click reset button for bindings", () =>
             {
                 var resetButton = panel.ChildrenOfType<ResetButton>().First();
+
+                if (!resetButton.Enabled.Value)
+                    throw new Exception();
 
                 resetButton.TriggerClick();
             });
