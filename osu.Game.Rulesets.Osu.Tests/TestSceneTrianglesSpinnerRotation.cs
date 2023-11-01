@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Osu.Tests
 
         protected override bool Autoplay => true;
 
-        protected override TestPlayer CreatePlayer(Ruleset ruleset) => new ScoreExposedPlayer();
+        protected override TestPlayer CreatePlayer(Ruleset ruleset, bool interpolateTime) => new ScoreExposedPlayer();
 
         protected override WorkingBeatmap CreateWorkingBeatmap(IBeatmap beatmap, Storyboard? storyboard = null)
             => new ClockBackedTestWorkingBeatmap(beatmap, storyboard, new FramedClock(new ManualClock { Rate = 1 }), audioManager);

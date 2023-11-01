@@ -55,21 +55,24 @@ namespace osu.Game.Beatmaps
 
         public bool IsRewinding { get; private set; }
 
-        public FramedBeatmapClock(bool applyOffsets, bool requireDecoupling, IClock? source = null)
+        public FramedBeatmapClock(bool applyOffsets, bool requireDecoupling, bool interpolateTime = true, IClock? source = null)
         {
             this.applyOffsets = applyOffsets;
 
-            decoupledTrack = new DecouplingFramedClock(source) { AllowDecoupling = requireDecoupling };
+            IFrameBasedClock preOffsetClock = decoupledTrack = new DecouplingFramedClock(source) { AllowDecoupling = requireDecoupling };
 
-            // An interpolating clock is used to ensure precise time values even when the host audio subsystem is not reporting
-            // high precision times (on windows there's generally only 5-10ms reporting intervals, as an example).
-            var interpolatedTrack = new InterpolatingFramedClock(decoupledTrack);
+            if (interpolateTime)
+            {
+                // An interpolating clock is used to ensure precise time values even when the host audio subsystem is not reporting
+                // high precision times (on windows there's generally only 5-10ms reporting intervals, as an example).
+                preOffsetClock = new InterpolatingFramedClock(preOffsetClock);
+            }
 
             if (applyOffsets)
             {
                 // Audio timings in general with newer BASS versions don't match stable.
                 // This only seems to be required on windows. We need to eventually figure out why, with a bit of luck.
-                platformOffsetClock = new OffsetCorrectionClock(interpolatedTrack, ExternalPauseFrequencyAdjust) { Offset = RuntimeInfo.OS == RuntimeInfo.Platform.Windows ? 15 : 0 };
+                platformOffsetClock = new OffsetCorrectionClock(preOffsetClock, ExternalPauseFrequencyAdjust) { Offset = RuntimeInfo.OS == RuntimeInfo.Platform.Windows ? 15 : 0 };
 
                 // User global offset (set in settings) should also be applied.
                 userGlobalOffsetClock = new OffsetCorrectionClock(platformOffsetClock, ExternalPauseFrequencyAdjust);
@@ -79,7 +82,7 @@ namespace osu.Game.Beatmaps
             }
             else
             {
-                finalClockSource = interpolatedTrack;
+                finalClockSource = preOffsetClock;
             }
         }
 

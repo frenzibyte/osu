@@ -49,7 +49,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         protected override TestPlayer CreatePlayer(Ruleset ruleset)
         {
             SelectedMods.Value = SelectedMods.Value.Concat(new[] { ruleset.GetAutoplayMod() }).ToArray();
-            return base.CreatePlayer(ruleset);
+            return base.CreatePlayer(ruleset, interpolateTime);
         }
 
         protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)

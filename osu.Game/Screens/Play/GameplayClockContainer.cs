@@ -56,13 +56,14 @@ namespace osu.Game.Screens.Play
         /// <param name="sourceClock">The source <see cref="IClock"/> used for timing.</param>
         /// <param name="applyOffsets">Whether to apply platform, user and beatmap offsets to the mix.</param>
         /// <param name="requireDecoupling">Whether decoupling logic should be applied on the source clock.</param>
-        public GameplayClockContainer(IClock sourceClock, bool applyOffsets, bool requireDecoupling)
+        /// <param name="interpolateTime">Whether time progression should be interpolated from source rather than matching it frame-by-frame.</param>
+        public GameplayClockContainer(IClock sourceClock, bool applyOffsets, bool requireDecoupling, bool interpolateTime = true)
         {
             RelativeSizeAxes = Axes.Both;
 
             InternalChildren = new Drawable[]
             {
-                GameplayClock = new FramedBeatmapClock(applyOffsets, requireDecoupling, sourceClock),
+                GameplayClock = new FramedBeatmapClock(applyOffsets, requireDecoupling, interpolateTime, sourceClock),
                 Content
             };
         }

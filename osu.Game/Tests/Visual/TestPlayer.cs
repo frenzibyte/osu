@@ -9,6 +9,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Screens;
+using osu.Game.Beatmaps;
 using osu.Game.Online.API;
 using osu.Game.Online.Rooms;
 using osu.Game.Online.Spectator;
@@ -50,6 +51,13 @@ namespace osu.Game.Tests.Visual
 
         [Resolved]
         private SpectatorClient spectatorClient { get; set; }
+
+        /// <summary>
+        /// Whether time progression of the gameplay clock should be interpolated from source rather than matching it frame-by-frame.
+        /// This should be set to <c>false</c> for test scenes that require stopping at precise moments.
+        /// Otherwise, the interpolation layer may nudge the clock forward than the desired timestamp, defying expectations.
+        /// </summary>
+        public bool InterpolateGameplayTime { get; init; } = true;
 
         public TestPlayer(bool allowPause = true, bool showResults = true, bool pauseOnFocusLost = false)
             : base(new PlayerConfiguration
@@ -103,6 +111,8 @@ namespace osu.Game.Tests.Visual
 
             ScoreProcessor.NewJudgement += r => Results.Add(r);
         }
+
+        protected override GameplayClockContainer CreateGameplayClockContainer(WorkingBeatmap beatmap, double gameplayStart) => new MasterGameplayClockContainer(beatmap, gameplayStart, InterpolateGameplayTime);
 
         public override bool OnExiting(ScreenExitEvent e)
         {
