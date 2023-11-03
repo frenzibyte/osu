@@ -206,7 +206,7 @@ namespace osu.Game.Rulesets.Osu.Tests
         private void addSeekStep(Func<double> getTime)
         {
             AddStep("seek to time", () => Player.GameplayClockContainer.Seek(getTime()));
-            AddUntilStep("wait for seek to finish", () => Precision.AlmostEquals(getTime(), Player.DrawableRuleset.FrameStableClock.CurrentTime, 100));
+            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(getTime()).Within(100));
         }
 
         protected override IBeatmap CreateBeatmap(RulesetInfo ruleset) => new Beatmap { HitObjects = createHitObjects() };

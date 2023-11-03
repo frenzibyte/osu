@@ -8,7 +8,6 @@ using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Timing;
-using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Osu.Objects;
@@ -44,7 +43,7 @@ namespace osu.Game.Tests.Visual.Gameplay
             AddStep($"seek to {time}", () => Beatmap.Value.Track.Seek(time));
 
             // Allow a few frames of lenience
-            AddUntilStep("wait for seek to finish", () => Precision.AlmostEquals(time, Player.DrawableRuleset.FrameStableClock.CurrentTime, 100));
+            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(time).Within(100));
         }
 
         protected override TestPlayer CreatePlayer(Ruleset ruleset)
