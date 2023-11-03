@@ -41,15 +41,13 @@ namespace osu.Game.Tests.Visual.Gameplay
         private void addSeekStep(double time)
         {
             AddStep($"seek to {time}", () => Beatmap.Value.Track.Seek(time));
-
-            // Allow a few frames of lenience
-            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(time).Within(100));
+            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(time));
         }
 
         protected override TestPlayer CreatePlayer(Ruleset ruleset)
         {
             SelectedMods.Value = SelectedMods.Value.Concat(new[] { ruleset.GetAutoplayMod() }).ToArray();
-            return base.CreatePlayer(ruleset, interpolateTime);
+            return new TestPlayer { InterpolateGameplayTime = false };
         }
 
         protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)

@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Osu.Tests
 
         protected override bool Autoplay => true;
 
-        protected override TestPlayer CreatePlayer(Ruleset ruleset, bool interpolateTime) => new ScoreExposedPlayer();
+        protected override TestPlayer CreatePlayer(Ruleset ruleset) => new ScoreExposedPlayer { InterpolateGameplayTime = false };
 
         protected override WorkingBeatmap CreateWorkingBeatmap(IBeatmap beatmap, Storyboard? storyboard = null)
             => new ClockBackedTestWorkingBeatmap(beatmap, storyboard, new FramedClock(new ManualClock { Rate = 1 }), audioManager);
@@ -108,7 +108,7 @@ namespace osu.Game.Rulesets.Osu.Tests
         private void addSeekStep(double time)
         {
             AddStep($"seek to {time}", () => Player.GameplayClockContainer.Seek(time));
-            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(time).Within(100));
+            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(time));
         }
 
         private void transformReplay(Func<Replay, Replay> replayTransformation) => AddStep("set replay", () =>

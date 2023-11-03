@@ -22,7 +22,7 @@ using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Osu.Objects.Drawables;
 using osu.Game.Rulesets.Osu.Skinning.Default;
 using osu.Game.Storyboards;
-using osu.Game.Tests;
+using osu.Game.Tests.Visual;
 using osuTK;
 
 namespace osu.Game.Rulesets.Osu.Tests
@@ -44,6 +44,8 @@ namespace osu.Game.Rulesets.Osu.Tests
         private const double duration_of_span = 3605;
         private const double fade_in_modifier = -1200;
 
+        protected override TestPlayer CreatePlayer(Ruleset ruleset) => new TestPlayer { InterpolateGameplayTime = false };
+
         protected override WorkingBeatmap CreateWorkingBeatmap(IBeatmap beatmap, Storyboard? storyboard = null)
             => new ClockBackedTestWorkingBeatmap(this.beatmap = beatmap, storyboard, new FramedClock(new ManualClock { Rate = 1 }), audioManager);
 
@@ -63,7 +65,6 @@ namespace osu.Game.Rulesets.Osu.Tests
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(2)]
-        [FlakyTest]
         /*
          * Fail rate around 0.15%
          *
@@ -97,7 +98,6 @@ namespace osu.Game.Rulesets.Osu.Tests
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(2)]
-        [FlakyTest]
         /*
          * Fail rate around 0.15%
          *
@@ -206,7 +206,7 @@ namespace osu.Game.Rulesets.Osu.Tests
         private void addSeekStep(Func<double> getTime)
         {
             AddStep("seek to time", () => Player.GameplayClockContainer.Seek(getTime()));
-            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(getTime()).Within(100));
+            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(getTime()));
         }
 
         protected override IBeatmap CreateBeatmap(RulesetInfo ruleset) => new Beatmap { HitObjects = createHitObjects() };

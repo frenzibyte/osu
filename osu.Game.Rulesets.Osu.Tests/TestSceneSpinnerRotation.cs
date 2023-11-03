@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Osu.Tests
 
         protected override bool Autoplay => true;
 
-        protected override TestPlayer CreatePlayer(Ruleset ruleset, bool interpolateTime) => new ScoreExposedPlayer();
+        protected override TestPlayer CreatePlayer(Ruleset ruleset) => new ScoreExposedPlayer { InterpolateGameplayTime = false };
 
         protected override WorkingBeatmap CreateWorkingBeatmap(IBeatmap beatmap, Storyboard? storyboard = null)
             => new ClockBackedTestWorkingBeatmap(beatmap, storyboard, new FramedClock(new ManualClock { Rate = 1 }), audioManager);
@@ -62,12 +62,12 @@ namespace osu.Game.Rulesets.Osu.Tests
             {
                 trackerRotationTolerance = Math.Abs(drawableSpinner.RotationTracker.Rotation * 0.1f);
             });
-            AddAssert("is disc rotation not almost 0", () => drawableSpinner.RotationTracker.Rotation, () => Is.Not.EqualTo(0).Within(100));
-            AddAssert("is disc rotation absolute not almost 0", () => drawableSpinner.Result.TotalRotation, () => Is.Not.EqualTo(0).Within(100));
+            AddAssert("is disc rotation not almost 0", () => drawableSpinner.RotationTracker.Rotation, () => Is.Not.EqualTo(0).Within(1));
+            AddAssert("is disc rotation absolute not almost 0", () => drawableSpinner.Result.TotalRotation, () => Is.Not.EqualTo(0).Within(1));
 
             addSeekStep(0);
             AddAssert("is disc rotation almost 0", () => drawableSpinner.RotationTracker.Rotation, () => Is.EqualTo(0).Within(trackerRotationTolerance));
-            AddAssert("is disc rotation absolute almost 0", () => drawableSpinner.Result.TotalRotation, () => Is.EqualTo(0).Within(100));
+            AddAssert("is disc rotation absolute almost 0", () => drawableSpinner.Result.TotalRotation, () => Is.EqualTo(0).Within(1));
         }
 
         [Test]
@@ -193,7 +193,7 @@ namespace osu.Game.Rulesets.Osu.Tests
         private void addSeekStep(double time)
         {
             AddStep($"seek to {time}", () => Player.GameplayClockContainer.Seek(time));
-            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(time).Within(100));
+            AddUntilStep("wait for seek to finish", () => Player.DrawableRuleset.FrameStableClock.CurrentTime, () => Is.EqualTo(time));
         }
 
         private void transformReplay(Func<Replay, Replay> replayTransformation) => AddStep("set replay", () =>

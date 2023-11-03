@@ -36,6 +36,8 @@ namespace osu.Game.Tests.Visual.Gameplay
         [Resolved]
         private AudioManager audio { get; set; } = null!;
 
+        protected override TestPlayer CreatePlayer(Ruleset ruleset) => new TestPlayer { InterpolateGameplayTime = false };
+
         protected override WorkingBeatmap CreateWorkingBeatmap(IBeatmap beatmap, Storyboard? storyboard = null)
             => new ClockBackedTestWorkingBeatmap(beatmap, storyboard, new FramedClock(new ManualClock { Rate = 1 }), audio);
 
