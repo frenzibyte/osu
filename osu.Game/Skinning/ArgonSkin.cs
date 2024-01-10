@@ -138,7 +138,7 @@ namespace osu.Game.Skinning
                                     {
                                         healthLine.Anchor = Anchor.TopLeft;
                                         healthLine.Origin = Anchor.CentreLeft;
-                                        healthLine.Y = health.Y + ArgonHealthDisplay.MAIN_PATH_RADIUS;
+                                        healthLine.Y = health.Y + ArgonHealthBar.PATH_RADIUS;
                                         healthLine.Size = new Vector2(45, 3);
                                     }
 

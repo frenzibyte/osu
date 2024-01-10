@@ -1,0 +1,366 @@
+// // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// // See the LICENCE file in the repository root for full licence text.
+//
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using osu.Framework.Allocation;
+// using osu.Framework.Bindables;
+// using osu.Framework.Caching;
+// using osu.Framework.Extensions.Color4Extensions;
+// using osu.Framework.Extensions.ObjectExtensions;
+// using osu.Framework.Graphics;
+// using osu.Framework.Graphics.Colour;
+// using osu.Framework.Graphics.Containers;
+// using osu.Framework.Layout;
+// using osu.Framework.Threading;
+// using osu.Framework.Utils;
+// using osu.Game.Configuration;
+// using osu.Game.Rulesets.Judgements;
+// using osu.Game.Rulesets.Objects;
+// using osu.Game.Rulesets.Objects.Types;
+// using osu.Game.Skinning;
+// using osuTK;
+// using osuTK.Graphics;
+//
+// namespace osu.Game.Screens.Play.HUD
+// {
+//     public partial class ArgonOldHealthDisplay : HealthDisplay, ISerialisableDrawable
+//     {
+//         public bool UsesFixedAnchor { get; set; }
+//
+//         [SettingSource("Bar height")]
+//         public BindableFloat BarHeight { get; } = new BindableFloat(20)
+//         {
+//             MinValue = 0,
+//             MaxValue = 64,
+//             Precision = 1
+//         };
+//
+//         [SettingSource("Use relative size")]
+//         public BindableBool UseRelativeSize { get; } = new BindableBool(true);
+//
+//         private ArgonHealthBar mainArgonHealthBar = null!;
+//
+//         /// <summary>
+//         /// Used to show a glow at the end of the main bar, or red "damage" area when missing.
+//         /// </summary>
+//         private ArgonHealthBar glowArgonHealthBar = null!;
+//
+//         private ArgonHealthBackgroundBar argonHealthBackground = null!;
+//
+//         private SliderPath barPath = null!;
+//
+//         private static readonly Colour4 main_bar_colour = Colour4.White;
+//         private static readonly Colour4 main_bar_glow_colour = Color4Extensions.FromHex("#7ED7FD").Opacity(0.5f);
+//
+//         private ScheduledDelegate? resetMissBarDelegate;
+//
+//         private bool displayingMiss => resetMissBarDelegate != null;
+//
+//         private readonly List<Vector2> missBarVertices = new List<Vector2>();
+//         private readonly List<Vector2> healthBarVertices = new List<Vector2>();
+//
+//         private double glowBarValue;
+//
+//         public double GlowBarValue
+//         {
+//             get => glowBarValue;
+//             set
+//             {
+//                 if (Precision.AlmostEquals(glowBarValue, value, 0.0001))
+//                     return;
+//
+//                 glowBarValue = value;
+//                 pathVerticesCache.Invalidate();
+//             }
+//         }
+//
+//         private double healthBarValue;
+//
+//         public double HealthBarValue
+//         {
+//             get => healthBarValue;
+//             set
+//             {
+//                 if (Precision.AlmostEquals(healthBarValue, value, 0.0001))
+//                     return;
+//
+//                 healthBarValue = value;
+//                 pathVerticesCache.Invalidate();
+//             }
+//         }
+//
+//         public const float MAIN_PATH_RADIUS = 10f;
+//
+//         private const float curve_start_offset = 70;
+//         private const float curve_end_offset = 40;
+//         private const float padding = MAIN_PATH_RADIUS * 2;
+//         private const float curve_smoothness = 10;
+//
+//         private readonly LayoutValue drawSizeLayout = new LayoutValue(Invalidation.DrawSize);
+//
+//         private readonly Cached pathVerticesCache = new Cached();
+//
+//         public ArgonOldHealthDisplay()
+//         {
+//             AddLayout(drawSizeLayout);
+//
+//             // sane default width specification.
+//             // this only matters if the health display isn't part of the default skin
+//             // (in which case width will be set to 300 via `ArgonSkin.GetDrawableComponent()`),
+//             // and if the user hasn't applied their own modifications
+//             // (which are applied via `SerialisedDrawableInfo.ApplySerialisedInfo()`).
+//             Width = 0.98f;
+//         }
+//
+//         [BackgroundDependencyLoader]
+//         private void load()
+//         {
+//             AutoSizeAxes = Axes.Y;
+//
+//             InternalChild = new Container
+//             {
+//                 AutoSizeAxes = Axes.Both,
+//                 Children = new Drawable[]
+//                 {
+//                     argonHealthBackground = new ArgonHealthBackgroundBar
+//                     {
+//                         PathRadius = MAIN_PATH_RADIUS,
+//                     },
+//                     glowArgonHealthBar = new ArgonHealthBar
+//                     {
+//                         BarColour = Color4.White,
+//                         GlowColour = main_bar_glow_colour,
+//                         Blending = BlendingParameters.Additive,
+//                         Colour = ColourInfo.GradientHorizontal(Color4.White.Opacity(0.8f), Color4.White),
+//                         PathRadius = 40f,
+//                         // Kinda hacky, but results in correct positioning with increased path radius.
+//                         Margin = new MarginPadding(-30f),
+//                         GlowPortion = 0.9f,
+//                     },
+//                     mainArgonHealthBar = new ArgonHealthBar
+//                     {
+//                         AutoSizeAxes = Axes.None,
+//                         RelativeSizeAxes = Axes.Both,
+//                         Blending = BlendingParameters.Additive,
+//                         BarColour = main_bar_colour,
+//                         GlowColour = main_bar_glow_colour,
+//                         PathRadius = MAIN_PATH_RADIUS,
+//                         GlowPortion = 0.6f,
+//                     },
+//                 }
+//             };
+//         }
+//
+//         private bool pendingMissAnimation;
+//
+//         protected override void LoadComplete()
+//         {
+//             base.LoadComplete();
+//
+//             HealthProcessor.NewJudgement += onNewJudgement;
+//             Current.BindValueChanged(onCurrentChanged, true);
+//
+//             // we're about to set `RelativeSizeAxes` depending on the value of `UseRelativeSize`.
+//             // setting `RelativeSizeAxes` internally transforms absolute sizing to relative and back to keep the size the same,
+//             // but that is not what we want in this case, since the width at this point is valid in the *target* sizing mode.
+//             // to counteract this, store the numerical value here, and restore it after setting the correct initial relative sizing axes.
+//             float previousWidth = Width;
+//             UseRelativeSize.BindValueChanged(v => RelativeSizeAxes = v.NewValue ? Axes.X : Axes.None, true);
+//             Width = previousWidth;
+//
+//             BarHeight.BindValueChanged(_ => updatePath(), true);
+//         }
+//
+//         private void onNewJudgement(JudgementResult result) => pendingMissAnimation |= !result.IsHit;
+//
+//         private void onCurrentChanged(ValueChangedEvent<double> valueChangedEvent)
+//             // schedule display updates one frame later to ensure we know the judgement result causing this change (if there is one).
+//             => Scheduler.AddOnce(updateDisplay);
+//
+//         private void updateDisplay()
+//         {
+//             double newHealth = Current.Value;
+//
+//             if (newHealth >= GlowBarValue)
+//                 finishMissDisplay();
+//
+//             double time = newHealth > GlowBarValue ? 500 : 250;
+//
+//             // TODO: this should probably use interpolation in update.
+//             this.TransformTo(nameof(HealthBarValue), newHealth, time, Easing.OutQuint);
+//
+//             if (pendingMissAnimation && newHealth < GlowBarValue)
+//                 triggerMissDisplay();
+//
+//             pendingMissAnimation = false;
+//
+//             if (!displayingMiss)
+//                 this.TransformTo(nameof(GlowBarValue), newHealth, time, Easing.OutQuint);
+//         }
+//
+//         protected override void Update()
+//         {
+//             base.Update();
+//
+//             if (!drawSizeLayout.IsValid)
+//             {
+//                 updatePath();
+//                 drawSizeLayout.Validate();
+//             }
+//
+//             if (!pathVerticesCache.IsValid)
+//                 updatePathVertices();
+//
+//             mainArgonHealthBar.Alpha = (float)Interpolation.DampContinuously(mainArgonHealthBar.Alpha, Current.Value > 0 ? 1 : 0, 40, Time.Elapsed);
+//             glowArgonHealthBar.Alpha = (float)Interpolation.DampContinuously(glowArgonHealthBar.Alpha, GlowBarValue > 0 ? 1 : 0, 40, Time.Elapsed);
+//         }
+//
+//         protected override void FinishInitialAnimation(double value)
+//         {
+//             base.FinishInitialAnimation(value);
+//             this.TransformTo(nameof(HealthBarValue), value, 500, Easing.OutQuint);
+//             this.TransformTo(nameof(GlowBarValue), value, 250, Easing.OutQuint);
+//         }
+//
+//         protected override void Flash()
+//         {
+//             base.Flash();
+//
+//             mainArgonHealthBar.TransformTo(nameof(ArgonHealthBar.GlowColour), main_bar_glow_colour.Opacity(0.8f))
+//                    .TransformTo(nameof(ArgonHealthBar.GlowColour), main_bar_glow_colour, 300, Easing.OutQuint);
+//
+//             if (!displayingMiss)
+//             {
+//                 glowArgonHealthBar.TransformTo(nameof(ArgonHealthBar.BarColour), Colour4.White, 30, Easing.OutQuint)
+//                        .Then()
+//                        .TransformTo(nameof(ArgonHealthBar.BarColour), main_bar_colour, 1000, Easing.OutQuint);
+//
+//                 glowArgonHealthBar.TransformTo(nameof(ArgonHealthBar.GlowColour), Colour4.White, 30, Easing.OutQuint)
+//                        .Then()
+//                        .TransformTo(nameof(ArgonHealthBar.GlowColour), main_bar_glow_colour, 300, Easing.OutQuint);
+//             }
+//         }
+//
+//         private void triggerMissDisplay()
+//         {
+//             resetMissBarDelegate?.Cancel();
+//             resetMissBarDelegate = null;
+//
+//             this.Delay(500).Schedule(() =>
+//             {
+//                 this.TransformTo(nameof(GlowBarValue), Current.Value, 300, Easing.OutQuint);
+//                 finishMissDisplay();
+//             }, out resetMissBarDelegate);
+//
+//             glowArgonHealthBar.TransformTo(nameof(ArgonHealthBar.BarColour), new Colour4(255, 147, 147, 255), 100, Easing.OutQuint).Then()
+//                    .TransformTo(nameof(ArgonHealthBar.BarColour), new Colour4(255, 93, 93, 255), 800, Easing.OutQuint);
+//
+//             glowArgonHealthBar.TransformTo(nameof(ArgonHealthBar.GlowColour), new Colour4(253, 0, 0, 255).Lighten(0.2f))
+//                    .TransformTo(nameof(ArgonHealthBar.GlowColour), new Colour4(253, 0, 0, 255), 800, Easing.OutQuint);
+//         }
+//
+//         private void finishMissDisplay()
+//         {
+//             if (!displayingMiss)
+//                 return;
+//
+//             if (Current.Value > 0)
+//             {
+//                 glowArgonHealthBar.TransformTo(nameof(ArgonHealthBar.BarColour), main_bar_colour, 300, Easing.In);
+//                 glowArgonHealthBar.TransformTo(nameof(ArgonHealthBar.GlowColour), main_bar_glow_colour, 300, Easing.In);
+//             }
+//
+//             resetMissBarDelegate?.Cancel();
+//             resetMissBarDelegate = null;
+//         }
+//
+//         private void updatePath()
+//         {
+//             float usableWidth = DrawWidth - padding;
+//
+//             if (usableWidth < 0) enforceMinimumWidth();
+//
+//             // the display starts curving at `curve_start_offset` units from the right and ends curving at `curve_end_offset`.
+//             // to ensure that the curve is symmetric when it starts being narrow enough, add a `curve_end_offset` to the left side too.
+//             const float rescale_cutoff = curve_start_offset + curve_end_offset;
+//
+//             float barLength = Math.Max(DrawWidth - padding, rescale_cutoff);
+//             float curveStart = barLength - curve_start_offset;
+//             float curveEnd = barLength - curve_end_offset;
+//
+//             Vector2 diagonalDir = (new Vector2(curveEnd, BarHeight.Value) - new Vector2(curveStart, 0)).Normalized();
+//
+//             barPath = new SliderPath(new[]
+//             {
+//                 new PathControlPoint(new Vector2(0, 0), PathType.LINEAR),
+//                 new PathControlPoint(new Vector2(curveStart - curve_smoothness, 0), PathType.BEZIER),
+//                 new PathControlPoint(new Vector2(curveStart, 0)),
+//                 new PathControlPoint(new Vector2(curveStart, 0) + diagonalDir * curve_smoothness, PathType.LINEAR),
+//                 new PathControlPoint(new Vector2(curveEnd, BarHeight.Value) - diagonalDir * curve_smoothness, PathType.BEZIER),
+//                 new PathControlPoint(new Vector2(curveEnd, BarHeight.Value)),
+//                 new PathControlPoint(new Vector2(curveEnd + curve_smoothness, BarHeight.Value), PathType.LINEAR),
+//                 new PathControlPoint(new Vector2(barLength, BarHeight.Value)),
+//             });
+//
+//             if (DrawWidth - padding < rescale_cutoff)
+//                 rescalePathProportionally();
+//
+//             List<Vector2> vertices = new List<Vector2>();
+//             barPath.GetPathToProgress(vertices, 0.0, 1.0);
+//
+//             argonHealthBackground.Vertices = vertices;
+//             mainArgonHealthBar.Vertices = vertices;
+//             glowArgonHealthBar.Vertices = vertices;
+//
+//             updatePathVertices();
+//
+//             void enforceMinimumWidth()
+//             {
+//                 // Switch to absolute in order to be able to define a minimum width.
+//                 // Then switch back is required. Framework will handle the conversion for us.
+//                 Axes relativeAxes = RelativeSizeAxes;
+//                 RelativeSizeAxes = Axes.None;
+//
+//                 Width = padding;
+//
+//                 RelativeSizeAxes = relativeAxes;
+//             }
+//
+//             void rescalePathProportionally()
+//             {
+//                 foreach (var point in barPath.ControlPoints)
+//                     point.Position = new Vector2(point.Position.X / barLength * (DrawWidth - padding), point.Position.Y);
+//             }
+//         }
+//
+//         private void updatePathVertices()
+//         {
+//             barPath.GetPathToProgress(healthBarVertices, 0.0, healthBarValue);
+//             barPath.GetPathToProgress(missBarVertices, healthBarValue, Math.Max(glowBarValue, healthBarValue));
+//
+//             if (healthBarVertices.Count == 0)
+//                 healthBarVertices.Add(Vector2.Zero);
+//
+//             if (missBarVertices.Count == 0)
+//                 missBarVertices.Add(Vector2.Zero);
+//
+//             glowArgonHealthBar.Vertices = missBarVertices.Select(v => v - missBarVertices[0]).ToList();
+//             glowArgonHealthBar.Position = missBarVertices[0];
+//
+//             mainArgonHealthBar.Vertices = healthBarVertices.Select(v => v - healthBarVertices[0]).ToList();
+//             mainArgonHealthBar.Position = healthBarVertices[0];
+//
+//             pathVerticesCache.Validate();
+//         }
+//
+//         protected override void Dispose(bool isDisposing)
+//         {
+//             base.Dispose(isDisposing);
+//
+//             if (HealthProcessor.IsNotNull())
+//                 HealthProcessor.NewJudgement -= onNewJudgement;
+//         }
+//     }
+// }
