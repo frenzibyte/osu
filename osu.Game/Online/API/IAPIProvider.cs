@@ -30,8 +30,11 @@ namespace osu.Game.Online.API
         IBindable<UserActivity> Activity { get; }
 
         /// <summary>
-        /// The current user's online statistics.
+        /// The current user's online statistics for the ruleset selected game-wide.
         /// </summary>
+        /// <remarks>
+        /// This is set to null when waiting for the server to return the user's statistics.
+        /// </remarks>
         IBindable<UserStatistics?> Statistics { get; }
 
         /// <summary>

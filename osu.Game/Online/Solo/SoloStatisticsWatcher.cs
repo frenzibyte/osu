@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.ObjectExtensions;
@@ -11,8 +10,8 @@ using osu.Framework.Graphics;
 using osu.Game.Extensions;
 using osu.Game.Online.API;
 using osu.Game.Online.API.Requests;
-using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Online.Spectator;
+using osu.Game.Rulesets;
 using osu.Game.Scoring;
 using osu.Game.Users;
 
@@ -20,6 +19,7 @@ namespace osu.Game.Online.Solo
 {
     /// <summary>
     /// A persistent component that binds to the spectator server and API in order to deliver updates about the logged in user's gameplay statistics.
+    /// This also handles updating the <see cref="IAPIProvider.Statistics"/> bindable based on changes to the local user, game-wide ruleset, or processed gameplay scores.
     /// </summary>
     public partial class SoloStatisticsWatcher : Component
     {
@@ -29,18 +29,29 @@ namespace osu.Game.Online.Solo
         [Resolved]
         private IAPIProvider api { get; set; } = null!;
 
+        [Resolved]
+        private IBindable<RulesetInfo> ruleset { get; set; } = null!;
+
         public Bindable<UserStatistics?> Statistics { get; } = new Bindable<UserStatistics?>();
 
         private readonly Dictionary<long, StatisticsUpdateCallback> callbacks = new Dictionary<long, StatisticsUpdateCallback>();
         private long? lastProcessedScoreId;
 
-        private Dictionary<string, UserStatistics>? latestStatistics;
+        private readonly Dictionary<string, UserStatistics> latestStatistics = new Dictionary<string, UserStatistics>();
 
         protected override void LoadComplete()
         {
             base.LoadComplete();
 
-            api.LocalUser.BindValueChanged(user => onUserChanged(user.NewValue), true);
+            Statistics.BindValueChanged(v =>
+            {
+                if (api.LocalUser.Value != null && v.NewValue != null)
+                    api.LocalUser.Value.Statistics = v.NewValue;
+            });
+
+            api.LocalUser.BindValueChanged(_ => onUserChanged(), true);
+            ruleset.BindValueChanged(_ => onRulesetChanged(), true);
+
             spectatorClient.OnUserScoreProcessed += userScoreProcessed;
         }
 
@@ -64,7 +75,7 @@ namespace osu.Game.Online.Solo
 
                 if (lastProcessedScoreId == score.OnlineID)
                 {
-                    requestStatisticsUpdate(api.LocalUser.Value.Id, callback);
+                    requestStatisticsUpdate(api.LocalUser.Value.Id, callback.Score.Ruleset, callback);
                     return;
                 }
 
@@ -74,36 +85,32 @@ namespace osu.Game.Online.Solo
             return new InvokeOnDisposal(() => Schedule(() => callbacks.Remove(score.OnlineID)));
         }
 
-        private void onUserChanged(APIUser? localUser) => Schedule(() =>
+        private void onUserChanged() => Schedule(() =>
         {
             callbacks.Clear();
             lastProcessedScoreId = null;
-            latestStatistics = null;
+            latestStatistics.Clear();
 
-            if (localUser == null || localUser.OnlineID <= 1)
-                return;
-
-            var userRequest = new GetUsersRequest(new[] { localUser.OnlineID });
-            userRequest.Success += initialiseUserStatistics;
-            api.Queue(userRequest);
+            updateStatisticsBindable();
         });
 
-        private void initialiseUserStatistics(GetUsersResponse response) => Schedule(() =>
+        private void onRulesetChanged() => Schedule(updateStatisticsBindable);
+
+        private void updateStatisticsBindable()
         {
-            var user = response.Users.SingleOrDefault();
+            Statistics.Value = null;
 
-            // possible if the user is restricted or similar.
-            if (user == null)
-                return;
-
-            latestStatistics = new Dictionary<string, UserStatistics>();
-
-            if (user.RulesetsStatistics != null)
+            if (api.LocalUser.Value == null || api.LocalUser.Value.OnlineID <= 1 || ruleset.Value?.IsLegacyRuleset() != true)
             {
-                foreach (var rulesetStats in user.RulesetsStatistics)
-                    latestStatistics.Add(rulesetStats.Key, rulesetStats.Value);
+                Statistics.Value = new UserStatistics();
+                return;
             }
-        });
+
+            if (!latestStatistics.TryGetValue(ruleset.Value.ShortName, out var statistics))
+                requestStatisticsUpdate(api.LocalUser.Value.OnlineID, ruleset.Value);
+            else
+                Statistics.Value = statistics;
+        }
 
         private void userScoreProcessed(int userId, long scoreId)
         {
@@ -115,33 +122,33 @@ namespace osu.Game.Online.Solo
             if (!callbacks.TryGetValue(scoreId, out var callback))
                 return;
 
-            requestStatisticsUpdate(userId, callback);
+            requestStatisticsUpdate(userId, callback.Score.Ruleset, callback);
             callbacks.Remove(scoreId);
         }
 
-        private void requestStatisticsUpdate(int userId, StatisticsUpdateCallback callback)
+        private void requestStatisticsUpdate(int userId, IRulesetInfo ruleset, StatisticsUpdateCallback? callback = null)
         {
-            var request = new GetUserRequest(userId, callback.Score.Ruleset);
-            request.Success += user => Schedule(() => dispatchStatisticsUpdate(callback, user.Statistics));
+            var request = new GetUserRequest(userId, ruleset);
+            request.Success += user => Schedule(() => dispatchStatisticsUpdate(user.Statistics, ruleset, callback));
             api.Queue(request);
         }
 
-        private void dispatchStatisticsUpdate(StatisticsUpdateCallback callback, UserStatistics updatedStatistics)
+        private void dispatchStatisticsUpdate(UserStatistics updatedStatistics, IRulesetInfo statisticsRuleset, StatisticsUpdateCallback? callback = null)
         {
-            string rulesetName = callback.Score.Ruleset.ShortName;
+            if (callback != null)
+            {
+                latestStatistics.TryGetValue(statisticsRuleset.ShortName, out UserStatistics? latestRulesetStatistics);
+                latestRulesetStatistics ??= new UserStatistics();
 
-            api.UpdateStatistics(updatedStatistics);
+                var update = new SoloStatisticsUpdate(callback.Score, latestRulesetStatistics, updatedStatistics);
+                callback.OnUpdateReady.Invoke(update);
+            }
 
-            if (latestStatistics == null)
-                return;
+            latestStatistics[statisticsRuleset.ShortName] = updatedStatistics;
 
-            latestStatistics.TryGetValue(rulesetName, out UserStatistics? latestRulesetStatistics);
-            latestRulesetStatistics ??= new UserStatistics();
-
-            var update = new SoloStatisticsUpdate(callback.Score, latestRulesetStatistics, updatedStatistics);
-            callback.OnUpdateReady.Invoke(update);
-
-            latestStatistics[rulesetName] = updatedStatistics;
+            // the statistics ruleset may not match the game-wide ruleset bindable (assume player changed their ruleset before the score finished processing).
+            if (statisticsRuleset.ShortName == ruleset.Value.ShortName)
+                Statistics.Value = updatedStatistics;
         }
 
         protected override void Dispose(bool isDisposing)
