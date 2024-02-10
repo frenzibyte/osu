@@ -7,6 +7,7 @@ using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Online.API;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays.Profile.Header.Components;
@@ -29,6 +30,7 @@ namespace osu.Game.Users
 
         private ProfileValueDisplay globalRankDisplay = null!;
         private ProfileValueDisplay countryRankDisplay = null!;
+        private LoadingLayer loadingLayer = null!;
 
         private readonly IBindable<UserStatistics?> statistics = new Bindable<UserStatistics?>();
 
@@ -47,6 +49,7 @@ namespace osu.Game.Users
             statistics.BindTo(api.Statistics);
             statistics.BindValueChanged(stats =>
             {
+                loadingLayer.State.Value = stats.NewValue == null ? Visibility.Visible : Visibility.Hidden;
                 globalRankDisplay.Content = stats.NewValue?.GlobalRank?.ToLocalisableString("\\##,##0") ?? "-";
                 countryRankDisplay.Content = stats.NewValue?.CountryRank?.ToLocalisableString("\\##,##0") ?? "-";
             }, true);
@@ -173,7 +176,8 @@ namespace osu.Game.Users
                                 }
                             }
                         }
-                    }
+                    },
+                    loadingLayer = new LoadingLayer(true),
                 }
             };
 
