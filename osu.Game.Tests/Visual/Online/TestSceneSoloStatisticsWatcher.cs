@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Testing;
@@ -15,6 +14,7 @@ using osu.Game.Online.Solo;
 using osu.Game.Online.Spectator;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Osu;
+using osu.Game.Rulesets.Taiko;
 using osu.Game.Scoring;
 using osu.Game.Users;
 
@@ -32,7 +32,6 @@ namespace osu.Game.Tests.Visual.Online
 
         private DummyAPIAccess dummyAPI => (DummyAPIAccess)API;
 
-        private Action<GetUsersRequest>? handleGetUsersRequest;
         private Action<GetUserRequest>? handleGetUserRequest;
 
         private IDisposable? subscription;
@@ -42,46 +41,16 @@ namespace osu.Game.Tests.Visual.Online
         [SetUpSteps]
         public void SetUpSteps()
         {
+            AddStep("set ruleset to osu", () => Ruleset.Value = new OsuRuleset().RulesetInfo);
             AddStep("clear server-side stats", () => serverSideStatistics.Clear());
             AddStep("set up request handling", () =>
             {
                 handleGetUserRequest = null;
-                handleGetUsersRequest = null;
 
                 dummyAPI.HandleRequest = request =>
                 {
                     switch (request)
                     {
-                        case GetUsersRequest getUsersRequest:
-                            if (handleGetUsersRequest != null)
-                            {
-                                handleGetUsersRequest?.Invoke(getUsersRequest);
-                            }
-                            else
-                            {
-                                int userId = getUsersRequest.UserIds.Single();
-                                var response = new GetUsersResponse
-                                {
-                                    Users = new List<APIUser>
-                                    {
-                                        new APIUser
-                                        {
-                                            Id = userId,
-                                            RulesetsStatistics = new Dictionary<string, UserStatistics>
-                                            {
-                                                ["osu"] = tryGetStatistics(userId, "osu"),
-                                                ["taiko"] = tryGetStatistics(userId, "taiko"),
-                                                ["fruits"] = tryGetStatistics(userId, "fruits"),
-                                                ["mania"] = tryGetStatistics(userId, "mania"),
-                                            }
-                                        }
-                                    }
-                                };
-                                getUsersRequest.TriggerSuccess(response);
-                            }
-
-                            return true;
-
                         case GetUserRequest getUserRequest:
                             if (handleGetUserRequest != null)
                             {
@@ -109,7 +78,10 @@ namespace osu.Game.Tests.Visual.Online
 
             AddStep("create watcher", () =>
             {
-                Child = watcher = new SoloStatisticsWatcher();
+                Child = watcher = new SoloStatisticsWatcher
+                {
+                    Statistics = { BindTarget = ((DummyAPIAccess)API).Statistics }
+                };
             });
         }
 
@@ -290,6 +262,39 @@ namespace osu.Game.Tests.Visual.Online
             AddUntilStep("update received", () => update != null);
             AddAssert("local user values are correct", () => dummyAPI.LocalUser.Value.Statistics.TotalScore, () => Is.EqualTo(5_000_000));
             AddAssert("statistics values are correct", () => dummyAPI.Statistics.Value!.TotalScore, () => Is.EqualTo(5_000_000));
+        }
+
+        [Test]
+        public void TestGlobalStatisticsUpdatedAfterChangingRuleset()
+        {
+            int userId = getUserId();
+            long scoreId = getScoreId();
+            setUpUser(userId);
+
+            AddAssert("local user values match osu", () => dummyAPI.LocalUser.Value.Statistics.TotalScore, () => Is.EqualTo(4_000_000));
+            AddAssert("statistics values match osu", () => dummyAPI.Statistics.Value!.TotalScore, () => Is.EqualTo(4_000_000));
+
+            var ruleset = new OsuRuleset().RulesetInfo;
+
+            SoloStatisticsUpdate? update = null;
+            registerForUpdates(scoreId, ruleset, receivedUpdate => update = receivedUpdate);
+
+            AddStep("change ruleset to taiko", () => Ruleset.Value = new TaikoRuleset().RulesetInfo);
+
+            AddAssert("local user values match taiko", () => dummyAPI.LocalUser.Value.Statistics.TotalScore, () => Is.EqualTo(3_000_000));
+            AddAssert("statistics values match taiko", () => dummyAPI.Statistics.Value!.TotalScore, () => Is.EqualTo(3_000_000));
+
+            feignScoreProcessing(userId, ruleset, 5_000_000);
+
+            AddStep("signal score processed", () => ((ISpectatorClient)spectatorClient).UserScoreProcessed(userId, scoreId));
+            AddUntilStep("update received", () => update != null);
+
+            AddAssert("local user values still match taiko", () => dummyAPI.LocalUser.Value.Statistics.TotalScore, () => Is.EqualTo(3_000_000));
+            AddAssert("statistics values still match taiko", () => dummyAPI.Statistics.Value!.TotalScore, () => Is.EqualTo(3_000_000));
+
+            AddAssert("statistics update came from osu", () => update!.Score.Ruleset.ShortName, () => Is.EqualTo("osu"));
+            AddAssert("old statistic update match osu", () => update!.Before.TotalScore, () => Is.EqualTo(4_000_000));
+            AddAssert("new statistic update match osu", () => update!.After.TotalScore, () => Is.EqualTo(5_000_000));
         }
 
         private int nextUserId = 2000;
