@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
 using osu.Game.Extensions;
@@ -27,6 +28,8 @@ namespace osu.Game.Online.Solo
 
         [Resolved]
         private IAPIProvider api { get; set; } = null!;
+
+        public Bindable<UserStatistics?> Statistics { get; } = new Bindable<UserStatistics?>();
 
         private readonly Dictionary<long, StatisticsUpdateCallback> callbacks = new Dictionary<long, StatisticsUpdateCallback>();
         private long? lastProcessedScoreId;

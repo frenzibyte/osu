@@ -124,11 +124,6 @@ namespace osu.Game.Online.API
         void Logout();
 
         /// <summary>
-        /// Sets Statistics bindable.
-        /// </summary>
-        void UpdateStatistics(UserStatistics newStatistics);
-
-        /// <summary>
         /// Constructs a new <see cref="IHubClientConnector"/>. May be null if not supported.
         /// </summary>
         /// <param name="clientName">The name of the client this connector connects for, used for logging.</param>

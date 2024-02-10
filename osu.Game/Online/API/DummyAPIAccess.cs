@@ -173,14 +173,6 @@ namespace osu.Game.Online.API
             LocalUser.Value = new GuestUser();
         }
 
-        public void UpdateStatistics(UserStatistics newStatistics)
-        {
-            Statistics.Value = newStatistics;
-
-            if (IsLoggedIn)
-                LocalUser.Value.Statistics = newStatistics;
-        }
-
         public IHubClientConnector? GetHubConnector(string clientName, string endpoint, bool preferMessagePack) => null;
 
         public IChatClient GetChatClient() => new TestChatClientConnector(this);

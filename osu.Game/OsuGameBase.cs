@@ -330,6 +330,14 @@ namespace osu.Game
             dependencies.CacheAs(metadataClient = new OnlineMetadataClient(endpoints));
             dependencies.CacheAs(soloStatisticsWatcher = new SoloStatisticsWatcher());
 
+            if (API is APIAccess apiAccess)
+            {
+                soloStatisticsWatcher.Statistics.BindTo(apiAccess.Statistics);
+
+                // add api components to hierarchy.
+                base.Content.Add(apiAccess);
+            }
+
             base.Content.Add(new BeatmapOnlineChangeIngest(beatmapUpdater, realm, metadataClient));
 
             BeatmapManager.ProcessBeatmap = (beatmapSet, scope) => beatmapUpdater.Process(beatmapSet, scope);
@@ -363,10 +371,6 @@ namespace osu.Game
 
             dependencies.CacheAs<IBindable<WorkingBeatmap>>(Beatmap);
             dependencies.CacheAs(Beatmap);
-
-            // add api components to hierarchy.
-            if (API is APIAccess apiAccess)
-                base.Content.Add(apiAccess);
 
             base.Content.Add(SpectatorClient);
             base.Content.Add(MultiplayerClient);
