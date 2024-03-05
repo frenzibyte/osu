@@ -7,10 +7,11 @@ using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Screens.Play.HUD;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultComboCounter : ComboCounter
+    public partial class TrianglesComboCounter : ComboCounter
     {
         [BackgroundDependencyLoader]
         private void load(OsuColour colours, ScoreProcessor scoreProcessor)

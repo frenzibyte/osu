@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Skinning;
+using osu.Game.Skinning.Triangles;
 
 namespace osu.Game.Tests.Visual.Gameplay
 {
@@ -18,7 +19,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         private ScoreProcessor scoreProcessor = new ScoreProcessor(new OsuRuleset());
 
         protected override Drawable CreateArgonImplementation() => new ArgonComboCounter();
-        protected override Drawable CreateDefaultImplementation() => new DefaultComboCounter();
+        protected override Drawable CreateDefaultImplementation() => new TrianglesComboCounter();
         protected override Drawable CreateLegacyImplementation() => new LegacyComboCounter();
 
         [Test]

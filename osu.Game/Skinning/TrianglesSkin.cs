@@ -89,7 +89,7 @@ namespace osu.Game.Skinning
                             {
                                 var score = container.OfType<DefaultScoreCounter>().FirstOrDefault();
                                 var accuracy = container.OfType<DefaultAccuracyCounter>().FirstOrDefault();
-                                var combo = container.OfType<DefaultComboCounter>().FirstOrDefault();
+                                var combo = container.OfType<TrianglesComboCounter>().FirstOrDefault();
                                 var ppCounter = container.OfType<PerformancePointsCounter>().FirstOrDefault();
                                 var songProgress = container.OfType<DefaultSongProgress>().FirstOrDefault();
                                 var keyCounter = container.OfType<DefaultKeyCounterDisplay>().FirstOrDefault();
@@ -160,7 +160,7 @@ namespace osu.Game.Skinning
                             {
                                 Children = new Drawable[]
                                 {
-                                    new DefaultComboCounter(),
+                                    new TrianglesComboCounter(),
                                     new DefaultScoreCounter(),
                                     new DefaultAccuracyCounter(),
                                     new DefaultHealthDisplay(),
