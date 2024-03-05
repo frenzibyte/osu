@@ -3,11 +3,11 @@
 
 using osu.Framework.Allocation;
 using osu.Game.Graphics;
-using osu.Game.Skinning;
+using osu.Game.Screens.Play.HUD;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultAccuracyCounter : GameplayAccuracyCounter, ISerialisableDrawable
+    public partial class TrianglesAccuracyCounter : GameplayAccuracyCounter, ISerialisableDrawable
     {
         public bool UsesFixedAnchor { get; set; }
 

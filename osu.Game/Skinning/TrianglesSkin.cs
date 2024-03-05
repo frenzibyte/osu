@@ -88,7 +88,7 @@ namespace osu.Game.Skinning
                             var skinnableTargetWrapper = new DefaultSkinComponentsContainer(container =>
                             {
                                 var score = container.OfType<TrianglesScoreCounter>().FirstOrDefault();
-                                var accuracy = container.OfType<DefaultAccuracyCounter>().FirstOrDefault();
+                                var accuracy = container.OfType<TrianglesAccuracyCounter>().FirstOrDefault();
                                 var combo = container.OfType<TrianglesComboCounter>().FirstOrDefault();
                                 var ppCounter = container.OfType<PerformancePointsCounter>().FirstOrDefault();
                                 var songProgress = container.OfType<DefaultSongProgress>().FirstOrDefault();
@@ -162,7 +162,7 @@ namespace osu.Game.Skinning
                                 {
                                     new TrianglesComboCounter(),
                                     new TrianglesScoreCounter(),
-                                    new DefaultAccuracyCounter(),
+                                    new TrianglesAccuracyCounter(),
                                     new DefaultHealthDisplay(),
                                     new DefaultSongProgress(),
                                     new DefaultKeyCounterDisplay(),

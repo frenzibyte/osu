@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Skinning;
+using osu.Game.Skinning.Triangles;
 
 namespace osu.Game.Tests.Visual.Gameplay
 {
@@ -17,7 +18,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         private ScoreProcessor scoreProcessor = new ScoreProcessor(new OsuRuleset());
 
         protected override Drawable CreateArgonImplementation() => new ArgonAccuracyCounter();
-        protected override Drawable CreateDefaultImplementation() => new DefaultAccuracyCounter();
+        protected override Drawable CreateDefaultImplementation() => new TrianglesAccuracyCounter();
         protected override Drawable CreateLegacyImplementation() => new LegacyAccuracyCounter();
 
         public override void SetUpSteps()
