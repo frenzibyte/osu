@@ -87,7 +87,7 @@ namespace osu.Game.Skinning
                         case SkinComponentsContainerLookup.TargetArea.MainHUDComponents:
                             var skinnableTargetWrapper = new DefaultSkinComponentsContainer(container =>
                             {
-                                var score = container.OfType<DefaultScoreCounter>().FirstOrDefault();
+                                var score = container.OfType<TrianglesScoreCounter>().FirstOrDefault();
                                 var accuracy = container.OfType<DefaultAccuracyCounter>().FirstOrDefault();
                                 var combo = container.OfType<TrianglesComboCounter>().FirstOrDefault();
                                 var ppCounter = container.OfType<PerformancePointsCounter>().FirstOrDefault();
@@ -161,7 +161,7 @@ namespace osu.Game.Skinning
                                 Children = new Drawable[]
                                 {
                                     new TrianglesComboCounter(),
-                                    new DefaultScoreCounter(),
+                                    new TrianglesScoreCounter(),
                                     new DefaultAccuracyCounter(),
                                     new DefaultHealthDisplay(),
                                     new DefaultSongProgress(),

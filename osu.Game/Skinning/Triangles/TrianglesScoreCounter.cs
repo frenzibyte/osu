@@ -4,13 +4,13 @@
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Game.Graphics;
-using osu.Game.Skinning;
+using osu.Game.Screens.Play.HUD;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultScoreCounter : GameplayScoreCounter, ISerialisableDrawable
+    public partial class TrianglesScoreCounter : GameplayScoreCounter, ISerialisableDrawable
     {
-        public DefaultScoreCounter()
+        public TrianglesScoreCounter()
         {
             Anchor = Anchor.TopCentre;
             Origin = Anchor.TopCentre;
