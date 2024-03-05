@@ -2,16 +2,17 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
-using osuTK;
-using osuTK.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
+using osu.Game.Screens.Play.HUD;
+using osuTK;
+using osuTK.Graphics;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultSongProgressBar : SongProgressBar
+    public partial class TrianglesSongProgressBar : SongProgressBar
     {
         public Color4 FillColour
         {
@@ -22,7 +23,7 @@ namespace osu.Game.Screens.Play.HUD
         private readonly Container handleBase;
         private readonly Container handleContainer;
 
-        public DefaultSongProgressBar(float barHeight, float handleBarHeight, Vector2 handleSize)
+        public TrianglesSongProgressBar(float barHeight, float handleBarHeight, Vector2 handleSize)
         {
             RelativeSizeAxes = Axes.X;
             Height = barHeight + handleBarHeight + handleSize.Y;

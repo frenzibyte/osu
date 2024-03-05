@@ -3,15 +3,16 @@
 
 #nullable disable
 
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Screens.Play;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultSongProgressGraph : SquareGraph
+    public partial class TrianglesSongProgressGraph : SquareGraph
     {
         private IEnumerable<HitObject> objects;
 

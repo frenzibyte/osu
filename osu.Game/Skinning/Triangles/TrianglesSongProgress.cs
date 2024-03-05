@@ -11,11 +11,13 @@ using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Localisation.HUD;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Screens.Play;
+using osu.Game.Screens.Play.HUD;
 using osuTK;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultSongProgress : SongProgress
+    public partial class TrianglesSongProgress : SongProgress
     {
         private const float bottom_bar_height = 5;
         private const float graph_height = SquareGraph.Column.WIDTH * 6;
@@ -25,8 +27,8 @@ namespace osu.Game.Screens.Play.HUD
 
         private const float transition_duration = 200;
 
-        private readonly DefaultSongProgressBar bar;
-        private readonly DefaultSongProgressGraph graph;
+        private readonly TrianglesSongProgressBar bar;
+        private readonly TrianglesSongProgressGraph graph;
         private readonly SongProgressInfo info;
         private readonly Container content;
 
@@ -36,7 +38,7 @@ namespace osu.Game.Screens.Play.HUD
         [Resolved]
         private Player? player { get; set; }
 
-        public DefaultSongProgress()
+        public TrianglesSongProgress()
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
@@ -54,7 +56,7 @@ namespace osu.Game.Screens.Play.HUD
                         Anchor = Anchor.BottomLeft,
                         RelativeSizeAxes = Axes.X,
                     },
-                    graph = new DefaultSongProgressGraph
+                    graph = new TrianglesSongProgressGraph
                     {
                         RelativeSizeAxes = Axes.X,
                         Origin = Anchor.BottomLeft,
@@ -62,7 +64,7 @@ namespace osu.Game.Screens.Play.HUD
                         Height = graph_height,
                         Margin = new MarginPadding { Bottom = bottom_bar_height },
                     },
-                    bar = new DefaultSongProgressBar(bottom_bar_height, graph_height, handle_size)
+                    bar = new TrianglesSongProgressBar(bottom_bar_height, graph_height, handle_size)
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,

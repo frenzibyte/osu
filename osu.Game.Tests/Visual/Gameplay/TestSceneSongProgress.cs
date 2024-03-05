@@ -16,6 +16,7 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Skinning;
+using osu.Game.Skinning.Triangles;
 using osuTK.Graphics;
 
 namespace osu.Game.Tests.Visual.Gameplay
@@ -73,7 +74,7 @@ namespace osu.Game.Tests.Visual.Gameplay
             AddStep("set hit objects", () => this.ChildrenOfType<SongProgress>().ForEach(progress => progress.Objects = Beatmap.Value.Beatmap.HitObjects));
             AddStep("hook seeking", () =>
             {
-                applyToDefaultProgress(d => d.ChildrenOfType<DefaultSongProgressBar>().Single().OnSeek += t => gameplayClockContainer.Seek(t));
+                applyToDefaultProgress(d => d.ChildrenOfType<TrianglesSongProgressBar>().Single().OnSeek += t => gameplayClockContainer.Seek(t));
                 applyToArgonProgress(d => d.ChildrenOfType<ArgonSongProgressBar>().Single().OnSeek += t => gameplayClockContainer.Seek(t));
             });
             AddStep("seek to intro", () => gameplayClockContainer.Seek(skip_target_time));
@@ -112,10 +113,10 @@ namespace osu.Game.Tests.Visual.Gameplay
         private void applyToArgonProgress(Action<ArgonSongProgress> action) =>
             this.ChildrenOfType<ArgonSongProgress>().ForEach(action);
 
-        private void applyToDefaultProgress(Action<DefaultSongProgress> action) =>
-            this.ChildrenOfType<DefaultSongProgress>().ForEach(action);
+        private void applyToDefaultProgress(Action<TrianglesSongProgress> action) =>
+            this.ChildrenOfType<TrianglesSongProgress>().ForEach(action);
 
-        protected override Drawable CreateDefaultImplementation() => new DefaultSongProgress();
+        protected override Drawable CreateDefaultImplementation() => new TrianglesSongProgress();
 
         protected override Drawable CreateArgonImplementation() => new ArgonSongProgress();
 
