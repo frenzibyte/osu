@@ -11,6 +11,7 @@ using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Skinning;
+using osu.Game.Skinning.Triangles;
 using osuTK;
 
 namespace osu.Game.Tests.Visual.Gameplay
@@ -21,7 +22,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         private HealthProcessor healthProcessor = new DrainingHealthProcessor(0);
 
         protected override Drawable CreateArgonImplementation() => new ArgonHealthDisplay { Scale = new Vector2(0.6f), Width = 600, UseRelativeSize = { Value = false } };
-        protected override Drawable CreateDefaultImplementation() => new DefaultHealthDisplay { Scale = new Vector2(0.6f) };
+        protected override Drawable CreateDefaultImplementation() => new TrianglesHealthDisplay { Scale = new Vector2(0.6f) };
         protected override Drawable CreateLegacyImplementation() => new LegacyHealthDisplay { Scale = new Vector2(0.6f) };
 
         public override void SetUpSteps()

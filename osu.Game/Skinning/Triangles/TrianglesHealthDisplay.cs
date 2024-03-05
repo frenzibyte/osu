@@ -7,16 +7,16 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
-using osu.Game.Graphics;
-using osuTK;
-using osuTK.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
-using osu.Game.Skinning;
+using osu.Game.Graphics;
+using osu.Game.Screens.Play.HUD;
+using osuTK;
+using osuTK.Graphics;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultHealthDisplay : HealthDisplay, IHasAccentColour, ISerialisableDrawable
+    public partial class TrianglesHealthDisplay : HealthDisplay, IHasAccentColour, ISerialisableDrawable
     {
         /// <summary>
         /// The base opacity of the glow.
@@ -73,7 +73,7 @@ namespace osu.Game.Screens.Play.HUD
 
         public bool UsesFixedAnchor { get; set; }
 
-        public DefaultHealthDisplay()
+        public TrianglesHealthDisplay()
         {
             const float padding = 20;
             const float bar_height = 5;

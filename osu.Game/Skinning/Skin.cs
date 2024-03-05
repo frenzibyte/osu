@@ -158,6 +158,7 @@ namespace osu.Game.Skinning
                         jsonContent = jsonContent.Replace(@"osu.Game.Screens.Play.HUD.DefaultComboCounter", @"osu.Game.Skinning.Triangles.TrianglesComboCounter");
                         jsonContent = jsonContent.Replace(@"osu.Game.Screens.Play.HUD.DefaultScoreCounter", @"osu.Game.Skinning.Triangles.TrianglesScoreCounter");
                         jsonContent = jsonContent.Replace(@"osu.Game.Screens.Play.HUD.DefaultAccuracyCounter", @"osu.Game.Skinning.Triangles.TrianglesAccuracyCounter");
+                        jsonContent = jsonContent.Replace(@"osu.Game.Screens.Play.HUD.DefaultHealthDisplay", @"osu.Game.Skinning.Triangles.TrianglesHealthDisplay");
 
                         var deserializedContent = JsonConvert.DeserializeObject<IEnumerable<SerialisedDrawableInfo>>(jsonContent);
 

@@ -163,7 +163,7 @@ namespace osu.Game.Skinning
                                     new TrianglesComboCounter(),
                                     new TrianglesScoreCounter(),
                                     new TrianglesAccuracyCounter(),
-                                    new DefaultHealthDisplay(),
+                                    new TrianglesHealthDisplay(),
                                     new DefaultSongProgress(),
                                     new DefaultKeyCounterDisplay(),
                                     new BarHitErrorMeter(),
