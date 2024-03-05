@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Play.HUD;
+using osu.Game.Skinning.Triangles;
 using osuTK;
 using osuTK.Input;
 
@@ -34,12 +35,12 @@ namespace osu.Game.Tests.Visual.Gameplay
                     Spacing = new Vector2(20),
                     Children = new Drawable[]
                     {
-                        new DefaultKeyCounterDisplay
+                        new TrianglesKeyCounterDisplay
                         {
                             Origin = Anchor.Centre,
                             Anchor = Anchor.Centre,
                         },
-                        new DefaultKeyCounterDisplay
+                        new TrianglesKeyCounterDisplay
                         {
                             Origin = Anchor.Centre,
                             Anchor = Anchor.Centre,
@@ -65,13 +66,13 @@ namespace osu.Game.Tests.Visual.Gameplay
                             Spacing = new Vector2(20),
                             Children = new Drawable[]
                             {
-                                new DefaultKeyCounterDisplay
+                                new TrianglesKeyCounterDisplay
                                 {
                                     Origin = Anchor.Centre,
                                     Anchor = Anchor.Centre,
                                     Rotation = -90,
                                 },
-                                new DefaultKeyCounterDisplay
+                                new TrianglesKeyCounterDisplay
                                 {
                                     Origin = Anchor.Centre,
                                     Anchor = Anchor.Centre,

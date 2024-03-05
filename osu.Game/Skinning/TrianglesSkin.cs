@@ -92,7 +92,7 @@ namespace osu.Game.Skinning
                                 var combo = container.OfType<TrianglesComboCounter>().FirstOrDefault();
                                 var ppCounter = container.OfType<PerformancePointsCounter>().FirstOrDefault();
                                 var songProgress = container.OfType<DefaultSongProgress>().FirstOrDefault();
-                                var keyCounter = container.OfType<DefaultKeyCounterDisplay>().FirstOrDefault();
+                                var keyCounter = container.OfType<TrianglesKeyCounterDisplay>().FirstOrDefault();
 
                                 if (score != null)
                                 {
@@ -165,7 +165,7 @@ namespace osu.Game.Skinning
                                     new TrianglesAccuracyCounter(),
                                     new TrianglesHealthDisplay(),
                                     new DefaultSongProgress(),
-                                    new DefaultKeyCounterDisplay(),
+                                    new TrianglesKeyCounterDisplay(),
                                     new BarHitErrorMeter(),
                                     new BarHitErrorMeter(),
                                     new TrianglesPerformancePointsCounter()

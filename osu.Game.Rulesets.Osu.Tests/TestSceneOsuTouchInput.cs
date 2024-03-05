@@ -21,6 +21,7 @@ using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Osu.Objects.Drawables;
 using osu.Game.Rulesets.Osu.UI.Cursor;
 using osu.Game.Screens.Play.HUD;
+using osu.Game.Skinning.Triangles;
 using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
@@ -33,9 +34,9 @@ namespace osu.Game.Rulesets.Osu.Tests
         [Resolved]
         private OsuConfigManager config { get; set; } = null!;
 
-        private DefaultKeyCounter leftKeyCounter = null!;
+        private TrianglesKeyCounter leftKeyCounter = null!;
 
-        private DefaultKeyCounter rightKeyCounter = null!;
+        private TrianglesKeyCounter rightKeyCounter = null!;
 
         private OsuInputManager osuInputManager = null!;
 
@@ -81,13 +82,13 @@ namespace osu.Game.Rulesets.Osu.Tests
 
                 mainContent.AddRange(new[]
                 {
-                    leftKeyCounter = new DefaultKeyCounter(triggerLeft)
+                    leftKeyCounter = new TrianglesKeyCounter(triggerLeft)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.CentreRight,
                         X = -100,
                     },
-                    rightKeyCounter = new DefaultKeyCounter(triggerRight)
+                    rightKeyCounter = new TrianglesKeyCounter(triggerRight)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.CentreLeft,

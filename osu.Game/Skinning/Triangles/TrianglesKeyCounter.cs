@@ -8,12 +8,13 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Screens.Play.HUD;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultKeyCounter : KeyCounter
+    public partial class TrianglesKeyCounter : KeyCounter
     {
         private Sprite buttonSprite = null!;
         private Sprite glowSprite = null!;
@@ -25,7 +26,7 @@ namespace osu.Game.Screens.Play.HUD
         public Color4 KeyUpTextColor { get; set; } = Color4.White;
         public double FadeTime { get; set; }
 
-        public DefaultKeyCounter(InputTrigger trigger)
+        public TrianglesKeyCounter(InputTrigger trigger)
             : base(trigger)
         {
         }

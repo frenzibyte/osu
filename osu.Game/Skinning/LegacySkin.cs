@@ -23,6 +23,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Screens.Play.HUD.HitErrorMeters;
+using osu.Game.Skinning.Triangles;
 using osuTK;
 using osuTK.Graphics;
 
@@ -381,7 +382,7 @@ namespace osu.Game.Skinning
                                 }
 
                                 var hitError = container.OfType<HitErrorMeter>().FirstOrDefault();
-                                var keyCounter = container.OfType<DefaultKeyCounterDisplay>().FirstOrDefault();
+                                var keyCounter = container.OfType<TrianglesKeyCounterDisplay>().FirstOrDefault();
 
                                 if (hitError != null)
                                 {
@@ -408,7 +409,7 @@ namespace osu.Game.Skinning
                                     new LegacySongProgress(),
                                     new LegacyHealthDisplay(),
                                     new BarHitErrorMeter(),
-                                    new DefaultKeyCounterDisplay()
+                                    new TrianglesKeyCounterDisplay()
                                 }
                             };
                     }

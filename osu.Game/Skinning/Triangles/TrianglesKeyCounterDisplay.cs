@@ -4,17 +4,18 @@
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Screens.Play.HUD;
 using osuTK.Graphics;
 
-namespace osu.Game.Screens.Play.HUD
+namespace osu.Game.Skinning.Triangles
 {
-    public partial class DefaultKeyCounterDisplay : KeyCounterDisplay
+    public partial class TrianglesKeyCounterDisplay : KeyCounterDisplay
     {
         private const double key_fade_time = 80;
 
         protected override FillFlowContainer<KeyCounter> KeyFlow { get; }
 
-        public DefaultKeyCounterDisplay()
+        public TrianglesKeyCounterDisplay()
         {
             InternalChild = KeyFlow = new FillFlowContainer<KeyCounter>
             {
@@ -24,7 +25,7 @@ namespace osu.Game.Screens.Play.HUD
             };
         }
 
-        protected override KeyCounter CreateCounter(InputTrigger trigger) => new DefaultKeyCounter(trigger)
+        protected override KeyCounter CreateCounter(InputTrigger trigger) => new TrianglesKeyCounter(trigger)
         {
             FadeTime = key_fade_time,
             KeyDownTextColor = KeyDownTextColor,
@@ -41,7 +42,7 @@ namespace osu.Game.Screens.Play.HUD
                 if (value != keyDownTextColor)
                 {
                     keyDownTextColor = value;
-                    foreach (var child in KeyFlow.Cast<DefaultKeyCounter>())
+                    foreach (var child in KeyFlow.Cast<TrianglesKeyCounter>())
                         child.KeyDownTextColor = value;
                 }
             }
@@ -57,7 +58,7 @@ namespace osu.Game.Screens.Play.HUD
                 if (value != keyUpTextColor)
                 {
                     keyUpTextColor = value;
-                    foreach (var child in KeyFlow.Cast<DefaultKeyCounter>())
+                    foreach (var child in KeyFlow.Cast<TrianglesKeyCounter>())
                         child.KeyUpTextColor = value;
                 }
             }
