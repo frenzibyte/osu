@@ -8,6 +8,7 @@ using DiscordRPC.Message;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Game;
@@ -91,6 +92,9 @@ namespace osu.Desktop
             activity.BindValueChanged(_ => updateStatus());
             privacyMode.BindValueChanged(_ => updateStatus());
 
+            multiplayerClient.UserJoined += onMultiplayerUserJoined;
+            multiplayerClient.UserLeft += onMultiplayerUserLeft;
+
             client.Initialize();
         }
 
@@ -100,7 +104,10 @@ namespace osu.Desktop
             updateStatus();
         }
 
-        private void updateStatus()
+        private void onMultiplayerUserJoined(MultiplayerRoomUser _) => updateStatus();
+        private void onMultiplayerUserLeft(MultiplayerRoomUser _) => updateStatus();
+
+        private void updateStatus() => Scheduler.AddOnce(() =>
         {
             if (!client.IsInitialized)
                 return;
@@ -185,7 +192,7 @@ namespace osu.Desktop
             presence.Assets.SmallImageText = ruleset.Value.Name;
 
             client.SetPresence(presence);
-        }
+        });
 
         private void onJoin(object sender, JoinMessage args)
         {
@@ -271,6 +278,12 @@ namespace osu.Desktop
 
         protected override void Dispose(bool isDisposing)
         {
+            if (multiplayerClient.IsNotNull())
+            {
+                multiplayerClient.UserJoined -= onMultiplayerUserJoined;
+                multiplayerClient.UserLeft -= onMultiplayerUserLeft;
+            }
+
             client.Dispose();
             base.Dispose(isDisposing);
         }
