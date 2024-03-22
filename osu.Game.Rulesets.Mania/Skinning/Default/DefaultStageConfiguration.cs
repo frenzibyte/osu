@@ -30,13 +30,7 @@ namespace osu.Game.Rulesets.Mania.Skinning.Default
         protected override void LoadComplete()
         {
             base.LoadComplete();
-
-            PlayfieldPosition.BindValueChanged(updatePosition, true);
-        }
-
-        private void updatePosition(ValueChangedEvent<float> pos)
-        {
-            playfield.StageContainer.X = pos.NewValue;
+            playfield.PlayfieldPosition = PlayfieldPosition;
         }
 
         public bool UsesFixedAnchor { get; set; }

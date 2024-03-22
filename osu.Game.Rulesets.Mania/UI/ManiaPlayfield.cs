@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics.Primitives;
+using osu.Game.Configuration;
 using osu.Game.Rulesets.Mania.Beatmaps;
 using osu.Game.Rulesets.Mania.Objects;
 using osu.Game.Rulesets.Mania.Skinning.Default;
@@ -28,7 +30,15 @@ namespace osu.Game.Rulesets.Mania.UI
 
         private readonly List<Stage> stages = new List<Stage>();
 
-        public Drawable StageContainer { get; private set; }
+        private readonly Drawable stageContainer;
+
+        private readonly BindableNumberWithCurrent<float> playfieldPosition = new BindableNumberWithCurrent<float>(0.5f);
+
+        public BindableNumber<float> PlayfieldPosition
+        {
+            get => playfieldPosition;
+            set => playfieldPosition.Current = value;
+        }
 
         public override Quad SkinnableComponentScreenSpaceDrawQuad
         {
@@ -66,7 +76,7 @@ namespace osu.Game.Rulesets.Mania.UI
 
             GridContainer playfieldGrid;
 
-            AddInternal(StageContainer = new Container
+            AddInternal(stageContainer = new Container
             {
                 RelativeSizeAxes = Axes.Y,
                 AutoSizeAxes = Axes.X,
@@ -102,6 +112,12 @@ namespace osu.Game.Rulesets.Mania.UI
 
                 firstColumnIndex += newStage.Columns.Length;
             }
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            PlayfieldPosition.BindValueChanged(v => stageContainer.X = v.NewValue, true);
         }
 
         public override void Add(HitObject hitObject) => getStageByColumn(((ManiaHitObject)hitObject).Column).Add(hitObject);
