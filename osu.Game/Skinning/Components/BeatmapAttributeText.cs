@@ -41,7 +41,7 @@ namespace osu.Game.Skinning.Components
         {
             [BeatmapAttribute.CircleSize] = BeatmapsetsStrings.ShowStatsCs,
             [BeatmapAttribute.Accuracy] = BeatmapsetsStrings.ShowStatsAccuracy,
-            [BeatmapAttribute.HPDrain] = BeatmapsetsStrings.ShowStatsDrain,
+            [BeatmapAttribute.HpDrain] = BeatmapsetsStrings.ShowStatsDrain,
             [BeatmapAttribute.ApproachRate] = BeatmapsetsStrings.ShowStatsAr,
             [BeatmapAttribute.StarRating] = BeatmapsetsStrings.ShowStatsStars,
             [BeatmapAttribute.Title] = EditorSetupStrings.Title,
@@ -94,7 +94,7 @@ namespace osu.Game.Skinning.Components
             valueDictionary[BeatmapAttribute.RankedStatus] = workingBeatmap.BeatmapInfo.Status.GetLocalisableDescription();
             valueDictionary[BeatmapAttribute.BPM] = workingBeatmap.BeatmapInfo.BPM.ToLocalisableString(@"F2");
             valueDictionary[BeatmapAttribute.CircleSize] = ((double)workingBeatmap.BeatmapInfo.Difficulty.CircleSize).ToLocalisableString(@"F2");
-            valueDictionary[BeatmapAttribute.HPDrain] = ((double)workingBeatmap.BeatmapInfo.Difficulty.DrainRate).ToLocalisableString(@"F2");
+            valueDictionary[BeatmapAttribute.HpDrain] = ((double)workingBeatmap.BeatmapInfo.Difficulty.DrainRate).ToLocalisableString(@"F2");
             valueDictionary[BeatmapAttribute.Accuracy] = ((double)workingBeatmap.BeatmapInfo.Difficulty.OverallDifficulty).ToLocalisableString(@"F2");
             valueDictionary[BeatmapAttribute.ApproachRate] = ((double)workingBeatmap.BeatmapInfo.Difficulty.ApproachRate).ToLocalisableString(@"F2");
             valueDictionary[BeatmapAttribute.StarRating] = workingBeatmap.BeatmapInfo.StarRating.ToLocalisableString(@"F2");
@@ -130,7 +130,7 @@ namespace osu.Game.Skinning.Components
     public enum BeatmapAttribute
     {
         CircleSize,
-        HPDrain,
+        HpDrain,
         Accuracy,
         ApproachRate,
         StarRating,
