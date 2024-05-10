@@ -148,6 +148,14 @@ namespace osu.Game.Screens.Select.FooterV2
                             RelativeSizeAxes = Axes.Both,
                             Width = mod_display_portion,
                             Masking = true,
+                            EdgeEffect = new EdgeEffectParameters
+                            {
+                                Type = EdgeEffectType.Shadow,
+                                Radius = 4,
+                                // Figma says 50% opacity, but it does not match up visually if taken at face value, and looks bad.
+                                Colour = Colour4.Black.Opacity(0.25f),
+                                Offset = new Vector2(0, 2),
+                            },
                             Children = new Drawable[]
                             {
                                 new Box
