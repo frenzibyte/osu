@@ -41,10 +41,10 @@ namespace osu.Game.Graphics.Containers
             base.OnUserScroll(value, animated, distanceDecay);
         }
 
-        public new void ScrollIntoView(Drawable target, bool animated = true)
+        public new void ScrollIntoView(Drawable target, bool animated = true, float extraScroll = 0)
         {
             UserScrolling = false;
-            base.ScrollIntoView(target, animated);
+            base.ScrollIntoView(target, animated, extraScroll);
         }
 
         protected override void ScrollFromMouseEvent(MouseEvent e)

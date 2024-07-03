@@ -3,18 +3,28 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterface;
 
 namespace osu.Game.Overlays.Settings
 {
-    public partial class SettingsDropdown<T> : SettingsItem<T>
+    public partial class SettingsDropdown<T> : SettingsItem<T>, ISettingsDropdown
     {
         protected new OsuDropdown<T> Control => (OsuDropdown<T>)base.Control;
+
+        public event Action<MenuState> MenuStateChanged
+        {
+            add => Control.MenuStateChanged += value;
+            remove => Control.MenuStateChanged -= value;
+        }
+
+        public MenuState State => Control.State;
 
         public bool AlwaysShowSearchBar
         {

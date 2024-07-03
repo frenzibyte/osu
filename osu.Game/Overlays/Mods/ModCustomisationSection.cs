@@ -2,11 +2,14 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.UI;
 using osuTK;
@@ -18,6 +21,9 @@ namespace osu.Game.Overlays.Mods
         public readonly Mod Mod;
 
         private readonly IReadOnlyList<Drawable> settings;
+
+        [Resolved]
+        private ModCustomisationPanel.ModCustomisationScrollContainer scroll { get; set; } = null!;
 
         public ModCustomisationSection(Mod mod, IReadOnlyList<Drawable> settings)
         {
@@ -70,7 +76,26 @@ namespace osu.Game.Overlays.Mods
                 }
             };
 
+            foreach (var dropdown in settings.Cast<ISettingsItem>().OfType<ISettingsDropdown>())
+                dropdown.MenuStateChanged += _ => menuStateChanged(dropdown);
+
             flow.AddRange(settings);
+        }
+
+        private ISettingsDropdown? openDropdown;
+
+        private void menuStateChanged(ISettingsDropdown dropdown)
+        {
+            if (dropdown.State == MenuState.Closed)
+            {
+                if (dropdown == openDropdown)
+                    openDropdown = null;
+
+                return;
+            }
+
+            openDropdown = dropdown;
+            scrollDropdownIntoView(dropdown);
         }
 
         protected override void LoadComplete()
@@ -78,5 +103,15 @@ namespace osu.Game.Overlays.Mods
             base.LoadComplete();
             FinishTransforms(true);
         }
+
+        protected override void UpdateAfterChildren()
+        {
+            base.UpdateAfterChildren();
+
+            if (openDropdown != null && !scroll.UserScrolling)
+                scrollDropdownIntoView(openDropdown);
+        }
+
+        private void scrollDropdownIntoView(ISettingsDropdown dropdown) => scroll.ScrollIntoView((Drawable)dropdown, extraScroll: 30);
     }
 }

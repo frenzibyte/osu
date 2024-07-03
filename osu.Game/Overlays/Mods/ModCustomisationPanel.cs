@@ -27,7 +27,7 @@ namespace osu.Game.Overlays.Mods
         private const float content_vertical_padding = 20f;
 
         private Container content = null!;
-        private OsuScrollContainer scrollContainer = null!;
+        private ModCustomisationScrollContainer scrollContainer = null!;
         private FillFlowContainer sectionsFlow = null!;
 
         [Resolved]
@@ -82,10 +82,9 @@ namespace osu.Game.Overlays.Mods
                             RelativeSizeAxes = Axes.Both,
                             Colour = colourProvider.Dark4,
                         },
-                        scrollContainer = new OsuScrollContainer(Direction.Vertical)
+                        scrollContainer = new ModCustomisationScrollContainer
                         {
                             RelativeSizeAxes = Axes.X,
-                            ScrollbarOverlapsContent = false,
                             // The +2f is a workaround for masking issues (see https://github.com/ppy/osu-framework/issues/1675#issuecomment-910023157)
                             // Note that this actually causes the full scroll range to be reduced by 2px at the bottom, but it's not really noticeable.
                             Margin = new MarginPadding { Top = header_height + 2f },
@@ -194,6 +193,9 @@ namespace osu.Game.Overlays.Mods
             base.Update();
             scrollContainer.Height = Math.Min(scrollContainer.AvailableContent, DrawHeight - header_height);
         }
+
+        [Cached]
+        public class ModCustomisationScrollContainer : UserTrackingScrollContainer;
 
         private partial class FocusGrabbingContainer : InputBlockingContainer
         {
