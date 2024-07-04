@@ -10,8 +10,10 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Testing;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
@@ -27,7 +29,7 @@ namespace osu.Game.Overlays.Mods
         private const float content_vertical_padding = 20f;
 
         private Container content = null!;
-        private OsuScrollContainer scrollContainer = null!;
+        private UserTrackingScrollContainer scrollContainer = null!;
         private FillFlowContainer sectionsFlow = null!;
 
         [Resolved]
@@ -82,10 +84,9 @@ namespace osu.Game.Overlays.Mods
                             RelativeSizeAxes = Axes.Both,
                             Colour = colourProvider.Dark4,
                         },
-                        scrollContainer = new OsuScrollContainer(Direction.Vertical)
+                        scrollContainer = new UserTrackingScrollContainer
                         {
                             RelativeSizeAxes = Axes.X,
-                            ScrollbarOverlapsContent = false,
                             // The +2f is a workaround for masking issues (see https://github.com/ppy/osu-framework/issues/1675#issuecomment-910023157)
                             // Note that this actually causes the full scroll range to be reduced by 2px at the bottom, but it's not really noticeable.
                             Margin = new MarginPadding { Top = header_height + 2f },
@@ -189,10 +190,20 @@ namespace osu.Game.Overlays.Mods
             }
         }
 
+        private Menu? lastOpenMenu;
+
         protected override void Update()
         {
             base.Update();
+
             scrollContainer.Height = Math.Min(scrollContainer.AvailableContent, DrawHeight - header_height);
+
+            var openMenu = sectionsFlow.ChildrenOfType<Menu>().FirstOrDefault(m => m.State == MenuState.Open);
+
+            if (openMenu != null && (lastOpenMenu == null || !scrollContainer.UserScrolling))
+                scrollContainer.ScrollIntoView(openMenu, extraScroll: 30);
+
+            lastOpenMenu = openMenu;
         }
 
         private partial class FocusGrabbingContainer : InputBlockingContainer
