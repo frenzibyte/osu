@@ -10,12 +10,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Input.Bindings;
+using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Mods;
 using osuTK;
 
@@ -27,7 +29,7 @@ namespace osu.Game.Overlays.Mods
         private const float content_vertical_padding = 20f;
 
         private Container content = null!;
-        private OsuScrollContainer scrollContainer = null!;
+        private UserTrackingScrollContainer scrollContainer = null!;
         private FillFlowContainer sectionsFlow = null!;
 
         [Resolved]
@@ -82,10 +84,9 @@ namespace osu.Game.Overlays.Mods
                             RelativeSizeAxes = Axes.Both,
                             Colour = colourProvider.Dark4,
                         },
-                        scrollContainer = new OsuScrollContainer(Direction.Vertical)
+                        scrollContainer = new UserTrackingScrollContainer
                         {
                             RelativeSizeAxes = Axes.X,
-                            ScrollbarOverlapsContent = false,
                             // The +2f is a workaround for masking issues (see https://github.com/ppy/osu-framework/issues/1675#issuecomment-910023157)
                             // Note that this actually causes the full scroll range to be reduced by 2px at the bottom, but it's not really noticeable.
                             Margin = new MarginPadding { Top = header_height + 2f },
@@ -172,10 +173,15 @@ namespace osu.Game.Overlays.Mods
             }
         }
 
+        private readonly List<Drawable> allSettings = new List<Drawable>();
+        private ISettingsDropdown? lastOpenDropdown;
+
         private void updateMods()
         {
             Expanded.Value = false;
             sectionsFlow.Clear();
+
+            allSettings.Clear();
 
             // Importantly, the selected mods bindable is already ordered by the mod select overlay (following the order of mod columns and panels).
             // Using AsOrdered produces a slightly different order (e.g. DT and NC no longer becoming adjacent),
@@ -186,13 +192,26 @@ namespace osu.Game.Overlays.Mods
 
                 if (settings.Count > 0)
                     sectionsFlow.Add(new ModCustomisationSection(mod, settings));
+
+                allSettings.AddRange(settings);
             }
         }
 
         protected override void Update()
         {
             base.Update();
+
             scrollContainer.Height = Math.Min(scrollContainer.AvailableContent, DrawHeight - header_height);
+
+            var openDropdown = allSettings.OfType<ISettingsDropdown>().FirstOrDefault(d => d.State == MenuState.Open);
+
+            // dropdown smoothly increases its height upon opening it, so we have to keep calling ScrollIntoView for better UX.
+            // when this is the first frame where a dropdown is found open, call ScrollIntoView once to set UserScrolling = false,
+            // then keep calling ScrollIntoView to scroll as the dropdown transforms to its maximum height, and stop if user tried to scroll away.
+            if (openDropdown != null && (lastOpenDropdown == null || !scrollContainer.UserScrolling))
+                scrollContainer.ScrollIntoView((Drawable)openDropdown, extraScroll: 30);
+
+            lastOpenDropdown = openDropdown;
         }
 
         private partial class FocusGrabbingContainer : InputBlockingContainer

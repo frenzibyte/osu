@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -25,6 +26,14 @@ namespace osu.Game.Graphics.UserInterface
     public partial class OsuDropdown<T> : Dropdown<T>, IKeyBindingHandler<GlobalAction>
     {
         private const float corner_radius = 5;
+
+        public event Action<MenuState> MenuStateChanged
+        {
+            add => Menu.StateChanged += value;
+            remove => Menu.StateChanged -= value;
+        }
+
+        public MenuState State => Menu.State;
 
         protected override DropdownHeader CreateHeader() => new OsuDropdownHeader();
 
