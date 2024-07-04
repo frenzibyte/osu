@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using System.Linq;
 using NUnit.Framework;
 using osu.Game.Beatmaps;
@@ -39,192 +40,129 @@ namespace osu.Game.Tests.Editing.Checks
         [Test]
         public void TestNoTitleMarkers()
         {
-            var issues = check.Run(getContext(beatmap)).ToList();
-            Assert.That(issues, Has.Count.EqualTo(0));
+            performTest(string.Empty, string.Empty);
         }
 
         [Test]
         public void TestTvSizeMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (TV Size)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (TV Size)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
-        }
-
-        [Test]
-        public void TestMalformedTvSizeMarker()
-        {
-            beatmap.BeatmapInfo.Metadata.Title += " (tv size)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (tv size)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            performTest("(TV Size)", "(TV Size)");
+            performTest("(Tv size)", "(TV Size)");
+            performTest("[TV Size]", "(TV Size)");
+            performTest("(TV Ver.)", "(TV Size)");
+            performTest("(TV Ver)", "(TV Size)");
         }
 
         [Test]
         public void TestGameVerMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (Game Ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (Game Ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
-        }
-
-        [Test]
-        public void TestMalformedGameVerMarker()
-        {
-            beatmap.BeatmapInfo.Metadata.Title += " (game ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (game ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            performTest("(Game Ver.)", "(Game Ver.)");
+            performTest("(Game ver.)", "(Game Ver.)");
+            performTest("[Game Ver.]", "(Game Ver.)");
+            performTest("(Game Size)", "(Game Ver.)");
+            performTest("(Game Ver)", "(Game Ver.)");
         }
 
         [Test]
         public void TestShortVerMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (Short Ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (Short Ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
-        }
-
-        [Test]
-        public void TestMalformedShortVerMarker()
-        {
-            beatmap.BeatmapInfo.Metadata.Title += " (short ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (short ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            performTest("(Short Ver.)", "(Short Ver.)");
+            performTest("(Short ver.)", "(Short Ver.)");
+            performTest("[Short Ver.]", "(Short Ver.)");
+            performTest("(Short Size)", "(Short Ver.)");
+            performTest("(Short Ver)", "(Short Ver.)");
         }
 
         [Test]
         public void TestCutVerMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (Cut Ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (Cut Ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
-        }
-
-        [Test]
-        public void TestMalformedCutVerMarker()
-        {
-            beatmap.BeatmapInfo.Metadata.Title += " (cut ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (cut ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            performTest("(Cut Ver.)", "(Cut Ver.)");
+            performTest("(Cut ver.)", "(Cut Ver.)");
+            performTest("[Cut Ver.]", "(Cut Ver.)");
+            performTest("(Cut Size)", "(Cut Ver.)");
+            performTest("(Cut Ver)", "(Cut Ver.)");
         }
 
         [Test]
         public void TestSpedUpVerMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (Sped Up Ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (Sped Up Ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
-        }
-
-        [Test]
-        public void TestMalformedSpedUpVerMarker()
-        {
-            beatmap.BeatmapInfo.Metadata.Title += " (sped up ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (sped up ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            performTest("(Sped Up Ver.)", "(Sped Up Ver.)");
+            performTest("(Sped Up ver.)", "(Sped Up Ver.)");
+            performTest("[Sped Up Ver.]", "(Sped Up Ver.)");
+            performTest("(Speed Up Ver.)", "(Sped Up Ver.)");
+            performTest("(Sped Up Ver)", "(Sped Up Ver.)");
         }
 
         [Test]
         public void TestNightcoreMixMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (Nightcore Mix)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (Nightcore Mix)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
-        }
-
-        [Test]
-        public void TestMalformedNightcoreMixMarker()
-        {
-            beatmap.BeatmapInfo.Metadata.Title += " (nightcore mix)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (nightcore mix)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            performTest("(Nightcore Mix)", "(Nightcore Mix)");
+            performTest("(Nightcore mix)", "(Nightcore Mix)");
+            performTest("[Nightcore Mix]", "(Nightcore Mix)");
+            performTest("(Nightcore Ver.)", "(Nightcore Mix)");
+            performTest("(Nightcore Ver)", "(Nightcore Mix)");
+            performTest("(Night Core Mix)", "(Nightcore Mix)");
+            performTest("(Night Core Ver.)", "(Nightcore Mix)");
         }
 
         [Test]
         public void TestSpedUpCutVerMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (Sped Up & Cut Ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (Sped Up & Cut Ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
-        }
-
-        [Test]
-        public void TestMalformedSpedUpCutVerMarker()
-        {
-            beatmap.BeatmapInfo.Metadata.Title += " (sped up & cut ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (sped up & cut ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            performTest("(Sped Up & Cut Ver.)", "(Sped Up & Cut Ver.)");
+            performTest("(Sped up & cut ver.)", "(Sped Up & Cut Ver.)");
+            performTest("[Sped Up & Cut Ver.]", "(Sped Up & Cut Ver.)");
+            performTest("(Speed Up & Cut Ver.)", "(Sped Up & Cut Ver.)");
+            performTest("(Sped Up & Cut Size)", "(Sped Up & Cut Ver.)");
+            performTest("(SpedUp & Cut Ver.)", "(Sped Up & Cut Ver.)");
+            performTest("(Sped Up & Cut Ver)", "(Sped Up & Cut Ver.)");
         }
 
         [Test]
         public void TestNightcoreCutVerMarker()
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (Nightcore & Cut Ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (Nightcore & Cut Ver.)";
-
-            var issues = check.Run(getContext(beatmap)).ToList();
-
-            Assert.That(issues, Has.Count.EqualTo(0));
+            performTest("(Nightcore & Cut Ver.)", "(Nightcore & Cut Ver.)");
+            performTest("(Nightcore & cut ver.)", "(Nightcore & Cut Ver.)");
+            performTest("[Nightcore & Cut Ver.]", "(Nightcore & Cut Ver.)");
+            performTest("(Night Core & Cut Ver.)", "(Nightcore & Cut Ver.)");
+            performTest("(Nightcore & Cut Ver)", "(Nightcore & Cut Ver.)");
         }
 
-        [Test]
-        public void TestMalformedNightcoreCutVerMarker()
+        private void performTest(string marker, string expected)
         {
-            beatmap.BeatmapInfo.Metadata.Title += " (nightcore & cut ver.)";
-            beatmap.BeatmapInfo.Metadata.TitleUnicode += " (nightcore & cut ver.)";
+            performTest(marker, expected, false);
+            performTest(marker, expected, true);
+        }
+
+        private void performTest(string marker, string expected, bool hasRomanisedTitle)
+        {
+            beatmap.BeatmapInfo.Metadata.Title = "Egao no Kanata " + marker;
+
+            if (hasRomanisedTitle)
+                beatmap.BeatmapInfo.Metadata.TitleUnicode = "エガオノカナタ " + marker;
+            else
+                beatmap.BeatmapInfo.Metadata.TitleUnicode = beatmap.BeatmapInfo.Metadata.Title;
 
             var issues = check.Run(getContext(beatmap)).ToList();
 
-            Assert.That(issues, Has.Count.EqualTo(2));
-            Assert.That(issues.Any(issue => issue.Template is CheckTitleMarkers.IssueTemplateIncorrectMarker));
+            if (marker == expected)
+                CollectionAssert.IsEmpty(issues);
+            else
+            {
+                if (hasRomanisedTitle)
+                {
+                    Assert.That(issues, Has.Count.EqualTo(2));
+                    Assert.That(issues[0].Arguments[0], Is.EqualTo("Title"));
+                    Assert.That(issues[0].Arguments[1], Is.EqualTo(expected));
+                    Assert.That(issues[1].Arguments[0], Is.EqualTo("Romanised title"));
+                    Assert.That(issues[1].Arguments[1], Is.EqualTo(expected));
+                }
+                else
+                {
+                    Assert.That(issues, Has.Count.EqualTo(1));
+                    Assert.That(issues[0].Arguments[0], Is.EqualTo("Title"));
+                    Assert.That(issues[0].Arguments[1], Is.EqualTo(expected));
+                }
+            }
         }
 
         private BeatmapVerifierContext getContext(IBeatmap beatmap)
