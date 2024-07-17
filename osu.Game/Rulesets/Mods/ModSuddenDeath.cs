@@ -23,8 +23,12 @@ namespace osu.Game.Rulesets.Mods
 
         public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(ModPerfect)).ToArray();
 
-        protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
-            => result.Type.AffectsCombo()
-               && !result.IsHit;
+        public override AppliedFailResult ApplyToFailure(JudgementResult result)
+        {
+            if (result.Type.AffectsCombo() && !result.IsHit)
+                return AppliedFailResult.TriggerFail;
+
+            return AppliedFailResult.Nothing;
+        }
     }
 }

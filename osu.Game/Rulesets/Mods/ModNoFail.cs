@@ -7,11 +7,12 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Mods
 {
-    public abstract class ModNoFail : Mod, IApplicableFailOverride, IApplicableToHUD, IReadFromConfig
+    public abstract class ModNoFail : Mod, IApplicableToFailConditions, IApplicableToHUD, IReadFromConfig
     {
         public override string Name => "No Fail";
         public override string Acronym => "NF";
@@ -24,10 +25,7 @@ namespace osu.Game.Rulesets.Mods
 
         private readonly Bindable<bool> showHealthBar = new Bindable<bool>();
 
-        /// <summary>
-        /// We never fail, 'yo.
-        /// </summary>
-        public bool PerformFail() => false;
+        public Action? TriggerFailure { get; set; }
 
         public bool RestartOnFail => false;
 
@@ -40,5 +38,10 @@ namespace osu.Game.Rulesets.Mods
         {
             overlay.ShowHealthBar.BindTo(showHealthBar);
         }
+
+        /// <summary>
+        /// We never fail, 'yo.
+        /// </summary>
+        public AppliedFailResult ApplyToFailure(JudgementResult result) => AppliedFailResult.BlockFail;
     }
 }

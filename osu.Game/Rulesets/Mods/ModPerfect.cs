@@ -28,9 +28,13 @@ namespace osu.Game.Rulesets.Mods
             Restart.Value = Restart.Default = true;
         }
 
-        protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
-            => (isRelevantResult(result.Judgement.MinResult) || isRelevantResult(result.Judgement.MaxResult) || isRelevantResult(result.Type))
-               && result.Type != result.Judgement.MaxResult;
+        public override AppliedFailResult ApplyToFailure(JudgementResult result)
+        {
+            if ((isRelevantResult(result.Judgement.MinResult) || isRelevantResult(result.Judgement.MaxResult) || isRelevantResult(result.Type)) && result.Type != result.Judgement.MaxResult)
+                return AppliedFailResult.TriggerFail;
+
+            return AppliedFailResult.Nothing;
+        }
 
         private bool isRelevantResult(HitResult result) => result.AffectsAccuracy() || result.AffectsCombo();
     }

@@ -6,6 +6,7 @@ using System.Linq;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Graphics;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Play;
@@ -23,7 +24,7 @@ namespace osu.Game.Rulesets.Mods
         }
     }
 
-    public class ModCinema : ModAutoplay, IApplicableToHUD, IApplicableToPlayer, IApplicableFailOverride
+    public class ModCinema : ModAutoplay, IApplicableToHUD, IApplicableToPlayer, IApplicableToFailConditions
     {
         public override string Name => "Cinema";
         public override string Acronym => "CN";
@@ -48,7 +49,9 @@ namespace osu.Game.Rulesets.Mods
             player.BreakOverlay.Hide();
         }
 
-        public bool PerformFail() => false;
+        public Action? TriggerFailure { get; set; }
+
+        public AppliedFailResult ApplyToFailure(JudgementResult result) => AppliedFailResult.BlockFail;
 
         public bool RestartOnFail => false;
     }

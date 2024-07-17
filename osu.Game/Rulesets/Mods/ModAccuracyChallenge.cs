@@ -66,15 +66,13 @@ namespace osu.Game.Rulesets.Mods
             currentAccuracy.BindValueChanged(s =>
             {
                 if (s.NewValue < MinimumAccuracy.Value)
-                {
-                    TriggerFailure();
-                }
+                    TriggerFailure!.Invoke();
             });
         }
 
         public ScoreRank AdjustRank(ScoreRank rank, double accuracy) => rank;
 
-        protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result) => false;
+        public override AppliedFailResult ApplyToFailure(JudgementResult result) => AppliedFailResult.Nothing;
 
         public enum AccuracyMode
         {
