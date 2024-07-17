@@ -951,7 +951,7 @@ namespace osu.Game.Screens.Play
                 ScoreProcessor.FailScore(Score.ScoreInfo);
                 OnFail();
 
-                if (GameplayState.Mods.OfType<IApplicableToFailConditions>().Any(m => m.RestartOnFail))
+                if (HealthProcessor.ModTriggeringFailure?.RestartOnFail == true)
                     Restart(true);
             });
 
