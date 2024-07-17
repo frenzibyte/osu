@@ -60,16 +60,13 @@ namespace osu.Game.Tests.Visual
 
         protected partial class ModTestPlayer : TestPlayer
         {
-            private readonly bool allowFail;
             private readonly ModTestData currentTestData;
-
-            protected override bool CheckModsAllowFailure() => allowFail;
 
             public ModTestPlayer(ModTestData data, bool allowFail)
                 : base(true, false)
             {
-                this.allowFail = allowFail;
                 currentTestData = data;
+                Configuration.AllowFailAnimation = allowFail;
             }
 
             protected override void PrepareReplay()

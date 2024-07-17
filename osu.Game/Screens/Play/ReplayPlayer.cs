@@ -30,23 +30,13 @@ namespace osu.Game.Screens.Play
 
         private readonly Func<IBeatmap, IReadOnlyList<Mod>, Score> createScore;
 
-        private readonly bool replayIsFailedScore;
-
         protected override UserActivity InitialActivity => new UserActivity.WatchingReplay(Score.ScoreInfo);
-
-        // Disallow replays from failing. (see https://github.com/ppy/osu/issues/6108)
-        protected override bool CheckModsAllowFailure()
-        {
-            if (!replayIsFailedScore && !GameplayState.Mods.OfType<ModAutoplay>().Any())
-                return false;
-
-            return base.CheckModsAllowFailure();
-        }
 
         public ReplayPlayer(Score score, PlayerConfiguration configuration = null)
             : this((_, _) => score, configuration)
         {
-            replayIsFailedScore = score.ScoreInfo.Rank == ScoreRank.F;
+            // Disallow replays from failing. (see https://github.com/ppy/osu/issues/6108)
+            Configuration.AllowFailAnimation = score.ScoreInfo.Rank == ScoreRank.F || score.ScoreInfo.Mods.OfType<ModAutoplay>().Any();
         }
 
         public ReplayPlayer(Func<IBeatmap, IReadOnlyList<Mod>, Score> createScore, PlayerConfiguration configuration = null)

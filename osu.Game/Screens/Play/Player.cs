@@ -148,12 +148,6 @@ namespace osu.Game.Screens.Play
 
         public DimmableStoryboard DimmableStoryboard { get; private set; }
 
-        /// <summary>
-        /// Whether failing should be allowed.
-        /// By default, this checks whether all selected mods allow failing.
-        /// </summary>
-        protected virtual bool CheckModsAllowFailure() => GameplayState.Mods.OfType<IApplicableFailOverride>().All(m => m.PerformFail());
-
         public readonly PlayerConfiguration Configuration;
 
         /// <summary>
@@ -244,6 +238,7 @@ namespace osu.Game.Screens.Play
 
             HealthProcessor = gameplayMods.OfType<IApplicableHealthProcessor>().FirstOrDefault()?.CreateHealthProcessor(playableBeatmap.HitObjects[0].StartTime);
             HealthProcessor ??= ruleset.CreateHealthProcessor(playableBeatmap.HitObjects[0].StartTime);
+            HealthProcessor.Mods.Value = gameplayMods;
             HealthProcessor.ApplyBeatmap(playableBeatmap);
 
             dependencies.CacheAs(HealthProcessor);
@@ -916,14 +911,11 @@ namespace osu.Game.Screens.Play
 
         private FailAnimationContainer failAnimationContainer;
 
-        private bool onFail()
+        private void onFail()
         {
             // Failing after the quit sequence has started may cause weird side effects with the fail animation / effects.
             if (GameplayState.HasQuit)
-                return false;
-
-            if (!CheckModsAllowFailure())
-                return false;
+                return;
 
             if (Configuration.AllowFailAnimation)
             {
@@ -955,7 +947,7 @@ namespace osu.Game.Screens.Play
                     ScoreProcessor.FailScore(Score.ScoreInfo);
                     OnFail();
 
-                    if (GameplayState.Mods.OfType<IApplicableFailOverride>().Any(m => m.RestartOnFail))
+                    if (GameplayState.Mods.OfType<IApplicableToFailConditions>().Any(m => m.RestartOnFail))
                         Restart(true);
                 });
             }
@@ -963,8 +955,6 @@ namespace osu.Game.Screens.Play
             {
                 ScoreProcessor.FailScore(Score.ScoreInfo);
             }
-
-            return true;
         }
 
         /// <summary>

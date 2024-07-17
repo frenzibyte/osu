@@ -29,7 +29,7 @@ namespace osu.Game.Screens.Edit.GameplayTest
         private MusicController musicController { get; set; } = null!;
 
         public EditorPlayer(Editor editor)
-            : base(new PlayerConfiguration { ShowResults = false })
+            : base(new PlayerConfiguration { ShowResults = false, AllowFailAnimation = false })
         {
             this.editor = editor;
             editorState = editor.GetState();
@@ -138,8 +138,6 @@ namespace osu.Game.Screens.Edit.GameplayTest
         {
             // don't record replays.
         }
-
-        protected override bool CheckModsAllowFailure() => false; // never fail.
 
         public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
         {
