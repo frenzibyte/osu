@@ -7,6 +7,7 @@ using osu.Framework.Graphics;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Osu.Judgements;
+using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
@@ -29,7 +30,7 @@ namespace osu.Game.Tests.Visual.Gameplay
             AddStep(@"Reset all", delegate
             {
                 healthProcessor.Health.Value = 1;
-                healthProcessor.Failed += () => false; // health won't be updated if the processor gets into a "fail" state.
+                healthProcessor.Mods.Value = new[] { new OsuModNoFail() }; // health won't be updated if the processor gets into a "fail" state.
             });
 
             base.SetUpSteps();
