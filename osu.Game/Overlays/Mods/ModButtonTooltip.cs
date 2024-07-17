@@ -43,7 +43,7 @@ namespace osu.Game.Overlays.Mods
                             Colour = colourProvider.Content1,
                             Font = OsuFont.GetFont(weight: FontWeight.Regular),
                         },
-                    }
+                    },
                 },
             };
         }

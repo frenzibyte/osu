@@ -134,7 +134,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             {
                 new Aim(mods, true),
                 new Aim(mods, false),
-                new Speed(mods)
+                new Speed(mods),
             };
 
             if (mods.Any(h => h is OsuModFlashlight))
@@ -151,7 +151,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             new OsuModEasy(),
             new OsuModHardRock(),
             new OsuModFlashlight(),
-            new MultiMod(new OsuModFlashlight(), new OsuModHidden())
+            new MultiMod(new OsuModFlashlight(), new OsuModHidden()),
         };
     }
 }

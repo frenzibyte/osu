@@ -138,7 +138,7 @@ namespace osu.Game.Rulesets.Osu.Mods
                                 RepeatIndex = e.SpanIndex,
                                 StartTime = e.Time,
                                 Position = EndPosition,
-                                StackHeight = StackHeight
+                                StackHeight = StackHeight,
                             });
                             break;
 

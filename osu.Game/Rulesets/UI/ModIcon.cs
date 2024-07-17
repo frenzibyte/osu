@@ -116,7 +116,7 @@ namespace osu.Game.Rulesets.UI
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                         },
-                    }
+                    },
                 },
                 new Container
                 {
@@ -141,16 +141,16 @@ namespace osu.Game.Rulesets.UI
                             Alpha = 0,
                             Font = OsuFont.Numeric.With(null, 22f),
                             UseFullGlyphHeight = false,
-                            Text = mod.Acronym
+                            Text = mod.Acronym,
                         },
                         modIcon = new SpriteIcon
                         {
                             Origin = Anchor.Centre,
                             Anchor = Anchor.Centre,
                             Size = new Vector2(45),
-                            Icon = FontAwesome.Solid.Question
+                            Icon = FontAwesome.Solid.Question,
                         },
-                    }
+                    },
                 },
             };
         }

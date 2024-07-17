@@ -16,6 +16,7 @@ using osu.Game.Beatmaps.Timing;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Overlays.Settings;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -32,7 +33,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Osu.Mods
 {
     public class OsuModTargetPractice : ModWithVisibilityAdjustment, IApplicableToDrawableRuleset<OsuHitObject>,
-                                        IApplicableToHealthProcessor, IApplicableToDifficulty, IApplicableFailOverride, IHasSeed, IHidesApproachCircles
+                                        IApplicableToDifficulty, IApplicableToFailConditions, IHasSeed, IHidesApproachCircles
     {
         public override string Name => "Target Practice";
         public override string Acronym => "TP";
@@ -48,7 +49,7 @@ namespace osu.Game.Rulesets.Osu.Mods
             typeof(OsuModSpunOut),
             typeof(OsuModStrictTracking),
             typeof(OsuModSuddenDeath),
-            typeof(OsuModDepth)
+            typeof(OsuModDepth),
         }).ToArray();
 
         [SettingSource("Seed", "Use a custom seed instead of a random one", SettingControlType = typeof(SettingsNumberBox))]
@@ -97,18 +98,18 @@ namespace osu.Game.Rulesets.Osu.Mods
 
         #endregion
 
-        #region Sudden Death (IApplicableFailOverride)
+        #region Sudden Death (IApplicableToFailConditions)
 
-        public bool PerformFail() => true;
+        public Action? TriggerFailure { get; set; }
 
         public bool RestartOnFail => false;
 
-        public void ApplyToHealthProcessor(HealthProcessor healthProcessor)
+        public AppliedFailResult ApplyToFailure(JudgementResult result)
         {
-            // Sudden death
-            healthProcessor.FailConditions += (_, result)
-                => result.Type.AffectsCombo()
-                   && !result.IsHit;
+            if (result.Type.AffectsCombo() && !result.IsHit)
+                return AppliedFailResult.TriggerFail;
+
+            return AppliedFailResult.Nothing;
         }
 
         #endregion

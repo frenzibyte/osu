@@ -12,6 +12,8 @@ namespace osu.Game.Tests.Visual
     {
         private readonly ModFailCondition mod;
 
+        protected sealed override bool AllowFail => true;
+
         protected ModFailConditionTestScene(ModFailCondition mod)
         {
             this.mod = mod;
@@ -23,22 +25,20 @@ namespace osu.Game.Tests.Visual
             Beatmap = new Beatmap
             {
                 BeatmapInfo = { Ruleset = CreatePlayerRuleset().RulesetInfo },
-                HitObjects = { testData.HitObject }
+                HitObjects = { testData.HitObject },
             },
             Autoplay = !shouldMiss,
-            PassCondition = () => ((ModFailConditionTestPlayer)Player).CheckFailed(shouldMiss && testData.FailOnMiss)
+            PassCondition = () => ((ModFailConditionTestPlayer)Player).CheckFailed(shouldMiss && testData.FailOnMiss),
         });
 
-        protected override TestPlayer CreateModPlayer(Ruleset ruleset) => new ModFailConditionTestPlayer(CurrentTestData, AllowFail);
+        protected override TestPlayer CreateModPlayer(Ruleset ruleset) => new ModFailConditionTestPlayer(CurrentTestData);
 
         protected partial class ModFailConditionTestPlayer : ModTestPlayer
         {
-            public ModFailConditionTestPlayer(ModTestData data, bool allowFail)
-                : base(data, allowFail)
+            public ModFailConditionTestPlayer(ModTestData data)
+                : base(data, true)
             {
             }
-
-            protected override bool CheckModsAllowFailure() => true;
 
             public bool CheckFailed(bool failed)
             {

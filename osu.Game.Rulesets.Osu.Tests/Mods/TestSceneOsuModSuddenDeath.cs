@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Osu.Tests.Mods
                     {
                         Position = new Vector2(256, 192),
                         StartTime = 1000,
-                        Path = new SliderPath(PathType.LINEAR, new[] { Vector2.Zero, new Vector2(100, 0), })
+                        Path = new SliderPath(PathType.LINEAR, new[] { Vector2.Zero, new Vector2(100, 0) }),
                     },
                 },
             },
@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Osu.Tests.Mods
             {
                 new OsuReplayFrame(1000, new Vector2(256, 192), OsuAction.LeftButton),
                 new OsuReplayFrame(1001, new Vector2(256, 192)),
-            }
+            },
         });
 
         [Test]
@@ -63,7 +63,7 @@ namespace osu.Game.Rulesets.Osu.Tests.Mods
                     {
                         Position = new Vector2(256, 192),
                         StartTime = 1000,
-                        Path = new SliderPath(PathType.LINEAR, new[] { Vector2.Zero, new Vector2(200, 0), })
+                        Path = new SliderPath(PathType.LINEAR, new[] { Vector2.Zero, new Vector2(200, 0) }),
                     },
                 },
             },
@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Osu.Tests.Mods
             {
                 new OsuReplayFrame(1000, new Vector2(256, 192), OsuAction.LeftButton),
                 new OsuReplayFrame(1001, new Vector2(256, 192)),
-            }
+            },
         });
     }
 }

@@ -32,7 +32,7 @@ namespace osu.Game.Tests.Visual.Mods
             {
                 Mod = new OsuModAccuracyChallenge
                 {
-                    MinimumAccuracy = { Value = 0.6 }
+                    MinimumAccuracy = { Value = 0.6 },
                 },
                 Autoplay = false,
                 Beatmap = new Beatmap
@@ -40,10 +40,10 @@ namespace osu.Game.Tests.Visual.Mods
                     HitObjects = Enumerable.Range(0, 5).Select(i => new HitCircle
                     {
                         StartTime = i * 250,
-                        Position = new Vector2(i * 50)
-                    }).Cast<HitObject>().ToList()
+                        Position = new Vector2(i * 50),
+                    }).Cast<HitObject>().ToList(),
                 },
-                PassCondition = () => Player.GameplayState.HasFailed && Player.ScoreProcessor.JudgedHits >= 3
+                PassCondition = () => Player.GameplayState.HasFailed && Player.ScoreProcessor.JudgedHits >= 3,
             });
 
         [Test]
@@ -53,7 +53,7 @@ namespace osu.Game.Tests.Visual.Mods
                 Mod = new OsuModAccuracyChallenge
                 {
                     MinimumAccuracy = { Value = 0.6 },
-                    AccuracyJudgeMode = { Value = ModAccuracyChallenge.AccuracyMode.Standard }
+                    AccuracyJudgeMode = { Value = ModAccuracyChallenge.AccuracyMode.Standard },
                 },
                 Autoplay = false,
                 Beatmap = new Beatmap
@@ -61,10 +61,10 @@ namespace osu.Game.Tests.Visual.Mods
                     HitObjects = Enumerable.Range(0, 5).Select(i => new HitCircle
                     {
                         StartTime = i * 250,
-                        Position = new Vector2(i * 50)
-                    }).Cast<HitObject>().ToList()
+                        Position = new Vector2(i * 50),
+                    }).Cast<HitObject>().ToList(),
                 },
-                PassCondition = () => Player.GameplayState.HasFailed && Player.ScoreProcessor.JudgedHits >= 1
+                PassCondition = () => Player.GameplayState.HasFailed && Player.ScoreProcessor.JudgedHits >= 1,
             });
     }
 }

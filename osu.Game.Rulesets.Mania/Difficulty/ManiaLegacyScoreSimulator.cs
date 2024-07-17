@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Mania.Difficulty
             return new LegacyScoreAttributes
             {
                 ComboScore = 1000000,
-                MaxCombo = 0 // Max combo is mod-dependent, so any value here is insufficient.
+                MaxCombo = 0, // Max combo is mod-dependent, so any value here is insufficient.
             };
         }
 
