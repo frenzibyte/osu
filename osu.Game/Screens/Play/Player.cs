@@ -911,50 +911,51 @@ namespace osu.Game.Screens.Play
 
         private FailAnimationContainer failAnimationContainer;
 
-        private void onFail()
+        private bool onFail()
         {
             // Failing after the quit sequence has started may cause weird side effects with the fail animation / effects.
             if (GameplayState.HasQuit)
-                return;
+                return false;
 
-            if (Configuration.AllowFailAnimation)
-            {
-                Debug.Assert(!GameplayState.HasFailed);
-                Debug.Assert(!GameplayState.HasPassed);
-                Debug.Assert(!GameplayState.HasQuit);
-
-                GameplayState.HasFailed = true;
-
-                updateGameplayState();
-
-                // There is a chance that we could be in a paused state as the ruleset's internal clock (see FrameStabilityContainer)
-                // could process an extra frame after the GameplayClock is stopped.
-                // In such cases we want the fail state to precede a user triggered pause.
-                if (PauseOverlay.State.Value == Visibility.Visible)
-                    PauseOverlay.Hide();
-
-                failAnimationContainer.Start();
-
-                // Failures can be triggered either by a judgement, or by a mod.
-                //
-                // For the case of a judgement, due to ordering considerations, ScoreProcessor will not have received
-                // the final judgement which triggered the failure yet (see DrawableRuleset.NewResult handling above).
-                //
-                // A schedule here ensures that any lingering judgements from the current frame are applied before we
-                // finalise the score as "failed".
-                Schedule(() =>
-                {
-                    ScoreProcessor.FailScore(Score.ScoreInfo);
-                    OnFail();
-
-                    if (GameplayState.Mods.OfType<IApplicableToFailConditions>().Any(m => m.RestartOnFail))
-                        Restart(true);
-                });
-            }
-            else
+            if (!Configuration.AllowFailAnimation)
             {
                 ScoreProcessor.FailScore(Score.ScoreInfo);
+                return false;
             }
+
+            Debug.Assert(!GameplayState.HasFailed);
+            Debug.Assert(!GameplayState.HasPassed);
+            Debug.Assert(!GameplayState.HasQuit);
+
+            GameplayState.HasFailed = true;
+
+            updateGameplayState();
+
+            // There is a chance that we could be in a paused state as the ruleset's internal clock (see FrameStabilityContainer)
+            // could process an extra frame after the GameplayClock is stopped.
+            // In such cases we want the fail state to precede a user triggered pause.
+            if (PauseOverlay.State.Value == Visibility.Visible)
+                PauseOverlay.Hide();
+
+            failAnimationContainer.Start();
+
+            // Failures can be triggered either by a judgement, or by a mod.
+            //
+            // For the case of a judgement, due to ordering considerations, ScoreProcessor will not have received
+            // the final judgement which triggered the failure yet (see DrawableRuleset.NewResult handling above).
+            //
+            // A schedule here ensures that any lingering judgements from the current frame are applied before we
+            // finalise the score as "failed".
+            Schedule(() =>
+            {
+                ScoreProcessor.FailScore(Score.ScoreInfo);
+                OnFail();
+
+                if (GameplayState.Mods.OfType<IApplicableToFailConditions>().Any(m => m.RestartOnFail))
+                    Restart(true);
+            });
+
+            return true;
         }
 
         /// <summary>

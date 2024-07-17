@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Scoring
         /// <summary>
         /// Invoked when the <see cref="HealthProcessor"/> is in a failed state.
         /// </summary>
-        public event Action? Failed;
+        public event Func<bool>? Failed;
 
         /// <summary>
         /// The current health.
@@ -56,7 +56,9 @@ namespace osu.Game.Rulesets.Scoring
             if (HasFailed)
                 return;
 
-            Failed?.Invoke();
+            if (Failed?.Invoke() == false)
+                return;
+
             HasFailed = true;
             ModTriggeringFailure = triggeringMod;
         }
