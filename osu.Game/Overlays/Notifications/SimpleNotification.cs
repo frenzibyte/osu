@@ -53,8 +53,11 @@ namespace osu.Game.Overlays.Notifications
         private SpriteIcon? iconDrawable;
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider colourProvider)
+        private void load(OsuColour colours)
         {
+            OverlayColourProvider colourProvider;
+            AddInternal(colourProvider = new OverlayColourProvider());
+
             Light.Colour = colours.Green;
 
             IconContent.AddRange(new Drawable[]
@@ -62,8 +65,7 @@ namespace osu.Game.Overlays.Notifications
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = colourProvider.Background5,
-                },
+                }.WithOverlayColour(colourProvider, OverlayColourShade.Background5),
                 iconDrawable = new SpriteIcon
                 {
                     Anchor = Anchor.Centre,

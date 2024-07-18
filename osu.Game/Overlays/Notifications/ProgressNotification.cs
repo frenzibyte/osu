@@ -74,9 +74,6 @@ namespace osu.Game.Overlays.Notifications
 
         protected override IconUsage CloseButtonIcon => FontAwesome.Solid.Times;
 
-        [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
-
         protected override void LoadComplete()
         {
             base.LoadComplete();
@@ -231,6 +228,9 @@ namespace osu.Game.Overlays.Notifications
         [BackgroundDependencyLoader]
         private void load(OsuColour colours, AudioManager audioManager)
         {
+            OverlayColourProvider colourProvider;
+            AddInternal(colourProvider = new OverlayColourProvider());
+
             colourQueued = colours.YellowDark;
             colourActive = colours.Blue;
             colourCancelled = colours.Red;
@@ -240,9 +240,8 @@ namespace osu.Game.Overlays.Notifications
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = colourProvider.Background5,
                     Depth = float.MaxValue,
-                },
+                }.WithOverlayColour(colourProvider, OverlayColourShade.Background5),
                 loadingSpinner = new LoadingSpinner
                 {
                     Size = new Vector2(loading_spinner_size),
