@@ -19,7 +19,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneBeatmapListingCardSizeTabControl : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         private readonly Bindable<BeatmapCardSize> cardSize = new Bindable<BeatmapCardSize>();
 

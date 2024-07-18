@@ -62,7 +62,7 @@ namespace osu.Game.Beatmaps.Drawables
         private OsuColour colours { get; set; } = null!;
 
         [Resolved(CanBeNull = true)]
-        private OverlayColourProvider? colourProvider { get; set; }
+        private OverlayColourPalette? colourProvider { get; set; }
 
         public BeatmapSetOnlineStatusPill()
         {

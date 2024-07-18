@@ -27,7 +27,7 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             InternalChild = new FillFlowContainer
             {

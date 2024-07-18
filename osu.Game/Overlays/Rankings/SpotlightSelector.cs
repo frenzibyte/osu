@@ -118,7 +118,7 @@ namespace osu.Game.Overlays.Rankings
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = colourProvider.Dark3;
         }
@@ -169,7 +169,7 @@ namespace osu.Game.Overlays.Rankings
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 valueText.Colour = colourProvider.Content2;
             }
@@ -184,7 +184,7 @@ namespace osu.Game.Overlays.Rankings
             protected override DropdownHeader CreateHeader() => new SpotlightsDropdownHeader();
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 menu.BackgroundColour = colourProvider.Background5;
                 menu.HoverColour = colourProvider.Background4;
@@ -204,7 +204,7 @@ namespace osu.Game.Overlays.Rankings
                 }
 
                 [BackgroundDependencyLoader]
-                private void load(OverlayColourProvider colourProvider)
+                private void load(OverlayColourPalette colourProvider)
                 {
                     BackgroundColour = colourProvider.Background6.Opacity(0.5f);
                     // osu-web adds a 0.6 opacity container on top of the 0.5 base one when hovering, 0.8 on a single container here matches the resulting colour

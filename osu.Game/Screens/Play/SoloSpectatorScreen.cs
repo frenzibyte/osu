@@ -46,7 +46,7 @@ namespace osu.Game.Screens.Play
         private BeatmapModelDownloader beatmapDownloader { get; set; } = null!;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         private Container beatmapPanelContainer = null!;
         private RoundedButton watchButton = null!;

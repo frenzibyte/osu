@@ -23,7 +23,7 @@ namespace osu.Game.Overlays.BeatmapListing
     public partial class FilterTabItem<T> : TabItem<T>
     {
         [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; }
+        protected OverlayColourPalette ColourProvider { get; private set; }
 
         protected OsuSpriteText Text;
 

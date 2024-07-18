@@ -187,7 +187,7 @@ namespace osu.Game.Overlays.Settings.Sections.Input
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 RelativeSizeAxes = Axes.X;
                 AutoSizeAxes = Axes.Y;

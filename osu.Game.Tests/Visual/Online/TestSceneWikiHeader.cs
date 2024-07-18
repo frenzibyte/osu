@@ -19,7 +19,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneWikiHeader : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Orange);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Orange);
 
         [Cached]
         private readonly Bindable<APIWikiPage> wikiPageData = new Bindable<APIWikiPage>(new APIWikiPage

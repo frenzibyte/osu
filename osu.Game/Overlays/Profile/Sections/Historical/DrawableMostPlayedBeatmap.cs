@@ -37,7 +37,7 @@ namespace osu.Game.Overlays.Profile.Sections.Historical
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             AddRangeInternal(new Drawable[]
             {
@@ -110,7 +110,7 @@ namespace osu.Game.Overlays.Profile.Sections.Historical
         private partial class MostPlayedBeatmapContainer : ProfileItemContainer
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 IdleColour = colourProvider.Background3;
                 HoverColour = colourProvider.Background2;

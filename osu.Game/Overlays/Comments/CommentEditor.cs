@@ -70,7 +70,7 @@ namespace osu.Game.Overlays.Comments
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
@@ -210,7 +210,7 @@ namespace osu.Game.Overlays.Comments
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 BackgroundUnfocused = BackgroundFocused = colourProvider.Background5;
                 placeholder.Colour = colourProvider.Background3;

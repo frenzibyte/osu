@@ -58,7 +58,7 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? colourProvider, OsuColour colours)
+        private void load(OverlayColourPalette? colourProvider, OsuColour colours)
         {
             AccentColour = colourProvider?.Highlight1 ?? colours.Pink;
             GlowingAccentColour = colourProvider?.Highlight1.Lighten(0.4f) ?? colours.PinkLighter;

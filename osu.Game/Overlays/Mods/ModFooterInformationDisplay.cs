@@ -24,7 +24,7 @@ namespace osu.Game.Overlays.Mods
         protected Box FrontBackground { get; private set; } = null!;
 
         [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; } = null!;
+        protected OverlayColourPalette ColourProvider { get; private set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load()

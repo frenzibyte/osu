@@ -37,7 +37,7 @@ namespace osu.Game.Overlays.SkinEditor
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider overlayColourProvider)
+        private void load(OverlayColourPalette overlayColourProvider)
         {
             InternalChildren = new Drawable[]
             {
@@ -104,7 +104,7 @@ namespace osu.Game.Overlays.SkinEditor
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider? overlayColourProvider, OsuColour colours)
+            private void load(OverlayColourPalette? overlayColourProvider, OsuColour colours)
             {
                 BackgroundColour = overlayColourProvider?.Background3 ?? colours.Blue3;
                 Content.CornerRadius = 5;

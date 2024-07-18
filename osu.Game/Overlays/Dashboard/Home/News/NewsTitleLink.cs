@@ -24,7 +24,7 @@ namespace osu.Game.Overlays.Dashboard.Home.News
         }
 
         [BackgroundDependencyLoader]
-        private void load(GameHost host, OverlayColourProvider colourProvider)
+        private void load(GameHost host, OverlayColourPalette colourProvider)
         {
             Child = new TextFlowContainer(t =>
             {

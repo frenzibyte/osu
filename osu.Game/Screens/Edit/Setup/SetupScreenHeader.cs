@@ -53,7 +53,7 @@ namespace osu.Game.Screens.Edit.Setup
         };
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             tabControl.AccentColour = colourProvider.Highlight1;
             tabControl.BackgroundColour = colourProvider.Dark5;

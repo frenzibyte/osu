@@ -49,7 +49,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? overlayColourProvider, OsuColour colours)
+        private void load(OverlayColourPalette? overlayColourProvider, OsuColour colours)
         {
             // Many buttons have local colours, but this provides a sane default for all other cases.
             DefaultBackgroundColour = overlayColourProvider?.Colour3 ?? colours.Blue3;

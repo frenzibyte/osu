@@ -140,7 +140,7 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             underlayContainer.BorderColour = ColourInfo.GradientVertical(Colour4.Black, colourProvider.Dark4);
             underlayBackground.Colour = colourProvider.Dark4;

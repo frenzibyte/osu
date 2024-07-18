@@ -18,7 +18,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneFirstRunScreenImportFromStable : OsuManualInputManagerTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         private readonly Mock<LegacyImportManager> legacyImportManager = new Mock<LegacyImportManager>();
 

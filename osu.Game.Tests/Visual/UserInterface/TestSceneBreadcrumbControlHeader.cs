@@ -16,7 +16,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private static readonly string[] items = { "first", "second", "third", "fourth", "fifth" };
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Red);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Red);
 
         private TestHeader header;
 

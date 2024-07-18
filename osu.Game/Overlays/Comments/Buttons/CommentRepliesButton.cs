@@ -24,7 +24,7 @@ namespace osu.Game.Overlays.Comments.Buttons
         }
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         private readonly ChevronIcon icon;
         private readonly Box background;

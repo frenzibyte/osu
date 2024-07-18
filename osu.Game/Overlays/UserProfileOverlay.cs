@@ -247,7 +247,7 @@ namespace osu.Game.Overlays
                 private OsuSpriteText text = null!;
 
                 [Resolved]
-                private OverlayColourProvider colourProvider { get; set; } = null!;
+                private OverlayColourPalette colourProvider { get; set; } = null!;
 
                 public ProfileSectionTabItem(ProfileSection value)
                     : base(value)

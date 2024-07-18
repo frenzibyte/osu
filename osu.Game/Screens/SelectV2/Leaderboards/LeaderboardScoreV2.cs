@@ -66,7 +66,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
         private ColourInfo totalScoreBackgroundGradient;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [Resolved]
         private SongSelect? songSelect { get; set; }
@@ -621,7 +621,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
             }
 
             [BackgroundDependencyLoader]
-            private void load(OsuColour colours, OverlayColourProvider colourProvider)
+            private void load(OsuColour colours, OverlayColourPalette colourProvider)
             {
                 AutoSizeAxes = Axes.Both;
                 OsuSpriteText value;

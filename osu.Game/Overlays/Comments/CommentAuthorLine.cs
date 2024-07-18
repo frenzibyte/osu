@@ -89,7 +89,7 @@ namespace osu.Game.Overlays.Comments
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 AutoSizeAxes = Axes.Both;
                 Masking = true;

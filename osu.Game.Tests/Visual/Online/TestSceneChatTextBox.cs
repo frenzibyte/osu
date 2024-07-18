@@ -23,7 +23,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneChatTextBox : OsuManualInputManagerTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Pink);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Pink);
 
         [Cached]
         private readonly Bindable<Channel> currentChannel = new Bindable<Channel>();

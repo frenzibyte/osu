@@ -15,7 +15,7 @@ namespace osu.Game.Screens.Edit
     public abstract partial class EditorRoundedScreenSettings : CompositeDrawable
     {
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             RelativeSizeAxes = Axes.Both;
 

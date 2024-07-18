@@ -32,7 +32,7 @@ namespace osu.Game.Graphics.Containers.Markdown.Footnotes
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider colourProvider, OsuMarkdownContainer markdownContainer, OverlayScrollContainer? scrollContainer)
+        private void load(OverlayColourPalette colourProvider, OsuMarkdownContainer markdownContainer, OverlayScrollContainer? scrollContainer)
         {
             float fontSize = parentTextComponent.CreateSpriteText().Font.Size;
             Size = new Vector2(fontSize);

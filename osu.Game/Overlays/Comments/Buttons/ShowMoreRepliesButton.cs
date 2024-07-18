@@ -28,7 +28,7 @@ namespace osu.Game.Overlays.Comments.Buttons
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             IdleColour = colourProvider.Light2;
             HoverColour = colourProvider.Light1;

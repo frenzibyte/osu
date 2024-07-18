@@ -31,7 +31,7 @@ namespace osu.Game.Graphics.Containers.Markdown
         private partial class QuoteBackground : Box
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 Anchor = Anchor.CentreLeft;
                 Origin = Anchor.CentreLeft;

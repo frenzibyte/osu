@@ -22,7 +22,7 @@ namespace osu.Game.Screens.Edit.Timing.RowAttributes
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider overlayColours)
+        private void load(OsuColour colours, OverlayColourPalette overlayColours)
         {
             Anchor = Anchor.CentreLeft;
             Origin = Anchor.CentreLeft;

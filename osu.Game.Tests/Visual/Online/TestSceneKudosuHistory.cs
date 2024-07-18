@@ -19,7 +19,7 @@ namespace osu.Game.Tests.Visual.Online
         private readonly Box background;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Pink);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Pink);
 
         public TestSceneKudosuHistory()
         {

@@ -22,7 +22,7 @@ namespace osu.Game.Tests.Visual.DailyChallenge
     public partial class TestSceneDailyChallengeCarousel : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Plum);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Plum);
 
         private readonly Bindable<Room> room = new Bindable<Room>(new Room());
 

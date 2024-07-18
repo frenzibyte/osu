@@ -28,7 +28,7 @@ namespace osu.Game.Tests.Visual.Editing
     public partial class TestSceneTimingScreen : EditorClockTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         private TimingScreen timingScreen;
         private EditorBeatmap editorBeatmap;

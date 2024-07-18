@@ -72,7 +72,7 @@ namespace osu.Game.Overlays.Wiki
         private partial class PanelBackground : CompositeDrawable
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 Padding = new MarginPadding(padding);
                 InternalChild = new Container

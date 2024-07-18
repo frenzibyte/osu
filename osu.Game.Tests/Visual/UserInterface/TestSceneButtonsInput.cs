@@ -22,7 +22,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private const int width = 500;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         private readonly SettingsButton settingsButton;
         private readonly OsuClickableContainer clickableContainer;

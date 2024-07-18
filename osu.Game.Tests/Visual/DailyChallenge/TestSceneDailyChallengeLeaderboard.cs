@@ -23,7 +23,7 @@ namespace osu.Game.Tests.Visual.DailyChallenge
         private DummyAPIAccess dummyAPI => (DummyAPIAccess)API;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Plum);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Plum);
 
         [Test]
         public void TestBasicBehaviour()

@@ -34,7 +34,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         protected override bool Autoplay => true;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [Cached]
         public readonly EditorClipboard Clipboard = new EditorClipboard();

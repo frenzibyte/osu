@@ -300,7 +300,7 @@ namespace osu.Game.Screens.Edit.Timing
             private WaveformGraph waveformGraph = null!;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             [Resolved]
             private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;

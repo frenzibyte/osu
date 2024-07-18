@@ -25,7 +25,7 @@ namespace osu.Game.Graphics.Containers.Markdown
         private partial class CodeBlockBackground : Box
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 RelativeSizeAxes = Axes.Both;
                 Colour = colourProvider.Background6;
@@ -35,7 +35,7 @@ namespace osu.Game.Graphics.Containers.Markdown
         private partial class CodeBlockTextFlowContainer : OsuMarkdownTextFlowContainer
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 Colour = colourProvider.Light1;
                 Margin = new MarginPadding(10);

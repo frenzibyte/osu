@@ -51,7 +51,7 @@ namespace osu.Game.Graphics.UserInterface
         private GameHost? host { get; set; }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? colourProvider)
+        private void load(OverlayColourPalette? colourProvider)
         {
             BackgroundUnfocused = colourProvider?.Background5 ?? new Color4(10, 10, 10, 255);
             BackgroundFocused = colourProvider?.Background5 ?? new Color4(10, 10, 10, 255);

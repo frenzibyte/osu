@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Edit
         protected IBeatSnapProvider BeatSnapProvider { get; private set; }
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; }
+        private OverlayColourPalette colourProvider { get; set; }
 
         public override ComposeBlueprintContainer BlueprintContainer => blueprintContainer;
         private ComposeBlueprintContainer blueprintContainer;

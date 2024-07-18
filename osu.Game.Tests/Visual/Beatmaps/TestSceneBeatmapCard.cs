@@ -221,14 +221,14 @@ namespace osu.Game.Tests.Visual.Beatmaps
 
         private Drawable createContent(OverlayColourScheme colourScheme, Func<APIBeatmapSet, Drawable> creationFunc)
         {
-            var colourProvider = new OverlayColourProvider(colourScheme);
+            var colourProvider = new OverlayColourPalette(colourScheme);
 
             return new DependencyProvidingContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 CachedDependencies = new (Type, object)[]
                 {
-                    (typeof(OverlayColourProvider), colourProvider)
+                    (typeof(OverlayColourPalette), colourProvider)
                 },
                 Children = new Drawable[]
                 {

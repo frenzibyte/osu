@@ -26,7 +26,7 @@ namespace osu.Game.Graphics.Containers.Markdown.Footnotes
         private IMarkdownTextComponent parentTextComponent { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [Resolved]
         private OsuMarkdownContainer markdownContainer { get; set; } = null!;

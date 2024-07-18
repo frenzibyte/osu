@@ -28,7 +28,7 @@ namespace osu.Game.Screens.Edit.Compose.Components.Timeline
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             InternalChildren = new Drawable[]
             {

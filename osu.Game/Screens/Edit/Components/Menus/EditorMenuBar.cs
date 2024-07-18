@@ -31,7 +31,7 @@ namespace osu.Game.Screens.Edit.Components.Menus
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, TextureStore textures)
+        private void load(OverlayColourPalette colourProvider, TextureStore textures)
         {
             BackgroundColour = colourProvider.Background3;
 
@@ -86,7 +86,7 @@ namespace osu.Game.Screens.Edit.Components.Menus
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 ForegroundColour = colourProvider.Light3;
                 BackgroundColour = colourProvider.Background2;
@@ -141,7 +141,7 @@ namespace osu.Game.Screens.Edit.Components.Menus
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 BackgroundColour = colourProvider.Background2;
             }
@@ -174,7 +174,7 @@ namespace osu.Game.Screens.Edit.Components.Menus
                 }
 
                 [BackgroundDependencyLoader]
-                private void load(OverlayColourProvider colourProvider)
+                private void load(OverlayColourPalette colourProvider)
                 {
                     BackgroundColour = colourProvider.Background2;
                     BackgroundColourHover = colourProvider.Background1;
@@ -191,7 +191,7 @@ namespace osu.Game.Screens.Edit.Components.Menus
                 }
 
                 [BackgroundDependencyLoader]
-                private void load(OverlayColourProvider colourProvider)
+                private void load(OverlayColourPalette colourProvider)
                 {
                     BackgroundColour = colourProvider.Background2;
                     BackgroundColourHover = colourProvider.Background1;

@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.UI
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, OsuColour colours, OverlayColourProvider? colourProvider)
+        private void load(TextureStore textures, OsuColour colours, OverlayColourPalette? colourProvider)
         {
             FillFlowContainer contentFlow;
             ModSwitchTiny tinySwitch;

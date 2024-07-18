@@ -36,7 +36,7 @@ namespace osu.Game.Screens.Footer
         protected static readonly Vector2 BUTTON_SHEAR = new Vector2(shear, 0);
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         private Colour4 buttonAccentColour;
 

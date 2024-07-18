@@ -18,7 +18,7 @@ namespace osu.Game.Screens.Edit.Compose.Components
         protected EditorBeatmap EditorBeatmap { get; private set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load()

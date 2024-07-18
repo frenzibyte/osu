@@ -26,7 +26,7 @@ namespace osu.Game.Screens.Edit
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             // Grid with only two rows.
             // First is the timeline area, which should be allowed to expand as required.

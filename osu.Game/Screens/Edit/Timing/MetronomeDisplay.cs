@@ -39,7 +39,7 @@ namespace osu.Game.Screens.Edit.Timing
         private readonly MetronomeTick metronomeTick = new MetronomeTick();
 
         [Resolved]
-        private OverlayColourProvider overlayColourProvider { get; set; } = null!;
+        private OverlayColourPalette overlayColourProvider { get; set; } = null!;
 
         public bool EnableClicking
         {

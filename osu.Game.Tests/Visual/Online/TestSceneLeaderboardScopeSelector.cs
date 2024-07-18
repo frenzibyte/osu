@@ -13,7 +13,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneLeaderboardScopeSelector : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         public TestSceneLeaderboardScopeSelector()
         {

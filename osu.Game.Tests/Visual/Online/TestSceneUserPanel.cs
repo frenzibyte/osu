@@ -31,7 +31,7 @@ namespace osu.Game.Tests.Visual.Online
         private TestUserListPanel boundPanel2;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         [Resolved]
         private IRulesetStore rulesetStore { get; set; }

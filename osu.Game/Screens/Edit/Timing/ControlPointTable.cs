@@ -32,7 +32,7 @@ namespace osu.Game.Screens.Edit.Timing
         private const float row_horizontal_padding = 20;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             RelativeSizeAxes = Axes.Both;
 
@@ -131,7 +131,7 @@ namespace osu.Game.Screens.Edit.Timing
             private Box background = null!;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             [Resolved]
             private Bindable<ControlPointGroup?> selectedGroup { get; set; } = null!;

@@ -38,7 +38,7 @@ namespace osu.Game.Screens.Edit.Verify
         private BeatmapVerifierContext context;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             generalVerifier = new BeatmapVerifier();
             rulesetVerifier = beatmap.BeatmapInfo.Ruleset.CreateInstance().CreateBeatmapVerifier();

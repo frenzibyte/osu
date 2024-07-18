@@ -25,7 +25,7 @@ namespace osu.Game.Overlays.Chat
         public readonly DateTimeOffset Date;
 
         [Resolved(CanBeNull = true)]
-        private OverlayColourProvider? colourProvider { get; set; }
+        private OverlayColourPalette? colourProvider { get; set; }
 
         public DaySeparator(DateTimeOffset date)
         {

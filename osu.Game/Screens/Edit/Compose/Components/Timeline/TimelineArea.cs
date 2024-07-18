@@ -32,7 +32,7 @@ namespace osu.Game.Screens.Edit.Compose.Components.Timeline
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuColour colours, Editor? editor)
+        private void load(OverlayColourPalette colourProvider, OsuColour colours, Editor? editor)
         {
             const float padding = 10;
 

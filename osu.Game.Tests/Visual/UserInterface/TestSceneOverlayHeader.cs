@@ -72,11 +72,11 @@ namespace osu.Game.Tests.Visual.UserInterface
         private partial class ColourProvidedContainer : Container
         {
             [Cached]
-            private readonly OverlayColourProvider colourProvider;
+            private readonly OverlayColourPalette colourProvider;
 
             public ColourProvidedContainer(OverlayColourScheme colourScheme, OverlayHeader header)
             {
-                colourProvider = new OverlayColourProvider(colourScheme);
+                colourProvider = new OverlayColourPalette(colourScheme);
 
                 AutoSizeAxes = Axes.Y;
                 RelativeSizeAxes = Axes.X;

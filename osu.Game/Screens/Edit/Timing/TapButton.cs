@@ -35,7 +35,7 @@ namespace osu.Game.Screens.Edit.Timing
         public readonly BindableBool IsHandlingTapping = new BindableBool();
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [Resolved]
         private Bindable<ControlPointGroup>? selectedGroup { get; set; }
@@ -350,7 +350,7 @@ namespace osu.Game.Screens.Edit.Timing
             private Container fillContent = null!;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             [BackgroundDependencyLoader]
             private void load()

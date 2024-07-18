@@ -131,7 +131,7 @@ namespace osu.Game.Overlays.Rankings.Tables
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 if (!isHighlighted)
                     Colour = colourProvider.Foreground1;
@@ -150,7 +150,7 @@ namespace osu.Game.Overlays.Rankings.Tables
         protected partial class ColouredRowText : RowText
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 Colour = colourProvider.Foreground1;
             }

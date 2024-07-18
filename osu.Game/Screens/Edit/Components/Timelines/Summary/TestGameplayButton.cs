@@ -24,7 +24,7 @@ namespace osu.Game.Screens.Edit.Components.Timelines.Summary
         };
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider colourProvider)
+        private void load(OsuColour colours, OverlayColourPalette colourProvider)
         {
             BackgroundColour = colours.Orange1;
             SpriteText.Colour = colourProvider.Background6;

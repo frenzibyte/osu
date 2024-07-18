@@ -25,7 +25,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneModColumn : OsuManualInputManagerTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         [Resolved]
         private OsuConfigManager configManager { get; set; } = null!;

@@ -182,11 +182,11 @@ namespace osu.Game.Tests.Visual.Online
         private partial class ColourProvidedContainer : Container
         {
             [Cached]
-            private readonly OverlayColourProvider colourProvider;
+            private readonly OverlayColourPalette colourProvider;
 
             public ColourProvidedContainer(OverlayColourScheme colourScheme, DrawableProfileScore score)
             {
-                colourProvider = new OverlayColourProvider(colourScheme);
+                colourProvider = new OverlayColourPalette(colourScheme);
 
                 AutoSizeAxes = Axes.Y;
                 RelativeSizeAxes = Axes.X;

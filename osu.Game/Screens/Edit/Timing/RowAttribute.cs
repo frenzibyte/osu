@@ -31,7 +31,7 @@ namespace osu.Game.Screens.Edit.Timing
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider overlayColours)
+        private void load(OsuColour colours, OverlayColourPalette overlayColours)
         {
             AutoSizeAxes = Axes.X;
 

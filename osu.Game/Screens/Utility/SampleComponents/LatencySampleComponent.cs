@@ -24,7 +24,7 @@ namespace osu.Game.Screens.Utility.SampleComponents
         private LatencyArea latencyArea { get; set; } = null!;
 
         [Resolved]
-        protected OverlayColourProvider OverlayColourProvider { get; private set; } = null!;
+        protected OverlayColourPalette OverlayColourProvider { get; private set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load(LatencyCertifierScreen latencyCertifierScreen)

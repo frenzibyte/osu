@@ -31,7 +31,7 @@ namespace osu.Game.Screens.Edit.Timing
         private Bindable<ControlPointGroup?> selectedGroup { get; set; } = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             RelativeSizeAxes = Axes.Both;
 

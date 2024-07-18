@@ -35,7 +35,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private RulesetStore rulesets = null!;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         [Cached(typeof(IDialogOverlay))]
         private readonly DialogOverlay dialogOverlay = new DialogOverlay();

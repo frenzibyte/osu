@@ -61,7 +61,7 @@ namespace osu.Game.Overlays
             }
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; }
+            private OverlayColourPalette colourProvider { get; set; }
 
             public LocalisableString TooltipText => Value.GetLocalisableDescription();
 

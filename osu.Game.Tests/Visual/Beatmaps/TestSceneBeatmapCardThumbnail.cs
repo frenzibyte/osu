@@ -22,7 +22,7 @@ namespace osu.Game.Tests.Visual.Beatmaps
         private PlayButton playButton => this.ChildrenOfType<PlayButton>().Single();
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [Test]
         public void TestThumbnailPreview()

@@ -16,7 +16,7 @@ namespace osu.Game.Tests.Visual.Editing
     public partial class TestSceneEditorMenuBar : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider overlayColour = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette overlayColour = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         public TestSceneEditorMenuBar()
         {

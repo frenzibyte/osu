@@ -27,7 +27,7 @@ namespace osu.Game.Tests.Visual.Online
         private GraphExposingSuccessRate successRate;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [SetUp]
         public void Setup() => Schedule(() =>

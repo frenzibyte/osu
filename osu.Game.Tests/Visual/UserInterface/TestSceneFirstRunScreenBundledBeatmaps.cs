@@ -11,7 +11,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneFirstRunScreenBundledBeatmaps : OsuManualInputManagerTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         public TestSceneFirstRunScreenBundledBeatmaps()
         {

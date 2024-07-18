@@ -31,7 +31,7 @@ namespace osu.Game.Overlays
         protected IAPIProvider API { get; private set; } = null!;
 
         [Cached]
-        protected readonly OverlayColourProvider ColourProvider;
+        protected readonly OverlayColourPalette ColourProvider;
 
         protected override Container<Drawable> Content => content;
 
@@ -42,7 +42,7 @@ namespace osu.Game.Overlays
         {
             RecreateHeader();
 
-            ColourProvider = new OverlayColourProvider(colourScheme);
+            ColourProvider = new OverlayColourPalette(colourScheme);
 
             RelativeSizeAxes = Axes.Both;
             RelativePositionAxes = Axes.Both;

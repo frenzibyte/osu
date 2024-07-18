@@ -37,7 +37,7 @@ namespace osu.Game.Screens.Edit.Compose.Components
         private BindableBeatDivisor beatDivisor { get; set; } = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             Masking = true;
 
@@ -536,7 +536,7 @@ namespace osu.Game.Screens.Edit.Compose.Components
             private partial class Marker : CompositeDrawable
             {
                 [Resolved]
-                private OverlayColourProvider colourProvider { get; set; } = null!;
+                private OverlayColourPalette colourProvider { get; set; } = null!;
 
                 [BackgroundDependencyLoader]
                 private void load()

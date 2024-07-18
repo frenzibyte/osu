@@ -78,7 +78,7 @@ namespace osu.Game.Overlays.Notifications
         protected virtual IconUsage CloseButtonIcon => FontAwesome.Solid.Check;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public override bool PropagatePositionalInputSubTree => base.PropagatePositionalInputSubTree && !WasClosed;
 
@@ -394,7 +394,7 @@ namespace osu.Game.Overlays.Notifications
             private readonly IconUsage iconUsage;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             public CloseButton(IconUsage iconUsage)
             {

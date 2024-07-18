@@ -73,7 +73,7 @@ namespace osu.Game.Tests.Visual.UserInterface
                     RelativeSizeAxes = Axes.Both,
                     CachedDependencies = new (Type, object)[]
                     {
-                        (typeof(OverlayColourProvider), new OverlayColourProvider(colourScheme.Value))
+                        (typeof(OverlayColourPalette), new OverlayColourPalette(colourScheme.Value))
                     },
                     Child = switchFlow
                 };

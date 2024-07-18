@@ -43,7 +43,7 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             IdleColour = colourProvider.Background2;
             HoverColour = colourProvider.Background1;
@@ -118,7 +118,7 @@ namespace osu.Game.Graphics.UserInterface
         public partial class ChevronIcon : SpriteIcon
         {
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; }
+            private OverlayColourPalette colourProvider { get; set; }
 
             public ChevronIcon()
             {

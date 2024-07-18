@@ -20,7 +20,7 @@ namespace osu.Game.Screens.Utility
     public partial class LatencyArea : CompositeDrawable, IProvideCursor
     {
         [Resolved]
-        private OverlayColourProvider overlayColourProvider { get; set; } = null!;
+        private OverlayColourPalette overlayColourProvider { get; set; } = null!;
 
         public Action? ReportUserBest { get; set; }
 

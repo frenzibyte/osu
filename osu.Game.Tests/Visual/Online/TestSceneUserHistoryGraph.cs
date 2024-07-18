@@ -13,7 +13,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneUserHistoryGraph : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Pink);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Pink);
 
         public TestSceneUserHistoryGraph()
         {

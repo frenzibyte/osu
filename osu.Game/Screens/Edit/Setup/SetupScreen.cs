@@ -25,7 +25,7 @@ namespace osu.Game.Screens.Edit.Setup
         }
 
         [BackgroundDependencyLoader]
-        private void load(EditorBeatmap beatmap, OverlayColourProvider colourProvider)
+        private void load(EditorBeatmap beatmap, OverlayColourPalette colourProvider)
         {
             var ruleset = beatmap.BeatmapInfo.Ruleset.CreateInstance();
 

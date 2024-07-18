@@ -101,7 +101,7 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer.Match
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider, OsuColour colours)
+            private void load(OverlayColourPalette colourProvider, OsuColour colours)
             {
                 InternalChildren = new Drawable[]
                 {

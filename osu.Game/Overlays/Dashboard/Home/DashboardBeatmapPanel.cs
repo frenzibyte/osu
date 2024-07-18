@@ -21,7 +21,7 @@ namespace osu.Game.Overlays.Dashboard.Home
     public abstract partial class DashboardBeatmapPanel : OsuClickableContainer
     {
         [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; }
+        protected OverlayColourPalette ColourProvider { get; private set; }
 
         [Resolved(canBeNull: true)]
         private BeatmapSetOverlay beatmapOverlay { get; set; }

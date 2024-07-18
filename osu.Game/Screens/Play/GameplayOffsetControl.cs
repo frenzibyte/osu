@@ -52,7 +52,7 @@ namespace osu.Game.Screens.Play
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider? colourProvider)
+        private void load(OverlayColourPalette? colourProvider)
         {
             InternalChildren = new Drawable[]
             {

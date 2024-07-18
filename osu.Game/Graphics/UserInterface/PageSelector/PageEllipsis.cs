@@ -12,7 +12,7 @@ namespace osu.Game.Graphics.UserInterface.PageSelector
     internal partial class PageEllipsis : CompositeDrawable
     {
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             RelativeSizeAxes = Axes.Y;
             AutoSizeAxes = Axes.X;

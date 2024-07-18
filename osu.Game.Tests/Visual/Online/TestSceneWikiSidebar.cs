@@ -17,7 +17,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneWikiSidebar : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Orange);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Orange);
 
         [Cached]
         private readonly OverlayScrollContainer scrollContainer = new OverlayScrollContainer();

@@ -22,7 +22,7 @@ namespace osu.Game.Overlays.Chat.ChannelList
         private Box box = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour osuColour, OverlayColourProvider colourProvider)
+        private void load(OsuColour osuColour, OverlayColourPalette colourProvider)
         {
             Masking = true;
             Size = new Vector2(20, 12);

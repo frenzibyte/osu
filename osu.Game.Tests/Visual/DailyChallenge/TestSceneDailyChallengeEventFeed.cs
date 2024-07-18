@@ -18,7 +18,7 @@ namespace osu.Game.Tests.Visual.DailyChallenge
     public partial class TestSceneDailyChallengeEventFeed : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Plum);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Plum);
 
         [Test]
         public void TestBasicAppearance()

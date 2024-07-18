@@ -42,7 +42,7 @@ namespace osu.Game.Overlays.Chat.Listing
         private IBindable<bool> channelJoined = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         private const float text_size = 14;
         private const float icon_size = 14;

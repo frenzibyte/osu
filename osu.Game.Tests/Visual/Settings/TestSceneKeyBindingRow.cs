@@ -17,7 +17,7 @@ namespace osu.Game.Tests.Visual.Settings
     public partial class TestSceneKeyBindingRow : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         [Test]
         public void TestChangesAfterConstruction()

@@ -44,7 +44,7 @@ namespace osu.Game.Overlays.Chat
         private const float padding = 5;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             RelativeSizeAxes = Axes.X;
             Height = HEIGHT;

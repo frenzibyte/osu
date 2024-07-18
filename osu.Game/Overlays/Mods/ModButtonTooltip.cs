@@ -18,7 +18,7 @@ namespace osu.Game.Overlays.Mods
 
         protected override Container<Drawable> Content { get; }
 
-        public ModButtonTooltip(OverlayColourProvider colourProvider)
+        public ModButtonTooltip(OverlayColourPalette colourProvider)
         {
             AutoSizeAxes = Axes.Both;
             Masking = true;

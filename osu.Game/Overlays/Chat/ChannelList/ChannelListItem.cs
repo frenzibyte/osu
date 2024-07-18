@@ -39,7 +39,7 @@ namespace osu.Game.Overlays.Chat.ChannelList
         private Bindable<Channel> selectedChannel { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public ChannelListItem(Channel channel)
         {

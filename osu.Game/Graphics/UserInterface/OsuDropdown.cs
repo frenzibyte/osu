@@ -73,7 +73,7 @@ namespace osu.Game.Graphics.UserInterface
             }
 
             [BackgroundDependencyLoader(true)]
-            private void load(OverlayColourProvider? colourProvider, OsuColour colours, AudioManager audio)
+            private void load(OverlayColourPalette? colourProvider, OsuColour colours, AudioManager audio)
             {
                 BackgroundColour = colourProvider?.Background5 ?? Color4.Black.Opacity(0.5f);
                 HoverColour = colourProvider?.Light4 ?? colours.PinkDarker;
@@ -267,7 +267,7 @@ namespace osu.Game.Graphics.UserInterface
                     }
 
                     [BackgroundDependencyLoader(true)]
-                    private void load(OverlayColourProvider? colourProvider)
+                    private void load(OverlayColourPalette? colourProvider)
                     {
                         Chevron.Colour = colourProvider?.Background5 ?? Color4.Black;
                     }
@@ -365,7 +365,7 @@ namespace osu.Game.Graphics.UserInterface
             }
 
             [Resolved]
-            private OverlayColourProvider? colourProvider { get; set; }
+            private OverlayColourPalette? colourProvider { get; set; }
 
             [Resolved]
             private OsuColour colours { get; set; } = null!;
@@ -440,7 +440,7 @@ namespace osu.Game.Graphics.UserInterface
                 private partial class DropdownSearchTextBox : OsuTextBox
                 {
                     [BackgroundDependencyLoader]
-                    private void load(OverlayColourProvider? colourProvider)
+                    private void load(OverlayColourPalette? colourProvider)
                     {
                         BackgroundUnfocused = colourProvider?.Background5 ?? new Color4(10, 10, 10, 255);
                         BackgroundFocused = colourProvider?.Background5 ?? new Color4(10, 10, 10, 255);

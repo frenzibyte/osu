@@ -14,12 +14,12 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneUserProfilePreviousUsernamesDisplay : OsuTestScene
     {
         private PreviousUsernamesDisplay container = null!;
-        private OverlayColourProvider colourProvider = null!;
+        private OverlayColourPalette colourProvider = null!;
 
         [SetUp]
         public void SetUp() => Schedule(() =>
         {
-            colourProvider = new OverlayColourProvider(OverlayColourScheme.Pink);
+            colourProvider = new OverlayColourPalette(OverlayColourScheme.Pink);
             Child = new DependencyProvidingContainer
             {
                 Child = container = new PreviousUsernamesDisplay
@@ -27,7 +27,7 @@ namespace osu.Game.Tests.Visual.Online
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
-                CachedDependencies = new (Type, object)[] { (typeof(OverlayColourProvider), colourProvider) },
+                CachedDependencies = new (Type, object)[] { (typeof(OverlayColourPalette), colourProvider) },
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
             };

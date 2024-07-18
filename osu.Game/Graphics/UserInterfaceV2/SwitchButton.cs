@@ -73,7 +73,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? colourProvider, OsuColour colours, AudioManager audio)
+        private void load(OverlayColourPalette? colourProvider, OsuColour colours, AudioManager audio)
         {
             enabledColour = colourProvider?.Highlight1 ?? colours.BlueDark;
             disabledColour = colourProvider?.Background3 ?? colours.Gray3;

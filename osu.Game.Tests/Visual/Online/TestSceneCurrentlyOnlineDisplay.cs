@@ -51,7 +51,7 @@ namespace osu.Game.Tests.Visual.Online
                             (typeof(SpectatorClient), spectatorClient),
                             (typeof(MetadataClient), metadataClient),
                             (typeof(UserLookupCache), lookupCache),
-                            (typeof(OverlayColourProvider), new OverlayColourProvider(OverlayColourScheme.Purple)),
+                            (typeof(OverlayColourPalette), new OverlayColourPalette(OverlayColourScheme.Purple)),
                         },
                         Child = currentlyOnline = new CurrentlyOnlineDisplay
                         {

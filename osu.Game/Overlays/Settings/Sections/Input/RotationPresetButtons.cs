@@ -92,7 +92,7 @@ namespace osu.Game.Overlays.Settings.Sections.Input
             private OsuColour colours { get; set; }
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; }
+            private OverlayColourPalette colourProvider { get; set; }
 
             public readonly int Preset;
 

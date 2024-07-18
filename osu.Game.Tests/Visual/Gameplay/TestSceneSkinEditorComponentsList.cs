@@ -15,7 +15,7 @@ namespace osu.Game.Tests.Visual.Gameplay
     public partial class TestSceneSkinEditorComponentsList : SkinnableTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [Test]
         public void TestToggleEditor()

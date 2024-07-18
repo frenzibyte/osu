@@ -145,7 +145,7 @@ namespace osu.Game.Overlays.BeatmapSet
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 background.Colour = colourProvider.Background6;
             }

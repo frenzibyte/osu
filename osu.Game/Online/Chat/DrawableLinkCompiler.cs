@@ -28,7 +28,7 @@ namespace osu.Game.Online.Chat
         public readonly SlimReadOnlyListWrapper<Drawable> Parts;
 
         [Resolved]
-        private OverlayColourProvider? overlayColourProvider { get; set; }
+        private OverlayColourPalette? overlayColourProvider { get; set; }
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
         {

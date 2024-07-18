@@ -51,7 +51,7 @@ namespace osu.Game.Tests.Visual.OnlinePlay
             CacheAs(RoomManager);
             CacheAs(OngoingOperationTracker);
             CacheAs(AvailabilityTracker);
-            CacheAs(new OverlayColourProvider(OverlayColourScheme.Plum));
+            CacheAs(new OverlayColourPalette(OverlayColourScheme.Plum));
             CacheAs<UserLookupCache>(UserLookupCache);
             CacheAs(BeatmapLookupCache);
         }

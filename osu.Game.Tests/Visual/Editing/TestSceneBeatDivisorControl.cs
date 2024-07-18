@@ -27,7 +27,7 @@ namespace osu.Game.Tests.Visual.Editing
         private Triangle tickMarkerHead => tickSliderBar.ChildrenOfType<Triangle>().Single();
 
         [Cached]
-        private readonly OverlayColourProvider overlayColour = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette overlayColour = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         [Cached]
         private readonly BindableBeatDivisor bindableBeatDivisor = new BindableBeatDivisor(16);

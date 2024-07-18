@@ -17,7 +17,7 @@ namespace osu.Game.Screens.Edit.Components.Timelines.Summary
     public partial class SummaryTimeline : BottomBarContainer
     {
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             Background.Colour = colourProvider.Background6;
 

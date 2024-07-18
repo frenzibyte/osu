@@ -70,7 +70,7 @@ namespace osu.Game.Overlays.SkinEditor
         private SkinEditorOverlay? skinEditorOverlay { get; set; }
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         private readonly Bindable<SkinComponentsContainerLookup?> selectedTarget = new Bindable<SkinComponentsContainerLookup?>();
 

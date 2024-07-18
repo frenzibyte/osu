@@ -75,7 +75,7 @@ namespace osu.Game.Overlays.Mods
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuColour colours)
+        private void load(OverlayColourPalette colourProvider, OsuColour colours)
         {
             Body.BorderThickness = 3;
             Body.BorderColour = colours.Orange1;

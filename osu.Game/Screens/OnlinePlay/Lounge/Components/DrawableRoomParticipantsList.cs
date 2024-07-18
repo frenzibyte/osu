@@ -46,7 +46,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             InternalChildren = new Drawable[]
             {
@@ -292,7 +292,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
             private readonly UpdateableAvatar avatar = new UpdateableAvatar(showUserPanelOnHover: true) { RelativeSizeAxes = Axes.Both };
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colours)
+            private void load(OverlayColourPalette colours)
             {
                 Size = new Vector2(avatar_size);
 
@@ -340,7 +340,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
             };
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colours)
+            private void load(OverlayColourPalette colours)
             {
                 Size = new Vector2(avatar_size);
                 Alpha = 0;

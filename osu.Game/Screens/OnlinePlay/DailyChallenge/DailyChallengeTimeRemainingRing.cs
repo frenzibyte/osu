@@ -21,7 +21,7 @@ namespace osu.Game.Screens.OnlinePlay.DailyChallenge
         private OsuSpriteText timeText = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [Resolved]
         private OsuColour colours { get; set; } = null!;

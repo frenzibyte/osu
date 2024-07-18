@@ -14,7 +14,7 @@ namespace osu.Game.Tests.Visual.Editing
     public partial class TestSceneEditorComposeRadioButtons : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         public TestSceneEditorComposeRadioButtons()
         {

@@ -18,7 +18,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private OsuMarkdownContainer markdownContainer;
 
         [Cached]
-        private readonly OverlayColourProvider overlayColour = new OverlayColourProvider(OverlayColourScheme.Orange);
+        private readonly OverlayColourPalette overlayColour = new OverlayColourPalette(OverlayColourScheme.Orange);
 
         [SetUp]
         public void Setup() => Schedule(() =>

@@ -83,7 +83,7 @@ namespace osu.Game.Overlays.Wiki.Markdown
             public LocalisableString Text { get; set; }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider, OsuColour colour)
+            private void load(OverlayColourPalette colourProvider, OsuColour colour)
             {
                 RelativeSizeAxes = Axes.X;
                 AutoSizeAxes = Axes.Y;

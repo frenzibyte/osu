@@ -129,7 +129,7 @@ namespace osu.Game.Overlays
             }
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; }
+            private OverlayColourPalette colourProvider { get; set; }
 
             private readonly SpriteText text;
             private readonly FillFlowContainer content;

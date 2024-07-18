@@ -17,7 +17,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneRankingsCountryFilter : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         public TestSceneRankingsCountryFilter()
         {

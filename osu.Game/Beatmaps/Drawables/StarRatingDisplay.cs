@@ -51,7 +51,7 @@ namespace osu.Game.Beatmaps.Drawables
         private OsuColour colours { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider? colourProvider { get; set; }
+        private OverlayColourPalette? colourProvider { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="StarRatingDisplay"/> using an already computed <see cref="StarDifficulty"/>.

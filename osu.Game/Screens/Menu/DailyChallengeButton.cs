@@ -193,7 +193,7 @@ namespace osu.Game.Screens.Menu
         internal partial class DailyChallengeTooltip : CompositeDrawable, ITooltip<APIBeatmapSet?>
         {
             [Cached]
-            private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+            private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
             private APIBeatmapSet? lastContent;
 

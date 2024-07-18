@@ -128,7 +128,7 @@ namespace osu.Game.Screens.OnlinePlay.DailyChallenge
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 RelativeSizeAxes = Axes.Both;
 

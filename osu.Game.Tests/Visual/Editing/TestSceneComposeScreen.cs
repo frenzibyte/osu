@@ -51,7 +51,7 @@ namespace osu.Game.Tests.Visual.Editing
                     {
                         (typeof(EditorBeatmap), editorBeatmap),
                         (typeof(IBeatSnapProvider), editorBeatmap),
-                        (typeof(OverlayColourProvider), new OverlayColourProvider(OverlayColourScheme.Green)),
+                        (typeof(OverlayColourPalette), new OverlayColourPalette(OverlayColourScheme.Green)),
                     },
                     Children = new Drawable[]
                     {

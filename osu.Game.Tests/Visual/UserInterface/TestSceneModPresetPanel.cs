@@ -24,7 +24,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneModPresetPanel : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         [SetUpSteps]
         public void SetUpSteps()

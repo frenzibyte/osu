@@ -39,7 +39,7 @@ namespace osu.Game.Overlays.Comments
         private LoginOverlay login { get; set; }
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; }
+        private OverlayColourPalette colourProvider { get; set; }
 
         protected Box Background { get; private set; }
 

@@ -96,7 +96,7 @@ namespace osu.Game.Beatmaps.Drawables.Cards.Buttons
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             IdleColour = colourProvider.Light1;
             HoverColour = colourProvider.Content1;

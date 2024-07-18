@@ -47,7 +47,7 @@ namespace osu.Game.Overlays.Dashboard.Home
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = colourProvider.Background4;
         }

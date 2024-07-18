@@ -33,7 +33,7 @@ namespace osu.Game.Beatmaps.Drawables.Cards
         protected override Container<Drawable> Content => content;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public BeatmapCardThumbnail(IBeatmapSetInfo beatmapSetInfo, IBeatmapSetOnlineInfo onlineInfo)
         {

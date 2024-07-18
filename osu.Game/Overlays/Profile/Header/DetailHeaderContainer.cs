@@ -15,7 +15,7 @@ namespace osu.Game.Overlays.Profile.Header
         public readonly Bindable<UserProfileData?> User = new Bindable<UserProfileData?>();
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             AutoSizeAxes = Axes.Y;
 

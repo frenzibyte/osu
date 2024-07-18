@@ -48,7 +48,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         internal partial class Background : CompositeDrawable
         {
             [BackgroundDependencyLoader(true)]
-            private void load(OverlayColourProvider overlayColourProvider, OsuColour colours)
+            private void load(OverlayColourPalette overlayColourProvider, OsuColour colours)
             {
                 RelativeSizeAxes = Axes.Both;
 

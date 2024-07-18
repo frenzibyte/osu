@@ -20,7 +20,7 @@ namespace osu.Game.Tests.Visual.Settings
     public partial class TestSceneKeyBindingConflictPopover : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider { get; set; } = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private OverlayColourPalette colourProvider { get; set; } = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         [Test]
         public void TestAppearance()

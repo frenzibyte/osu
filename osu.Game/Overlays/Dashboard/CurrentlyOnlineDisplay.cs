@@ -53,7 +53,7 @@ namespace osu.Game.Overlays.Dashboard
         private MetadataClient metadataClient { get; set; }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

@@ -46,7 +46,7 @@ namespace osu.Game.Overlays.Profile.Header.Components
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             IdleColour = colourProvider.Background6;
             HoverColour = colourProvider.Background5;

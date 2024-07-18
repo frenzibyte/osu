@@ -16,7 +16,7 @@ namespace osu.Game.Graphics.Containers.Markdown
         private partial class Separator : Box
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 RelativeSizeAxes = Axes.X;
                 Height = 1;

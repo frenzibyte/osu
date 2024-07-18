@@ -105,7 +105,7 @@ namespace osu.Game.Screens.Edit.Components.Timelines.Summary.Parts
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colours) => Colour = colours.Highlight1;
+            private void load(OverlayColourPalette colours) => Colour = colours.Highlight1;
         }
     }
 }

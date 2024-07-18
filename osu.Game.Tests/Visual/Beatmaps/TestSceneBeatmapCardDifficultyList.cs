@@ -14,7 +14,7 @@ namespace osu.Game.Tests.Visual.Beatmaps
     public partial class TestSceneBeatmapCardDifficultyList : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [BackgroundDependencyLoader]
         private void load()

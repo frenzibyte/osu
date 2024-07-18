@@ -17,9 +17,9 @@ namespace osu.Game.Graphics.Containers.Markdown.Footnotes
         private readonly FootnoteMarkdownContainer markdownContainer;
 
         [Cached]
-        private OverlayColourProvider colourProvider;
+        private OverlayColourPalette colourProvider;
 
-        public OsuMarkdownFootnoteTooltip(OverlayColourProvider colourProvider)
+        public OsuMarkdownFootnoteTooltip(OverlayColourPalette colourProvider)
         {
             this.colourProvider = colourProvider;
 

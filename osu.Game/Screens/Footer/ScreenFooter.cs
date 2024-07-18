@@ -37,7 +37,7 @@ namespace osu.Game.Screens.Footer
         private LogoTrackingContainer logoTrackingContainer = null!;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         [Resolved]
         private OsuGame? game { get; set; }

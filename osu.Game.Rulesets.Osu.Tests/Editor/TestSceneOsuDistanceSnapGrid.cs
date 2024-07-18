@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Osu.Tests.Editor
         private readonly EditorBeatmap editorBeatmap;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         [Cached]
         private readonly EditorClock editorClock;

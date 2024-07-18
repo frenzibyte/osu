@@ -20,7 +20,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestScenePlayHistorySubsection : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Red);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Red);
 
         private readonly Bindable<UserProfileData?> user = new Bindable<UserProfileData?>();
         private readonly PlayHistorySubsection section;

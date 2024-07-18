@@ -23,7 +23,7 @@ namespace osu.Game.Overlays
         protected override double PopInOutSampleBalance => OsuGameBase.SFX_STEREO_STRENGTH * 0.75f;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         public LoginOverlay()
         {

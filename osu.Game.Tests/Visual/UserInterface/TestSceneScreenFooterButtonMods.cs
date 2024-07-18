@@ -23,7 +23,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private readonly TestScreenFooterButtonMods footerButtonMods;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         public TestSceneScreenFooterButtonMods()
         {

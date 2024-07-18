@@ -23,7 +23,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         protected override SaturationValueSelector CreateSaturationValueSelector() => new OsuSaturationValueSelector();
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? colourProvider, OsuColour osuColour)
+        private void load(OverlayColourPalette? colourProvider, OsuColour osuColour)
         {
             Background.Colour = colourProvider?.Dark5 ?? osuColour.GreySeaFoamDark;
 

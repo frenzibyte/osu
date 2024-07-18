@@ -35,7 +35,7 @@ namespace osu.Game.Overlays
         protected override Container<Drawable> Content { get; }
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         private readonly Drawable icon;
 

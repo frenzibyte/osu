@@ -56,7 +56,7 @@ namespace osu.Game.Screens.SelectV2.Footer
         private OsuColour colours { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public ScreenFooterButtonMods(ModSelectOverlay overlay)
             : base(overlay)
@@ -236,7 +236,7 @@ namespace osu.Game.Screens.SelectV2.Footer
             public readonly Bindable<IReadOnlyList<Mod>> Mods = new Bindable<IReadOnlyList<Mod>>();
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             protected override void LoadComplete()
             {
@@ -253,9 +253,9 @@ namespace osu.Game.Screens.SelectV2.Footer
                 private ModDisplay extendedModDisplay = null!;
 
                 [Cached]
-                private OverlayColourProvider colourProvider;
+                private OverlayColourPalette colourProvider;
 
-                public ModTooltip(OverlayColourProvider colourProvider)
+                public ModTooltip(OverlayColourPalette colourProvider)
                 {
                     this.colourProvider = colourProvider;
                 }

@@ -21,7 +21,7 @@ namespace osu.Game.Overlays.Mods
 
         private readonly OsuSpriteText descriptionText;
 
-        public ModPresetTooltip(OverlayColourProvider colourProvider)
+        public ModPresetTooltip(OverlayColourPalette colourProvider)
         {
             Width = 250;
             AutoSizeAxes = Axes.Y;

@@ -38,7 +38,7 @@ namespace osu.Game.Screens.Utility
         }
 
         [Resolved]
-        private OverlayColourProvider overlayColourProvider { get; set; } = null!;
+        private OverlayColourPalette overlayColourProvider { get; set; } = null!;
 
         protected override void LoadComplete()
         {

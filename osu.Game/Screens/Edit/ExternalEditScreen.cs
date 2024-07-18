@@ -34,7 +34,7 @@ namespace osu.Game.Screens.Edit
         private GameHost gameHost { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [Resolved]
         private BeatmapManager beatmapManager { get; set; } = null!;

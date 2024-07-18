@@ -17,7 +17,7 @@ namespace osu.Game.Overlays.Mods
         private readonly BindableBool incompatible = new BindableBool();
 
         [Resolved]
-        private OverlayColourProvider overlayColourProvider { get; set; } = null!;
+        private OverlayColourPalette overlayColourProvider { get; set; } = null!;
 
         [Resolved]
         private Bindable<IReadOnlyList<Mod>> selectedMods { get; set; } = null!;

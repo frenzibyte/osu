@@ -34,7 +34,7 @@ namespace osu.Game.Overlays.Rankings.Tables
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = idleColour = colourProvider.Background4;
             hoverColour = colourProvider.Background3;

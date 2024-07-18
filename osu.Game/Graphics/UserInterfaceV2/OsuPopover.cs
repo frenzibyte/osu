@@ -48,7 +48,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? colourProvider, OsuColour colours, AudioManager audio)
+        private void load(OverlayColourPalette? colourProvider, OsuColour colours, AudioManager audio)
         {
             Background.Colour = Arrow.Colour = colourProvider?.Background4 ?? colours.GreySeaFoamDarker;
             samplePopIn = audio.Samples.Get(PopInSampleName);

@@ -82,7 +82,7 @@ namespace osu.Game.Overlays.Wiki
             protected override IEnumerable<Drawable> EffectTargets => new Drawable[] { textFlow };
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider, OverlayScrollContainer scrollContainer)
+            private void load(OverlayColourPalette colourProvider, OverlayScrollContainer scrollContainer)
             {
                 IdleColour = colourProvider.Light2;
                 HoverColour = colourProvider.Light1;

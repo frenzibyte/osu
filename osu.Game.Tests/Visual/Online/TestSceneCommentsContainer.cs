@@ -24,7 +24,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneCommentsContainer : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         private DummyAPIAccess dummyAPI => (DummyAPIAccess)API;
 

@@ -36,7 +36,7 @@ namespace osu.Game.Overlays
         private OsuColour colours { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider? colourProvider { get; set; }
+        private OverlayColourPalette? colourProvider { get; set; }
 
         public Bindable<T> Current
         {

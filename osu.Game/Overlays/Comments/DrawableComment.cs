@@ -95,7 +95,7 @@ namespace osu.Game.Overlays.Comments
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, DrawableComment? parentComment)
+        private void load(OverlayColourPalette colourProvider, DrawableComment? parentComment)
         {
             FillFlowContainer info;
             CommentMarkdownContainer message;

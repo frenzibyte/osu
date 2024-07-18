@@ -13,7 +13,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneRankingsHeader : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider overlayColour = new OverlayColourProvider(OverlayColourScheme.Green);
+        private readonly OverlayColourPalette overlayColour = new OverlayColourPalette(OverlayColourScheme.Green);
 
         public TestSceneRankingsHeader()
         {

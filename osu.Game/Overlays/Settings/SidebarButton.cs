@@ -13,7 +13,7 @@ namespace osu.Game.Overlays.Settings
         protected const double FADE_DURATION = 500;
 
         [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; } = null!;
+        protected OverlayColourPalette ColourProvider { get; private set; } = null!;
 
         protected SidebarButton(HoverSampleSet? hoverSounds = HoverSampleSet.ButtonSidebar)
             : base(hoverSounds)

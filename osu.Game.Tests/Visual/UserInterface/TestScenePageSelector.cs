@@ -14,7 +14,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestScenePageSelector : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider provider { get; } = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourPalette provider { get; } = new OverlayColourPalette(OverlayColourScheme.Green);
 
         private readonly PageSelector pageSelector;
 

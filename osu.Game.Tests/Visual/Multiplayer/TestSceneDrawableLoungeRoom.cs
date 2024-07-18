@@ -29,7 +29,7 @@ namespace osu.Game.Tests.Visual.Multiplayer
         };
 
         [Cached]
-        protected readonly OverlayColourProvider ColourProvider = new OverlayColourProvider(OverlayColourScheme.Pink);
+        protected readonly OverlayColourPalette ColourProvider = new OverlayColourPalette(OverlayColourScheme.Pink);
 
         private DrawableLoungeRoom drawableRoom;
         private SearchTextBox searchTextBox;

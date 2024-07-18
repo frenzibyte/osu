@@ -60,7 +60,7 @@ namespace osu.Game.Tests.Visual.UserInterface
 
         protected void CreateThemedContent(OverlayColourScheme colourScheme)
         {
-            var colourProvider = new OverlayColourProvider(colourScheme);
+            var colourProvider = new OverlayColourPalette(colourScheme);
 
             ContentContainer.Clear();
             ContentContainer.Add(new DependencyProvidingContainer
@@ -68,7 +68,7 @@ namespace osu.Game.Tests.Visual.UserInterface
                 RelativeSizeAxes = Axes.Both,
                 CachedDependencies = new (Type, object)[]
                 {
-                    (typeof(OverlayColourProvider), colourProvider)
+                    (typeof(OverlayColourPalette), colourProvider)
                 },
                 Children = new[]
                 {

@@ -48,7 +48,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider colourProvider, IAPIProvider api)
+        private void load(OsuColour colours, OverlayColourPalette colourProvider, IAPIProvider api)
         {
             bool isOwnScore = api.LocalUser.Value.Id == score.UserID;
 

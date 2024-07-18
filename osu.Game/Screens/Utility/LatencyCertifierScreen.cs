@@ -57,7 +57,7 @@ namespace osu.Game.Screens.Utility
         private const int target_host_update_frames = 4000;
 
         [Cached]
-        private readonly OverlayColourProvider overlayColourProvider = new OverlayColourProvider(OverlayColourScheme.Orange);
+        private readonly OverlayColourPalette overlayColourProvider = new OverlayColourPalette(OverlayColourScheme.Orange);
 
         [Resolved]
         private OsuColour colours { get; set; } = null!;

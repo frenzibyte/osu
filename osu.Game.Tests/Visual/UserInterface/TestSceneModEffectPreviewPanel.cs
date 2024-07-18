@@ -27,7 +27,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private TestBeatmapDifficultyCache difficultyCache = new TestBeatmapDifficultyCache();
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         private Container content = null!;
         protected override Container<Drawable> Content => content;

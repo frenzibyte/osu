@@ -53,7 +53,7 @@ namespace osu.Game.Overlays.Dashboard.Friends
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider colourProvider, IAPIProvider api)
+        private void load(OverlayColourPalette colourProvider, IAPIProvider api)
         {
             InternalChild = new FillFlowContainer
             {

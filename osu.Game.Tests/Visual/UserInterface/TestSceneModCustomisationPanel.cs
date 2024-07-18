@@ -16,7 +16,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneModCustomisationPanel : OsuManualInputManagerTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         private ModCustomisationPanel panel = null!;
 

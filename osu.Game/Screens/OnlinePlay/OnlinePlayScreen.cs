@@ -23,7 +23,7 @@ namespace osu.Game.Screens.OnlinePlay
     public abstract partial class OnlinePlayScreen : OsuScreen, IHasSubScreenStack
     {
         [Cached]
-        protected readonly OverlayColourProvider ColourProvider = new OverlayColourProvider(OverlayColourScheme.Plum);
+        protected readonly OverlayColourPalette ColourProvider = new OverlayColourPalette(OverlayColourScheme.Plum);
 
         public IScreen CurrentSubScreen => screenStack.CurrentScreen;
 

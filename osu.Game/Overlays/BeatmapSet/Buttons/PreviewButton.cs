@@ -65,7 +65,7 @@ namespace osu.Game.Overlays.BeatmapSet.Buttons
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider colourProvider)
+        private void load(OsuColour colours, OverlayColourPalette colourProvider)
         {
             progress.Colour = colours.Yellow;
             background.Colour = colourProvider.Background6;

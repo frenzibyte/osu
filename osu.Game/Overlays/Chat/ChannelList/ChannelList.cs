@@ -41,7 +41,7 @@ namespace osu.Game.Overlays.Chat.ChannelList
         private ChannelListItem selector = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             Children = new Drawable[]
             {

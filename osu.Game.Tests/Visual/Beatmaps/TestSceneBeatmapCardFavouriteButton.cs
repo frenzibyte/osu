@@ -24,7 +24,7 @@ namespace osu.Game.Tests.Visual.Beatmaps
         private DummyAPIAccess dummyAPI => (DummyAPIAccess)API;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [Test]
         public void TestInitialState([Values] bool favourited)

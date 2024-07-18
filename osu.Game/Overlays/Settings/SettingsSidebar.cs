@@ -34,7 +34,7 @@ namespace osu.Game.Overlays.Settings
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             AddInternal(new Box
             {

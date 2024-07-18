@@ -109,7 +109,7 @@ namespace osu.Game.Overlays.FirstRunSetup
                 private OsuSpriteText text = null!;
 
                 [Resolved]
-                private OverlayColourProvider colourProvider { get; set; } = null!;
+                private OverlayColourPalette colourProvider { get; set; } = null!;
 
                 private bool selected;
 

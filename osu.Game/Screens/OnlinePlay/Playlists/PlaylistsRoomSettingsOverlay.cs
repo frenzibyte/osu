@@ -93,7 +93,7 @@ namespace osu.Game.Screens.OnlinePlay.Playlists
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider, OsuColour colours)
+            private void load(OverlayColourPalette colourProvider, OsuColour colours)
             {
                 InternalChildren = new Drawable[]
                 {

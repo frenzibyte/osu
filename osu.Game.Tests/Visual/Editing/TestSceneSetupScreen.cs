@@ -25,7 +25,7 @@ namespace osu.Game.Tests.Visual.Editing
         private readonly EditorBeatmap editorBeatmap;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         public TestSceneSetupScreen()
         {

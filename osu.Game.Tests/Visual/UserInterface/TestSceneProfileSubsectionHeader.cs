@@ -14,7 +14,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneProfileSubsectionHeader : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Pink);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Pink);
 
         private ProfileSubsectionHeader header = null!;
 

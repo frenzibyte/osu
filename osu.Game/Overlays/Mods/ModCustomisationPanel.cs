@@ -34,7 +34,7 @@ namespace osu.Game.Overlays.Mods
         private FillFlowContainer sectionsFlow = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public readonly BindableBool Enabled = new BindableBool();
 

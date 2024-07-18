@@ -25,7 +25,7 @@ namespace osu.Game.Overlays.BeatmapSet
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             AccentColour = colourProvider.Highlight1;
             LineColour = colourProvider.Background1;

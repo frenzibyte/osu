@@ -37,7 +37,7 @@ namespace osu.Game.Beatmaps.Drawables.Cards
         private BeatmapCardDownloadProgressBar downloadProgressBar = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public BeatmapCardNormal(APIBeatmapSet beatmapSet, bool allowExpansion = true)
             : base(beatmapSet, allowExpansion)

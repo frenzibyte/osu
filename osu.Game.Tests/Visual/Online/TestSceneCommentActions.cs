@@ -38,7 +38,7 @@ namespace osu.Game.Tests.Visual.Online
         private readonly DialogOverlay dialogOverlay = new DialogOverlay();
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         private CommentsContainer commentsContainer = null!;
 

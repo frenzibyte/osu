@@ -21,7 +21,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private readonly BeatmapListingSortTabControl control;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         public TestSceneBeatmapListingSortTabControl()
         {

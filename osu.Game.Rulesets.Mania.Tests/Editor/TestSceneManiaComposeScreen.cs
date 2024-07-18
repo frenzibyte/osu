@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Mania.Tests.Editor
                     {
                         (typeof(EditorBeatmap), editorBeatmap),
                         (typeof(IBeatSnapProvider), editorBeatmap),
-                        (typeof(OverlayColourProvider), new OverlayColourProvider(OverlayColourScheme.Green)),
+                        (typeof(OverlayColourPalette), new OverlayColourPalette(OverlayColourScheme.Green)),
                     },
                     Children = new Drawable[]
                     {

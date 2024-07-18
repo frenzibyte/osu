@@ -112,7 +112,7 @@ namespace osu.Game.Overlays.BeatmapSet
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider colourProvider)
+        private void load(OsuColour colours, OverlayColourPalette colourProvider)
         {
             successRate.AccentColour = colours.Green;
             successRate.BackgroundColour = colourProvider.Background6;

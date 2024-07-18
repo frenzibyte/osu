@@ -37,7 +37,7 @@ namespace osu.Game.Overlays.Changelog
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colour, TextureStore textures, OverlayColourProvider colourProvider)
+        private void load(OsuColour colour, TextureStore textures, OverlayColourPalette colourProvider)
         {
             SupporterPromoLinkFlowContainer supportLinkText;
 

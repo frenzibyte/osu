@@ -67,7 +67,7 @@ namespace osu.Game.Beatmaps.Drawables.Cards.Statistics
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             spriteIcon.Colour = colourProvider.Content2;
         }

@@ -56,7 +56,7 @@ namespace osu.Game.Overlays.Comments
         private UpdateableAvatar avatar;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

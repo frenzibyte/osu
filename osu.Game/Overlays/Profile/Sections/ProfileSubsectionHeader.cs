@@ -37,7 +37,7 @@ namespace osu.Game.Overlays.Profile.Sections
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             AutoSizeAxes = Axes.Both;
             Padding = new MarginPadding { Vertical = 10 };

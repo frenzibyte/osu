@@ -33,7 +33,7 @@ namespace osu.Game.Overlays.Settings.Sections.Input
             public readonly OsuSpriteText Text;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             [Resolved]
             private ReadableKeyCombinationProvider keyCombinationProvider { get; set; } = null!;

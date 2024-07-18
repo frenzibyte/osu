@@ -23,7 +23,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private SettingsToolboxGroup group;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [SetUp]
         public void SetUp() => Schedule(() =>

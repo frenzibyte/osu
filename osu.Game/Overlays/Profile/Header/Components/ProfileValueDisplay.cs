@@ -57,7 +57,7 @@ namespace osu.Game.Overlays.Profile.Header.Components
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             title.Colour = colourProvider.Content1;
             content.Colour = colourProvider.Content2;

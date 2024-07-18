@@ -22,7 +22,7 @@ namespace osu.Game.Overlays.Comments
         private OsuSpriteText counter;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             RelativeSizeAxes = Axes.X;
             Height = 50;

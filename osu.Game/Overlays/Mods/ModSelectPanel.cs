@@ -64,7 +64,7 @@ namespace osu.Game.Overlays.Mods
         protected readonly FillFlowContainer TextFlow;
 
         [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; } = null!;
+        protected OverlayColourPalette ColourProvider { get; private set; } = null!;
 
         private readonly OsuSpriteText titleText;
         private readonly OsuSpriteText descriptionText;

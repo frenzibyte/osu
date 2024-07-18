@@ -37,7 +37,7 @@ namespace osu.Game.Overlays.Profile.Sections.Ranks
         private OsuColour colours { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public DrawableProfileScore(SoloScoreInfo score)
         {

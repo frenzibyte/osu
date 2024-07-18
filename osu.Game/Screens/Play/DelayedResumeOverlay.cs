@@ -25,7 +25,7 @@ namespace osu.Game.Screens.Play
     {
         // todo: this shouldn't define its own colour provider, but nothing in DrawableRuleset guarantees this, so let's do it locally for now.
         // (of note, Player does cache one but any test which uses a DrawableRuleset without Player will fail without this).
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         private const float outer_size = 200;
         private const float inner_size = 150;

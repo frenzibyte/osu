@@ -63,7 +63,7 @@ namespace osu.Game.Users
         private ChatOverlay? chatOverlay { get; set; }
 
         [Resolved]
-        protected OverlayColourProvider? ColourProvider { get; private set; }
+        protected OverlayColourPalette? ColourProvider { get; private set; }
 
         [Resolved]
         private IPerformFromScreenRunner? performer { get; set; }

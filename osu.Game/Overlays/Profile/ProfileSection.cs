@@ -107,7 +107,7 @@ namespace osu.Game.Overlays.Profile
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = colourProvider.Background4;
             underscore.Colour = colourProvider.Highlight1;

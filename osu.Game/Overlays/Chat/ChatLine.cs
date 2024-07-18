@@ -57,7 +57,7 @@ namespace osu.Game.Overlays.Chat
         private ChannelManager? chatManager { get; set; }
 
         [Resolved]
-        private OverlayColourProvider? colourProvider { get; set; }
+        private OverlayColourPalette? colourProvider { get; set; }
 
         private OsuSpriteText drawableTimestamp = null!;
 

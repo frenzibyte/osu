@@ -30,7 +30,7 @@ namespace osu.Game.Tests.Visual.Multiplayer
     public partial class TestSceneDrawableRoom : OsuTestScene
     {
         [Cached]
-        protected readonly OverlayColourProvider ColourProvider = new OverlayColourProvider(OverlayColourScheme.Plum);
+        protected readonly OverlayColourPalette ColourProvider = new OverlayColourPalette(OverlayColourScheme.Plum);
 
         private readonly Bindable<Room> selectedRoom = new Bindable<Room>();
 

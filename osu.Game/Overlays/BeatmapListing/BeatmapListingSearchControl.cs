@@ -154,7 +154,7 @@ namespace osu.Game.Overlays.BeatmapListing
         private IBindable<bool> allowExplicitContent;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuConfigManager config)
+        private void load(OverlayColourPalette colourProvider, OsuConfigManager config)
         {
             background.Colour = colourProvider.Dark6;
 

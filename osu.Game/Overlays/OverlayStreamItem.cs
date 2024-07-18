@@ -54,7 +54,7 @@ namespace osu.Game.Overlays
         private Sample selectSample;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuColour colours, AudioManager audio)
+        private void load(OverlayColourPalette colourProvider, OsuColour colours, AudioManager audio)
         {
             AddRange(new Drawable[]
             {

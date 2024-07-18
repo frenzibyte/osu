@@ -22,7 +22,7 @@ namespace osu.Game.Overlays.BeatmapSet
         public readonly Bindable<APIBeatmapSet> BeatmapSet = new Bindable<APIBeatmapSet>();
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; }
+        private OverlayColourPalette colourProvider { get; set; }
 
         private OsuSpriteText count;
         private Container countContainer;

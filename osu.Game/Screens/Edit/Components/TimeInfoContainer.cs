@@ -26,7 +26,7 @@ namespace osu.Game.Screens.Edit.Components
         private EditorClock editorClock { get; set; } = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, OverlayColourProvider colourProvider)
+        private void load(OsuColour colours, OverlayColourPalette colourProvider)
         {
             Background.Colour = colourProvider.Background5;
 

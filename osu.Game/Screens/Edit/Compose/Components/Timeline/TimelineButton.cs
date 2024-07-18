@@ -11,7 +11,7 @@ namespace osu.Game.Screens.Edit.Compose.Components.Timeline
     public partial class TimelineButton : IconButton
     {
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             // These are using colourProvider but don't match the design.
             // Just something to fit until someone implements the updated design.

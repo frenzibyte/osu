@@ -34,7 +34,7 @@ namespace osu.Game.Overlays.Changelog
         }
 
         [BackgroundDependencyLoader]
-        private void load(CancellationToken? cancellation, IAPIProvider api, OverlayColourProvider colourProvider)
+        private void load(CancellationToken? cancellation, IAPIProvider api, OverlayColourPalette colourProvider)
         {
             bool complete = false;
 
@@ -136,7 +136,7 @@ namespace osu.Game.Overlays.Changelog
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 date.Colour = colourProvider.Light1;
             }

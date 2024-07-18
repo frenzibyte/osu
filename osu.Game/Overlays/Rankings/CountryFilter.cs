@@ -76,7 +76,7 @@ namespace osu.Game.Overlays.Rankings
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = colourProvider.Dark3;
         }

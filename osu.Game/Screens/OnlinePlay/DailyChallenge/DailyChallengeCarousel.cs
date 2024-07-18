@@ -140,7 +140,7 @@ namespace osu.Game.Screens.OnlinePlay.DailyChallenge
             }
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             private Box background = null!;
             private Box progressLayer = null!;

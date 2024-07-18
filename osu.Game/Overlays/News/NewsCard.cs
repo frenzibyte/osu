@@ -40,7 +40,7 @@ namespace osu.Game.Overlays.News
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuGame? game)
+        private void load(OverlayColourPalette colourProvider, OsuGame? game)
         {
             if (post.Slug != null)
             {
@@ -130,7 +130,7 @@ namespace osu.Game.Overlays.News
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 AutoSizeAxes = Axes.Both;
                 Masking = true;

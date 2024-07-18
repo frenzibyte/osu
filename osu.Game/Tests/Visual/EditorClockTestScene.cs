@@ -22,7 +22,7 @@ namespace osu.Game.Tests.Visual
     public abstract partial class EditorClockTestScene : OsuManualInputManagerTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider overlayColour = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette overlayColour = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         protected readonly BindableBeatDivisor BeatDivisor = new BindableBeatDivisor();
 

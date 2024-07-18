@@ -25,7 +25,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? overlayColourProvider, OsuColour colours)
+        private void load(OverlayColourPalette? overlayColourProvider, OsuColour colours)
         {
             if (overlayColourProvider != null)
                 return;

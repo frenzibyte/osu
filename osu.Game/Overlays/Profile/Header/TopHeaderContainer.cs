@@ -53,7 +53,7 @@ namespace osu.Game.Overlays.Profile.Header
         private FillFlowContainer flow = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuConfigManager configManager)
+        private void load(OverlayColourPalette colourProvider, OsuConfigManager configManager)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

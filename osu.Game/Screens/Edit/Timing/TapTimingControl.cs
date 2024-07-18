@@ -34,7 +34,7 @@ namespace osu.Game.Screens.Edit.Timing
         private MetronomeDisplay metronome = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuColour colours)
+        private void load(OverlayColourPalette colourProvider, OsuColour colours)
         {
             const float padding = 10;
 
@@ -234,7 +234,7 @@ namespace osu.Game.Screens.Edit.Timing
             private SpriteIcon spriteIcon = null!;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             public InlineButton(IconUsage icon, Anchor anchor)
             {

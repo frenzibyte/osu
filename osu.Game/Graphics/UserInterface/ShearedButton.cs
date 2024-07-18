@@ -61,7 +61,7 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; } = null!;
+        protected OverlayColourPalette ColourProvider { get; private set; } = null!;
 
         private readonly Box background;
         private readonly OsuSpriteText text;

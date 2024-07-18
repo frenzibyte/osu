@@ -166,7 +166,7 @@ namespace osu.Game.Graphics.Containers
             }
 
             [BackgroundDependencyLoader(true)]
-            private void load(OverlayColourProvider? colourProvider, OsuColour colours)
+            private void load(OverlayColourPalette? colourProvider, OsuColour colours)
             {
                 Colour = defaultColour = colours.Gray8;
                 hoverColour = colours.GrayF;

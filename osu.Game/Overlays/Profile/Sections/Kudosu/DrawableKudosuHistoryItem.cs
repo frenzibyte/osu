@@ -45,7 +45,7 @@ namespace osu.Game.Overlays.Profile.Sections.Kudosu
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             date.Colour = colourProvider.Foreground1;
             var formattedSource = MessageFormatter.FormatText(getString(historyItem));

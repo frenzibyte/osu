@@ -19,7 +19,7 @@ namespace osu.Game.Graphics.UserInterface.PageSelector
         protected const int DURATION = 200;
 
         [Resolved]
-        protected OverlayColourProvider ColourProvider { get; private set; }
+        protected OverlayColourPalette ColourProvider { get; private set; }
 
         protected Box Background;
 

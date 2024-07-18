@@ -110,7 +110,7 @@ namespace osu.Game.Screens.Edit.Verify
             private Editor editor { get; set; } = null!;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             public Bindable<Issue> Current
             {

@@ -27,7 +27,7 @@ namespace osu.Game.Overlays.Chat.Listing
         private SearchContainer<ChannelListingItem> flow = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load()

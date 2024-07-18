@@ -15,7 +15,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneRangeSlider : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Red);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Red);
 
         private readonly BindableNumber<double> customStart = new BindableNumber<double>
         {

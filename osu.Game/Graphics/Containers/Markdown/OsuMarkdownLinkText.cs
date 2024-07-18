@@ -62,7 +62,7 @@ namespace osu.Game.Graphics.Containers.Markdown
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 IdleColour = colourProvider.Light2;
                 HoverColour = colourProvider.Light1;

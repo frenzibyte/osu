@@ -19,7 +19,7 @@ namespace osu.Game.Beatmaps.Drawables.Cards
         private readonly DelayedLoadUnloadWrapper cover;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public BeatmapCardContentBackground(IBeatmapSetOnlineInfo onlineInfo)
         {
@@ -46,7 +46,7 @@ namespace osu.Game.Beatmaps.Drawables.Cards
         };
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = colourProvider.Background2;
         }

@@ -43,7 +43,7 @@ namespace osu.Game.Overlays.Profile.Header.Components
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider? colourProvider, RulesetStore rulesets)
+        private void load(OverlayColourPalette? colourProvider, RulesetStore rulesets)
         {
             FillFlowContainer innerContainer;
 

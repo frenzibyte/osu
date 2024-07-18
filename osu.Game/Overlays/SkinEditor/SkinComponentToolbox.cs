@@ -165,7 +165,7 @@ namespace osu.Game.Overlays.SkinEditor
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 BackgroundColour = colourProvider.Background3;
 

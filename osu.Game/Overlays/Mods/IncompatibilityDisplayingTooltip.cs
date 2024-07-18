@@ -24,7 +24,7 @@ namespace osu.Game.Overlays.Mods
         [Resolved]
         private Bindable<RulesetInfo> ruleset { get; set; } = null!;
 
-        public IncompatibilityDisplayingTooltip(OverlayColourProvider colourProvider)
+        public IncompatibilityDisplayingTooltip(OverlayColourPalette colourProvider)
             : base(colourProvider)
         {
             AddRange(new Drawable[]

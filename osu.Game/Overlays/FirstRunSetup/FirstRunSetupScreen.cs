@@ -28,7 +28,7 @@ namespace osu.Game.Overlays.FirstRunSetup
         protected const float HEADER_FONT_SIZE = 24;
 
         [Resolved]
-        protected OverlayColourProvider OverlayColourProvider { get; private set; }
+        protected OverlayColourPalette OverlayColourProvider { get; private set; }
 
         [BackgroundDependencyLoader]
         private void load()

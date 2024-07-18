@@ -30,7 +30,7 @@ namespace osu.Game.Tests.Visual.Editing
         private TestSceneHitObjectComposer.EditorBeatmapContainer editorBeatmapContainer;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [Cached]
         private Bindable<ControlPointGroup> selectedGroup = new Bindable<ControlPointGroup>();

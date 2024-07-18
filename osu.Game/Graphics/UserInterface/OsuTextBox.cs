@@ -79,7 +79,7 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? colourProvider, OsuColour colour, AudioManager audio)
+        private void load(OverlayColourPalette? colourProvider, OsuColour colour, AudioManager audio)
         {
             BackgroundUnfocused = colourProvider?.Background5 ?? Color4.Black.Opacity(0.5f);
             BackgroundFocused = colourProvider?.Background4 ?? OsuColour.Gray(0.3f).Opacity(0.8f);

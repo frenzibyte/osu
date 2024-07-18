@@ -68,7 +68,7 @@ namespace osu.Game.Overlays
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OverlayColourProvider? colourProvider)
+        private void load(OverlayColourPalette? colourProvider)
         {
             CornerRadius = corner_radius;
 

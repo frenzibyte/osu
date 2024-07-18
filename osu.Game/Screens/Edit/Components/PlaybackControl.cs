@@ -36,7 +36,7 @@ namespace osu.Game.Screens.Edit.Components
         private readonly BindableNumber<double> tempoAdjustment = new BindableDouble(1);
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, Editor? editor)
+        private void load(OverlayColourPalette colourProvider, Editor? editor)
         {
             Background.Colour = colourProvider.Background4;
 
@@ -204,7 +204,7 @@ namespace osu.Game.Screens.Edit.Components
                 private Color4 normalColour;
 
                 [BackgroundDependencyLoader]
-                private void load(OverlayColourProvider colourProvider)
+                private void load(OverlayColourPalette colourProvider)
                 {
                     text.Colour = normalColour = colourProvider.Light3;
                     textBold.Colour = hoveredColour = colourProvider.Content1;

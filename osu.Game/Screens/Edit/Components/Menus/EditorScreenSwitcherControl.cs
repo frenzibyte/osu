@@ -26,7 +26,7 @@ namespace osu.Game.Screens.Edit.Components.Menus
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             AccentColour = colourProvider.Light3;
 
@@ -66,7 +66,7 @@ namespace osu.Game.Screens.Edit.Components.Menus
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 backgroundIdleColour = colourProvider.Background2;
                 backgroundHoverColour = colourProvider.Background1;

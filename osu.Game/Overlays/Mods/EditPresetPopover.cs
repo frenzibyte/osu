@@ -40,7 +40,7 @@ namespace osu.Game.Overlays.Mods
         private OsuColour colours { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public EditPresetPopover(Live<ModPreset> preset)
         {

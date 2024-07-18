@@ -29,7 +29,7 @@ namespace osu.Game.Tests.Visual.SongSelect
     public partial class TestSceneLeaderboardScoreV2 : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider { get; set; } = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private OverlayColourPalette colourProvider { get; set; } = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         [Resolved]
         private OsuConfigManager config { get; set; } = null!;

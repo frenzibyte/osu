@@ -39,7 +39,7 @@ namespace osu.Game.Overlays
         private BufferedContainer toastContentBackground = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         public Action<Notification>? ForwardNotificationToPermanentStore { get; set; }
 

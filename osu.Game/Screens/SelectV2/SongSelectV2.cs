@@ -27,7 +27,7 @@ namespace osu.Game.Screens.SelectV2
         private readonly ModSelectOverlay modSelectOverlay = new SoloModSelectOverlay();
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         public override bool ShowFooter => true;
 

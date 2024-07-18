@@ -29,7 +29,7 @@ namespace osu.Game.Overlays.Dashboard.Home.News
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             Child = new HomePanel
             {

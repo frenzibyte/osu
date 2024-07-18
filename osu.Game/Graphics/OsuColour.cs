@@ -110,7 +110,7 @@ namespace osu.Game.Graphics
 
         /// <summary>
         /// Retrieves a colour for the given <see cref="BeatmapOnlineStatus"/>.
-        /// A <see langword="null"/> value indicates that a "background" shade from the local <see cref="OverlayColourProvider"/>
+        /// A <see langword="null"/> value indicates that a "background" shade from the local <see cref="OverlayColourPalette"/>
         /// (or another fallback colour) should be used.
         /// </summary>
         /// <remarks>

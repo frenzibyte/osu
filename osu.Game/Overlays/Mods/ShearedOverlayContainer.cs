@@ -23,7 +23,7 @@ namespace osu.Game.Overlays.Mods
         public const float PADDING = 14;
 
         [Cached]
-        public readonly OverlayColourProvider ColourProvider;
+        public readonly OverlayColourPalette ColourProvider;
 
         /// <summary>
         /// The overlay's header.
@@ -66,7 +66,7 @@ namespace osu.Game.Overlays.Mods
         {
             RelativeSizeAxes = Axes.Both;
 
-            ColourProvider = new OverlayColourProvider(colourScheme);
+            ColourProvider = new OverlayColourPalette(colourScheme);
         }
 
         [BackgroundDependencyLoader]

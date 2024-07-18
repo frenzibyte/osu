@@ -24,7 +24,7 @@ namespace osu.Game.Overlays.News.Sidebar
         private FillFlowContainer yearsFlow;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider overlayColours, Bindable<APINewsSidebar> metadata)
+        private void load(OverlayColourPalette overlayColours, Bindable<APINewsSidebar> metadata)
         {
             this.metadata.BindTo(metadata);
 
@@ -107,7 +107,7 @@ namespace osu.Game.Overlays.News.Sidebar
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 IdleColour = isCurrent ? Color4.White : colourProvider.Light2;
                 HoverColour = isCurrent ? Color4.White : colourProvider.Light1;

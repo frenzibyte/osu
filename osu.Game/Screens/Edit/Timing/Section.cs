@@ -36,7 +36,7 @@ namespace osu.Game.Screens.Edit.Timing
         protected IEditorChangeHandler? ChangeHandler { get; private set; }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeDuration = 200;

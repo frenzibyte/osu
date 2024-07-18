@@ -26,7 +26,7 @@ namespace osu.Game.Tests.Visual.Settings
         private TabletSettings settings;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         [SetUpSteps]
         public void SetUpSteps()

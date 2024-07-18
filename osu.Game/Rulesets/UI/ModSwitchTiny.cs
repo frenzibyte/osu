@@ -104,7 +104,7 @@ namespace osu.Game.Rulesets.UI
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(OsuColour colours, OverlayColourProvider? colourProvider)
+        private void load(OsuColour colours, OverlayColourPalette? colourProvider)
         {
             var modTypeColour = colours.ForModType(Mod.Type);
 

@@ -14,7 +14,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneRankingInformationDisplay : OsuTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         [Test]
         public void TestBasic()

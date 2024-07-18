@@ -104,7 +104,7 @@ namespace osu.Game.Screens.Play
         // Should match PlayerLoader for consistency. Cached here for the rare case we push a Player
         // without the loading screen (one such usage is the skin editor's scene library).
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         [Resolved]
         private ScoreManager scoreManager { get; set; }

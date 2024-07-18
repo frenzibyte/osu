@@ -44,7 +44,7 @@ namespace osu.Game.Screens.Edit.Components.RadioButtons
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             defaultBackgroundColour = colourProvider.Background3;
             selectedBackgroundColour = colourProvider.Background1;

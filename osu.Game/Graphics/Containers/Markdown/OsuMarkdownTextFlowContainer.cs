@@ -82,7 +82,7 @@ namespace osu.Game.Graphics.Containers.Markdown
             public string Text;
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 AutoSizeAxes = Axes.Both;
                 CornerRadius = 4;

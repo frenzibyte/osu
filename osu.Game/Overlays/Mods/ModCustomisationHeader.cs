@@ -22,7 +22,7 @@ namespace osu.Game.Overlays.Mods
         private SpriteIcon icon = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         protected override IEnumerable<Drawable> EffectTargets => new[] { background };
 

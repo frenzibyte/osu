@@ -87,7 +87,7 @@ namespace osu.Game.Screens.Play
         private SkinnableSound sampleRestart = null!;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         protected bool BackgroundBrightnessReduction
         {

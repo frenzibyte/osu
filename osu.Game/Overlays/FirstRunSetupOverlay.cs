@@ -296,7 +296,7 @@ namespace osu.Game.Overlays
             public Action? ShowNextStep;
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 RelativeSizeAxes = Axes.Both;
 

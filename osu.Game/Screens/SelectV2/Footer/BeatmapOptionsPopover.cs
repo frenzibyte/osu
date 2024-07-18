@@ -33,14 +33,14 @@ namespace osu.Game.Screens.SelectV2.Footer
         private readonly ScreenFooterButtonOptions footerButton;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider;
+        private readonly OverlayColourPalette colourProvider;
 
         private WorkingBeatmap beatmapWhenOpening = null!;
 
         [Resolved]
         private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
 
-        public BeatmapOptionsPopover(ScreenFooterButtonOptions footerButton, OverlayColourProvider colourProvider)
+        public BeatmapOptionsPopover(ScreenFooterButtonOptions footerButton, OverlayColourPalette colourProvider)
         {
             this.footerButton = footerButton;
             this.colourProvider = colourProvider;
@@ -138,7 +138,7 @@ namespace osu.Game.Screens.SelectV2.Footer
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 BackgroundColour = colourProvider.Background3;
 

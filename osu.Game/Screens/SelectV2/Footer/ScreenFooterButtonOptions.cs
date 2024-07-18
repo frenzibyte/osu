@@ -16,7 +16,7 @@ namespace osu.Game.Screens.SelectV2.Footer
     public partial class ScreenFooterButtonOptions : ScreenFooterButton, IHasPopover
     {
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load(OsuColour colour)

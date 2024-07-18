@@ -22,7 +22,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneChannelListing : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider overlayColours = new OverlayColourProvider(OverlayColourScheme.Pink);
+        private readonly OverlayColourPalette overlayColours = new OverlayColourPalette(OverlayColourScheme.Pink);
 
         private SearchTextBox search;
         private ChannelListing listing;

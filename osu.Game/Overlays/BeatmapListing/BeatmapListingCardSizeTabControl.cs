@@ -47,7 +47,7 @@ namespace osu.Game.Overlays.BeatmapListing
             private SpriteIcon icon;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; }
+            private OverlayColourPalette colourProvider { get; set; }
 
             private Sample selectSample = null!;
 

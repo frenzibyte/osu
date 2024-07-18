@@ -19,7 +19,7 @@ namespace osu.Game.Tests.Visual.Online
     public partial class TestSceneRankingsTables : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         private readonly BasicScrollContainer scrollFlow;
         private readonly LoadingLayer loading;

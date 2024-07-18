@@ -212,7 +212,7 @@ namespace osu.Game.Overlays.BeatmapSet.Scores
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 text.Colour = colourProvider.Foreground1;
                 separator.Colour = colourProvider.Background3;

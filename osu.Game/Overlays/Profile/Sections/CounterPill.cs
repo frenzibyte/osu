@@ -19,7 +19,7 @@ namespace osu.Game.Overlays.Profile.Sections
         private OsuSpriteText counter = null!;
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             AutoSizeAxes = Axes.Both;
             Masking = true;

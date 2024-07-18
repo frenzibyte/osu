@@ -241,7 +241,7 @@ namespace osu.Game.Overlays.Profile.Sections.Historical
         private partial class TickText : OsuSpriteText
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 Colour = colourProvider.Foreground1;
             }
@@ -250,7 +250,7 @@ namespace osu.Game.Overlays.Profile.Sections.Historical
         private partial class TickLine : Box
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 Colour = colourProvider.Background6;
             }

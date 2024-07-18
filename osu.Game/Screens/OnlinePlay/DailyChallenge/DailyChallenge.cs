@@ -58,7 +58,7 @@ namespace osu.Game.Screens.OnlinePlay.DailyChallenge
         private DailyChallengeEventFeed feed = null!;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Plum);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Plum);
 
         [Cached(Type = typeof(IRoomManager))]
         private RoomManager roomManager { get; set; }

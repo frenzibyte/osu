@@ -18,7 +18,7 @@ namespace osu.Game.Tests.Visual.Editing
         private TapButton tapButton;
 
         [Cached]
-        private readonly OverlayColourProvider overlayColour = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourPalette overlayColour = new OverlayColourPalette(OverlayColourScheme.Aquamarine);
 
         [Test]
         public void TestBasic()

@@ -23,7 +23,7 @@ namespace osu.Game.Tests.Visual.Beatmaps
         private DownloadButton downloadButton;
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Blue);
 
         [Resolved]
         private OsuConfigManager config { get; set; }

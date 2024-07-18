@@ -70,7 +70,7 @@ namespace osu.Game.Overlays
         public IBindable<SettingsSection> CurrentSection = new Bindable<SettingsSection>();
 
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         protected SettingsPanel(bool showBackButton)
         {
@@ -316,7 +316,7 @@ namespace osu.Game.Overlays
                 };
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 HeaderBackground = new Box
                 {

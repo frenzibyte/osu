@@ -14,7 +14,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneUserListToolbar : OsuTestScene
     {
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         public TestSceneUserListToolbar()
         {

@@ -92,11 +92,11 @@ namespace osu.Game.Tests.Visual.UserInterface
         private partial class ColourProvidingContainer : Container
         {
             [Cached]
-            private OverlayColourProvider provider { get; }
+            private OverlayColourPalette provider { get; }
 
             public ColourProvidingContainer(OverlayColourScheme colourScheme)
             {
-                provider = new OverlayColourProvider(colourScheme);
+                provider = new OverlayColourPalette(colourScheme);
             }
         }
     }

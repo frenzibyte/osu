@@ -101,7 +101,7 @@ namespace osu.Game.Overlays.Rankings
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = colourProvider.Background5;
         }
@@ -155,7 +155,7 @@ namespace osu.Game.Overlays.Rankings
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 IdleColour = colourProvider.Light2;
                 HoverColour = Color4.White;

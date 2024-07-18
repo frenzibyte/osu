@@ -67,7 +67,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colours)
+        private void load(OverlayColourPalette colours)
         {
             ButtonsContainer = new Container
             {

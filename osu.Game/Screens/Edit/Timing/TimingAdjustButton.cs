@@ -42,7 +42,7 @@ namespace osu.Game.Screens.Edit.Timing
         private readonly RepeatingButtonBehaviour repeatBehaviour;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
+        private OverlayColourPalette colourProvider { get; set; } = null!;
 
         [Resolved]
         private EditorBeatmap editorBeatmap { get; set; } = null!;
@@ -118,7 +118,7 @@ namespace osu.Game.Screens.Edit.Timing
             private readonly OsuSpriteText text;
 
             [Resolved]
-            private OverlayColourProvider colourProvider { get; set; } = null!;
+            private OverlayColourPalette colourProvider { get; set; } = null!;
 
             public IncrementBox(int index, double amount)
             {

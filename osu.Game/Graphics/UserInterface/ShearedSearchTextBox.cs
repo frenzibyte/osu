@@ -96,7 +96,7 @@ namespace osu.Game.Graphics.UserInterface
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             background.Colour = colourProvider.Background3;
         }
@@ -106,7 +106,7 @@ namespace osu.Game.Graphics.UserInterface
         private partial class InnerSearchTextBox : SearchTextBox
         {
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider)
+            private void load(OverlayColourPalette colourProvider)
             {
                 BackgroundFocused = colourProvider.Background4;
                 BackgroundUnfocused = colourProvider.Background4;

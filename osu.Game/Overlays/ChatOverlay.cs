@@ -66,7 +66,7 @@ namespace osu.Game.Overlays
         private ChannelManager channelManager { get; set; } = null!;
 
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Pink);
+        private readonly OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Pink);
 
         [Cached]
         private readonly Bindable<Channel?> currentChannel = new Bindable<Channel?>();

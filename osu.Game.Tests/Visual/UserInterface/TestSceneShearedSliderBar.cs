@@ -16,7 +16,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneShearedSliderBar : OsuManualInputManagerTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider { get; set; } = new OverlayColourProvider(OverlayColourScheme.Purple);
+        private OverlayColourPalette colourProvider { get; set; } = new OverlayColourPalette(OverlayColourScheme.Purple);
 
         private ShearedSliderBar<double> slider = null!;
 

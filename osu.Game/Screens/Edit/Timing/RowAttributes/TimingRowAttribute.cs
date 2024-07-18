@@ -29,7 +29,7 @@ namespace osu.Game.Screens.Edit.Timing.RowAttributes
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider)
+        private void load(OverlayColourPalette colourProvider)
         {
             Content.AddRange(new[]
             {

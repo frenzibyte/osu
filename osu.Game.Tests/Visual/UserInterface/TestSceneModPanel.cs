@@ -21,7 +21,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneModPanel : OsuManualInputManagerTestScene
     {
         [Cached]
-        private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourPalette colourProvider = new OverlayColourPalette(OverlayColourScheme.Green);
 
         [Test]
         public void TestVariousPanels()
