@@ -26,6 +26,8 @@ namespace osu.Game.Screens.Play.HUD
         public event OnActivateCallback? OnActivate;
         public event OnDeactivateCallback? OnDeactivate;
 
+        public bool IsActive { get; private set; }
+
         private readonly Bindable<int> activationCount = new BindableInt();
         private readonly Bindable<bool> isCounting = new BindableBool(true);
 
@@ -49,6 +51,7 @@ namespace osu.Game.Screens.Play.HUD
             if (forwardPlayback && isCounting.Value)
                 activationCount.Value++;
 
+            IsActive = true;
             OnActivate?.Invoke(forwardPlayback);
         }
 
@@ -57,6 +60,7 @@ namespace osu.Game.Screens.Play.HUD
             if (!forwardPlayback && isCounting.Value)
                 activationCount.Value--;
 
+            IsActive = false;
             OnDeactivate?.Invoke(forwardPlayback);
         }
     }
