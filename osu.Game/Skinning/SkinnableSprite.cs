@@ -105,6 +105,7 @@ namespace osu.Game.Skinning
                 {
                     foreach (var skin in skins)
                     {
+                        // todo: what the fuck is this
                         if (skin is ISkinTransformer transformer && isUserSkin(transformer.Skin))
                             return transformer.Skin;
 

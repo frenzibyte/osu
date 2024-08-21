@@ -7,6 +7,7 @@ using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osu.Game.Audio;
@@ -165,6 +166,8 @@ namespace osu.Game.Tests.Skins
             public override Texture GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => throw new NotImplementedException();
 
             public override IBindable<TValue> GetConfig<TLookup, TValue>(TLookup lookup) => throw new NotImplementedException();
+
+            protected override Drawable? GetDefaultGlobalLayout(SkinComponentsContainerLookup.TargetArea area) => throw new NotImplementedException();
 
             public override ISample GetSample(ISampleInfo sampleInfo) => throw new NotImplementedException();
         }

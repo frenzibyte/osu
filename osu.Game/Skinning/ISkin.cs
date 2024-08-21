@@ -12,6 +12,7 @@ namespace osu.Game.Skinning
     /// <summary>
     /// Provides access to various elements contained by a skin.
     /// </summary>
+    // rename this to ISkinLookups
     public interface ISkin
     {
         /// <summary>
@@ -21,11 +22,8 @@ namespace osu.Game.Skinning
         /// <returns>A drawable representation for the requested component, or null if unavailable.</returns>
         Drawable? GetDrawableComponent(ISkinComponentLookup lookup);
 
-        Drawable? GetLayout(SkinComponentsContainerLookup lookup) => GetUserLayout(lookup) ?? GetDefaultLayout(lookup);
-
-        Drawable? GetUserLayout(SkinComponentsContainerLookup lookup);
-
-        Drawable? GetDefaultLayout(SkinComponentsContainerLookup lookup);
+        // - rename SkinComponentsContainerLookup to SkinLayoutLookup
+        Drawable? GetLayout(SkinComponentsContainerLookup lookup);
 
         /// <summary>
         /// Retrieve a <see cref="Texture"/>.

@@ -48,6 +48,8 @@ namespace osu.Game.Skinning
         private readonly Dictionary<SkinComponentsContainerLookup.TargetArea, SkinLayoutInfo> layoutInfos =
             new Dictionary<SkinComponentsContainerLookup.TargetArea, SkinLayoutInfo>();
 
+        // we can take all of this to an ISkinExtensions and replace it all with a single Get<T> method to simplify the fallback process.
+        // not 100% sure how the end result will be though.
         public abstract ISample? GetSample(ISampleInfo sampleInfo);
 
         public Texture? GetTexture(string componentName) => GetTexture(componentName, default, default);
@@ -187,14 +189,23 @@ namespace osu.Game.Skinning
                 case SkinnableSprite.SpriteComponentLookup sprite:
                     return this.GetAnimation(sprite.LookupName, false, false, maxSize: sprite.MaxSize);
 
-                case SkinComponentsContainerLookup containerLookup:
-                    throw new InvalidOperationException($"Use {nameof(GetUserLayout)} instead.");
+                case SkinComponentsContainerLookup:
+                    throw new InvalidOperationException($"Use {nameof(getUserLayout)} instead.");
             }
 
             return null;
         }
 
-        public Drawable? GetUserLayout(SkinComponentsContainerLookup lookup)
+        public Drawable? GetLayout(SkinComponentsContainerLookup lookup)
+        {
+            var userLayout = getUserLayout(lookup);
+            if (userLayout != null)
+                return userLayout;
+
+            return GetDefaultGlobalLayout(lookup.Target);
+        }
+
+        private Drawable? getUserLayout(SkinComponentsContainerLookup lookup)
         {
             // It is important to return null if the user has not configured this yet.
             // This allows skin transformers the opportunity to provide default components.
@@ -208,7 +219,7 @@ namespace osu.Game.Skinning
             };
         }
 
-        public Drawable? GetDefaultLayout(SkinComponentsContainerLookup lookup) => null;
+        protected abstract Drawable? GetDefaultGlobalLayout(SkinComponentsContainerLookup.TargetArea area);
 
         #region Deserialisation & Migration
 

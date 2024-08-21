@@ -23,6 +23,7 @@ namespace osu.Game.Skinning
     /// A type of <see cref="SkinProvidingContainer"/> specialized for <see cref="DrawableRuleset"/> and other gameplay-related components.
     /// Providing access to parent skin sources and the beatmap skin each surrounded with the ruleset legacy skin transformer.
     /// </summary>
+    // todo: this entire shit will be flipped outside down, maybe it doesn't even need to exist anymore which is a yay thing I think.
     public partial class RulesetSkinProvidingContainer : SkinProvidingContainer
     {
         protected readonly Ruleset Ruleset;

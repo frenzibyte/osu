@@ -80,6 +80,8 @@ namespace osu.Game.Tests.Rulesets
 
             public Drawable GetDrawableComponent(ISkinComponentLookup lookup) => skin.GetDrawableComponent(lookup);
 
+            public Drawable GetLayout(SkinComponentsContainerLookup lookup) => throw new NotImplementedException();
+
             public Texture GetTexture(string componentName, WrapMode wrapModeS = default, WrapMode wrapModeT = default) => skin.GetTexture(componentName);
 
             public ISample GetSample(ISampleInfo sampleInfo) => skin.GetSample(sampleInfo);
