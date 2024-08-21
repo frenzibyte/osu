@@ -207,9 +207,9 @@ namespace osu.Game.Tests.Visual
                 this.extrapolateAnimations = extrapolateAnimations;
             }
 
-            public override Texture GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT)
+            protected override Texture GetTextureImplementation(string componentName, WrapMode wrapModeS, WrapMode wrapModeT)
             {
-                var lookup = base.GetTexture(componentName, wrapModeS, wrapModeT);
+                var lookup = base.GetTextureImplementation(componentName, wrapModeS, wrapModeT);
 
                 if (lookup != null)
                     return lookup;
@@ -220,7 +220,7 @@ namespace osu.Game.Tests.Visual
                     var match = Regex.Match(componentName, "-([0-9]*)");
 
                     if (match.Length > 0 && int.TryParse(match.Groups[1].Value, out int number) && number < 60)
-                        return base.GetTexture(componentName.Replace($"-{number}", $"-{number % 2}"), wrapModeS, wrapModeT);
+                        return base.GetTextureImplementation(componentName.Replace($"-{number}", $"-{number % 2}"), wrapModeS, wrapModeT);
                 }
 
                 return null;

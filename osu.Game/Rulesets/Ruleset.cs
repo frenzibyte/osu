@@ -207,6 +207,13 @@ namespace osu.Game.Rulesets
         public ModTouchDevice? GetTouchDeviceMod() => CreateMod<ModTouchDevice>();
 
         /// <summary>
+        /// Creates an implementation which adds lookups specific to a ruleset to skin sources.
+        /// </summary>
+        /// <param name="skin">The source skin.</param>
+        /// <param name="beatmap">The current beatmap.</param>
+        public virtual ISkinRulesetImplementation? CreateSkinImplementation(ISkin skin, IBeatmap beatmap) => null;
+
+        /// <summary>
         /// Create a transformer which adds lookups specific to a ruleset to skin sources.
         /// </summary>
         /// <param name="skin">The source skin.</param>

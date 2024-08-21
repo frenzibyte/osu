@@ -163,13 +163,13 @@ namespace osu.Game.Tests.Skins
             {
             }
 
-            public override Texture GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => throw new NotImplementedException();
+            protected override Texture GetTextureImplementation(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => throw new NotImplementedException();
 
-            public override IBindable<TValue> GetConfig<TLookup, TValue>(TLookup lookup) => throw new NotImplementedException();
+            protected override IBindable<TValue> GetConfigImplementation<TLookup, TValue>(TLookup lookup) => throw new NotImplementedException();
 
-            protected override Drawable? GetDefaultGlobalLayout(SkinComponentsContainerLookup.TargetArea area) => throw new NotImplementedException();
+            protected override Drawable GetDefaultGlobalLayout(SkinComponentsContainerLookup.TargetArea area) => throw new NotImplementedException();
 
-            public override ISample GetSample(ISampleInfo sampleInfo) => throw new NotImplementedException();
+            protected override ISample GetSampleImplementation(ISampleInfo sampleInfo) => throw new NotImplementedException();
         }
     }
 }

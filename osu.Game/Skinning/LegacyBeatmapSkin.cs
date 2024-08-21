@@ -67,7 +67,7 @@ namespace osu.Game.Skinning
             return base.GetDrawableComponent(lookup);
         }
 
-        public override IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
+        protected override IBindable<TValue>? GetConfigImplementation<TLookup, TValue>(TLookup lookup)
         {
             switch (lookup)
             {
@@ -82,13 +82,13 @@ namespace osu.Game.Skinning
                     return null;
             }
 
-            return base.GetConfig<TLookup, TValue>(lookup);
+            return base.GetConfigImplementation<TLookup, TValue>(lookup);
         }
 
         protected override IBindable<Color4>? GetComboColour(IHasComboColours source, int comboIndex, IHasComboInformation combo)
             => base.GetComboColour(source, combo.ComboIndexWithOffsets, combo);
 
-        public override ISample? GetSample(ISampleInfo sampleInfo)
+        protected override ISample? GetSampleImplementation(ISampleInfo sampleInfo)
         {
             if (sampleInfo is ConvertHitObjectParser.LegacyHitSampleInfo legacy && legacy.CustomSampleBank == 0)
             {
@@ -96,7 +96,7 @@ namespace osu.Game.Skinning
                 return null;
             }
 
-            return base.GetSample(sampleInfo);
+            return base.GetSampleImplementation(sampleInfo);
         }
 
         private static SkinInfo createSkinInfo(BeatmapInfo beatmapInfo) =>

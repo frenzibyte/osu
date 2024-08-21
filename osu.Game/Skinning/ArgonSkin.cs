@@ -71,9 +71,9 @@ namespace osu.Game.Skinning
             };
         }
 
-        public override Texture? GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => Textures?.Get(componentName, wrapModeS, wrapModeT);
+        protected override Texture? GetTextureImplementation(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => Textures?.Get(componentName, wrapModeS, wrapModeT);
 
-        public override ISample? GetSample(ISampleInfo sampleInfo)
+        protected override ISample? GetSampleImplementation(ISampleInfo sampleInfo)
         {
             foreach (string lookup in sampleInfo.LookupNames)
             {
@@ -91,17 +91,8 @@ namespace osu.Game.Skinning
         public override Drawable? GetDrawableComponent(ISkinComponentLookup lookup)
         {
             // Temporary until default skin has a valid hit lighting.
-            if ((lookup as SkinnableSprite.SpriteComponentLookup)?.LookupName == @"lighting") return Drawable.Empty();
-
-            switch (lookup)
-            {
-                case SkinComponentsContainerLookup containerLookup:
-
-                    if (base.GetDrawableComponent(lookup) is UserConfiguredLayoutContainer c)
-                        return c;
-
-                    return null;
-            }
+            if ((lookup as SkinnableSprite.SpriteComponentLookup)?.LookupName == @"lighting")
+                return Drawable.Empty();
 
             return base.GetDrawableComponent(lookup);
         }
@@ -249,7 +240,7 @@ namespace osu.Game.Skinning
             return null;
         }
 
-        public override IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
+        protected override IBindable<TValue>? GetConfigImplementation<TLookup, TValue>(TLookup lookup)
         {
             // todo: this code is pulled from LegacySkin and should not exist.
             // will likely change based on how databased storage of skin configuration goes.

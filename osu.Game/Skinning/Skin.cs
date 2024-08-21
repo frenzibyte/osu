@@ -28,6 +28,7 @@ namespace osu.Game.Skinning
     public abstract class Skin : IDisposable, ISkin
     {
         private readonly IStorageResourceProvider? resources;
+        private readonly Ruleset? ruleset;
 
         /// <summary>
         /// A texture store which can be used to perform user file lookups for this skin.
@@ -48,15 +49,28 @@ namespace osu.Game.Skinning
         private readonly Dictionary<SkinComponentsContainerLookup.TargetArea, SkinLayoutInfo> layoutInfos =
             new Dictionary<SkinComponentsContainerLookup.TargetArea, SkinLayoutInfo>();
 
+        private readonly ISkinRulesetImplementation? rulesetImplementation;
+
         // we can take all of this to an ISkinExtensions and replace it all with a single Get<T> method to simplify the fallback process.
         // not 100% sure how the end result will be though.
-        public abstract ISample? GetSample(ISampleInfo sampleInfo);
+        public ISample? GetSample(ISampleInfo sampleInfo) => rulesetImplementation?.GetSample(sampleInfo) ?? GetSampleImplementation(sampleInfo);
 
-        public Texture? GetTexture(string componentName) => GetTexture(componentName, default, default);
+        protected abstract ISample? GetSampleImplementation(ISampleInfo sampleInfo);
 
-        public abstract Texture? GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT);
+        public Texture? GetTexture(string componentName) => GetTextureImplementation(componentName, default, default);
 
-        public abstract IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
+        public Texture? GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => rulesetImplementation?.GetTexture(componentName, wrapModeS, wrapModeT) ?? GetTextureImplementation(componentName, wrapModeS, wrapModeT);
+
+        protected abstract Texture? GetTextureImplementation(string componentName, WrapMode wrapModeS, WrapMode wrapModeT);
+
+        public IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
+            where TLookup : notnull
+            where TValue : notnull
+        {
+            return rulesetImplementation?.GetConfig<TLookup, TValue>(lookup) ?? GetConfigImplementation<TLookup, TValue>(lookup);
+        }
+
+        protected abstract IBindable<TValue>? GetConfigImplementation<TLookup, TValue>(TLookup lookup)
             where TLookup : notnull
             where TValue : notnull;
 
@@ -71,9 +85,13 @@ namespace osu.Game.Skinning
         /// <param name="resources">Access to game-wide resources.</param>
         /// <param name="fallbackStore">An optional fallback store which will be used for file lookups that are not serviced by realm user storage.</param>
         /// <param name="configurationFilename">An optional filename to read the skin configuration from. If not provided, the configuration will be retrieved from the storage using "skin.ini".</param>
-        protected Skin(SkinInfo skin, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore = null, string configurationFilename = @"skin.ini")
+        /// <param name="ruleset">The ruleset which this skin should provide components for. THIS SHOULD NOT BE OPTIONAL, I just cannot be arsed right now.</param>
+        protected Skin(SkinInfo skin, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore = null, string configurationFilename = @"skin.ini", Ruleset? ruleset = null)
         {
             this.resources = resources;
+            this.ruleset = ruleset;
+
+            rulesetImplementation = ruleset?.CreateSkinImplementation(this, null!);
 
             Name = skin.Name;
 
@@ -202,7 +220,7 @@ namespace osu.Game.Skinning
             if (userLayout != null)
                 return userLayout;
 
-            return GetDefaultGlobalLayout(lookup.Target);
+            return getDefaultRulesetLayout(lookup) ?? GetDefaultGlobalLayout(lookup.Target);
         }
 
         private Drawable? getUserLayout(SkinComponentsContainerLookup lookup)
@@ -217,6 +235,20 @@ namespace osu.Game.Skinning
                 RelativeSizeAxes = Axes.Both,
                 ChildrenEnumerable = drawableInfos.Select(i => i.CreateInstance())
             };
+        }
+
+        private Drawable? getDefaultRulesetLayout(SkinComponentsContainerLookup lookup)
+        {
+            if (lookup.Ruleset == null)
+                return null;
+
+            if (ruleset == null)
+                throw new InvalidOperationException("This skin does not support ruleset-specific lookups.");
+
+            if (!lookup.Ruleset.Equals(ruleset.RulesetInfo))
+                throw new InvalidOperationException($"Attempted to look up {nameof(lookup.Ruleset.Name)} components on a {nameof(ruleset.Description)} skin");
+
+            return rulesetImplementation!.GetDefaultRulesetLayout(lookup);
         }
 
         protected abstract Drawable? GetDefaultGlobalLayout(SkinComponentsContainerLookup.TargetArea area);
@@ -284,9 +316,9 @@ namespace osu.Game.Skinning
 
                     resources.RealmAccess.Run(r =>
                     {
-                        foreach (var ruleset in r.All<RulesetInfo>())
+                        foreach (var rulesetInDatabase in r.All<RulesetInfo>())
                         {
-                            layout.Update(ruleset, layout.TryGetDrawableInfo(ruleset, out var rulesetHUDComponents)
+                            layout.Update(rulesetInDatabase, layout.TryGetDrawableInfo(rulesetInDatabase, out var rulesetHUDComponents)
                                 ? rulesetHUDComponents.Concat(comboCounters).ToArray()
                                 : comboCounters);
                         }

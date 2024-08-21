@@ -20,7 +20,7 @@ namespace osu.Game.Skinning
             InstantiationInfo = typeof(ArgonProSkin).GetInvariantInstantiationInfo()
         };
 
-        public override ISample? GetSample(ISampleInfo sampleInfo)
+        protected override ISample? GetSampleImplementation(ISampleInfo sampleInfo)
         {
             foreach (string lookup in sampleInfo.LookupNames)
             {

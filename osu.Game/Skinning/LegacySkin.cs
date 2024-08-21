@@ -76,7 +76,7 @@ namespace osu.Game.Skinning
         }
 
         [SuppressMessage("ReSharper", "RedundantAssignment")] // for `wasHit` assignments used in `finally` debug logic
-        public override IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
+        protected override IBindable<TValue>? GetConfigImplementation<TLookup, TValue>(TLookup lookup)
         {
             bool wasHit = true;
 
@@ -172,7 +172,7 @@ namespace osu.Game.Skinning
                 case LegacyManiaSkinConfigurationLookups.ExplosionScale:
                     Debug.Assert(maniaLookup.ColumnIndex != null);
 
-                    if (GetConfig<SkinConfiguration.LegacySetting, decimal>(SkinConfiguration.LegacySetting.Version)?.Value < 2.5m)
+                    if (GetConfigImplementation<SkinConfiguration.LegacySetting, decimal>(SkinConfiguration.LegacySetting.Version)?.Value < 2.5m)
                         return SkinUtils.As<TValue>(new Bindable<float>(1));
 
                     if (existing.ExplosionWidth[maniaLookup.ColumnIndex.Value] != 0)
@@ -205,7 +205,7 @@ namespace osu.Game.Skinning
                     if (existing.NoteBodyStyle != null)
                         return SkinUtils.As<TValue>(new Bindable<LegacyNoteBodyStyle>(existing.NoteBodyStyle.Value));
 
-                    if (GetConfig<SkinConfiguration.LegacySetting, decimal>(SkinConfiguration.LegacySetting.Version)?.Value < 2.5m)
+                    if (GetConfigImplementation<SkinConfiguration.LegacySetting, decimal>(SkinConfiguration.LegacySetting.Version)?.Value < 2.5m)
                         return SkinUtils.As<TValue>(new Bindable<LegacyNoteBodyStyle>(LegacyNoteBodyStyle.Stretch));
 
                     return SkinUtils.As<TValue>(new Bindable<LegacyNoteBodyStyle>(LegacyNoteBodyStyle.RepeatBottom));
@@ -232,7 +232,7 @@ namespace osu.Game.Skinning
                 case LegacyManiaSkinConfigurationLookups.HoldNoteLightScale:
                     Debug.Assert(maniaLookup.ColumnIndex != null);
 
-                    if (GetConfig<SkinConfiguration.LegacySetting, decimal>(SkinConfiguration.LegacySetting.Version)?.Value < 2.5m)
+                    if (GetConfigImplementation<SkinConfiguration.LegacySetting, decimal>(SkinConfiguration.LegacySetting.Version)?.Value < 2.5m)
                         return SkinUtils.As<TValue>(new Bindable<float>(1));
 
                     if (existing.HoldNoteLightWidth[maniaLookup.ColumnIndex.Value] != 0)
@@ -357,11 +357,6 @@ namespace osu.Game.Skinning
         {
             switch (lookup)
             {
-                case SkinComponentsContainerLookup containerLookup:
-                    if (base.GetDrawableComponent(lookup) is UserConfiguredLayoutContainer c)
-                        return c;
-                    break;
-
                 case GameplaySkinComponentLookup<HitResult> resultComponent:
                     // kind of wasteful that we throw this away, but should do for now.
                     if (getJudgementAnimation(resultComponent.Component) != null)
@@ -383,7 +378,7 @@ namespace osu.Game.Skinning
             return base.GetDrawableComponent(lookup);
         }
 
-        protected override Drawable GetDefaultGlobalLayout(SkinComponentsContainerLookup.TargetArea area)
+        protected override Drawable? GetDefaultGlobalLayout(SkinComponentsContainerLookup.TargetArea area)
         {
             switch (area)
             {
@@ -495,11 +490,11 @@ namespace osu.Game.Skinning
         }
 
         /// <summary>
-        /// Whether high-resolution textures ("@2x"-suffixed) are allowed to be used by <see cref="GetTexture"/> when available.
+        /// Whether high-resolution textures ("@2x"-suffixed) are allowed to be used by <see cref="GetTextureImplementation"/> when available.
         /// </summary>
         protected virtual bool AllowHighResolutionSprites => true;
 
-        public override Texture? GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT)
+        protected override Texture? GetTextureImplementation(string componentName, WrapMode wrapModeS, WrapMode wrapModeT)
         {
             switch (componentName)
             {
@@ -534,7 +529,7 @@ namespace osu.Game.Skinning
             return texture;
         }
 
-        public override ISample? GetSample(ISampleInfo sampleInfo)
+        protected override ISample? GetSampleImplementation(ISampleInfo sampleInfo)
         {
             IEnumerable<string> lookupNames;
 

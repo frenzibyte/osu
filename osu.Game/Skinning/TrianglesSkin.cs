@@ -45,9 +45,9 @@ namespace osu.Game.Skinning
             this.resources = resources;
         }
 
-        public override Texture? GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => Textures?.Get(componentName, wrapModeS, wrapModeT);
+        protected override Texture? GetTextureImplementation(string componentName, WrapMode wrapModeS, WrapMode wrapModeT) => Textures?.Get(componentName, wrapModeS, wrapModeT);
 
-        public override ISample? GetSample(ISampleInfo sampleInfo)
+        protected override ISample? GetSampleImplementation(ISampleInfo sampleInfo)
         {
             foreach (string lookup in sampleInfo.LookupNames)
             {
@@ -186,7 +186,7 @@ namespace osu.Game.Skinning
             return null;
         }
 
-        public override IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
+        protected override IBindable<TValue>? GetConfigImplementation<TLookup, TValue>(TLookup lookup)
         {
             // todo: this code is pulled from LegacySkin and should not exist.
             // will likely change based on how databased storage of skin configuration goes.
