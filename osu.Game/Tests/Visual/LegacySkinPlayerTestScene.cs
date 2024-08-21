@@ -25,7 +25,7 @@ namespace osu.Game.Tests.Visual
         [BackgroundDependencyLoader]
         private void load(SkinManager skins)
         {
-            LegacySkin = new DefaultLegacySkin(skins);
+            LegacySkin = new DefaultLegacySkin(CreateRuleset(), skins);
             legacySkinSource = new SkinProvidingContainer(LegacySkin);
         }
 

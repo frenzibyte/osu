@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using osu.Framework.IO.Stores;
 using osu.Game.Extensions;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 using osuTK.Graphics;
 
 namespace osu.Game.Skinning
@@ -21,18 +22,14 @@ namespace osu.Game.Skinning
             InstantiationInfo = typeof(DefaultLegacySkin).GetInvariantInstantiationInfo()
         };
 
-        public DefaultLegacySkin(IStorageResourceProvider resources)
-            : this(CreateInfo(), resources)
+        public DefaultLegacySkin(Ruleset? ruleset, IStorageResourceProvider resources)
+            : this(CreateInfo(), ruleset, resources)
         {
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-        public DefaultLegacySkin(SkinInfo skin, IStorageResourceProvider resources)
-            : base(
-                skin,
-                resources,
-                new NamespacedResourceStore<byte[]>(resources.Resources, "Skins/Legacy")
-            )
+        public DefaultLegacySkin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider resources)
+            : base(skin, ruleset, resources, new NamespacedResourceStore<byte[]>(resources.Resources, "Skins/Legacy"))
         {
             Configuration.CustomColours["SliderBall"] = new Color4(2, 170, 255, 255);
             Configuration.CustomComboColours = new List<Color4>

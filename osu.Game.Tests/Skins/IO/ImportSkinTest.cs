@@ -242,7 +242,7 @@ namespace osu.Game.Tests.Skins.IO
             await skinManager.CurrentSkinInfo.Value.PerformRead(async s =>
             {
                 Assert.IsFalse(s.Protected);
-                Assert.AreEqual(typeof(ArgonSkin), s.CreateInstance(skinManager).GetType());
+                Assert.AreEqual(typeof(ArgonSkin), s.CreateInstance(null, skinManager).GetType());
 
                 await new LegacySkinExporter(osu.Dependencies.Get<Storage>()).ExportToStreamAsync(skinManager.CurrentSkinInfo.Value, exportStream);
 
@@ -255,7 +255,7 @@ namespace osu.Game.Tests.Skins.IO
             {
                 Assert.IsFalse(s.Protected);
                 Assert.AreNotEqual(originalSkinId, s.ID);
-                Assert.AreEqual(typeof(ArgonSkin), s.CreateInstance(skinManager).GetType());
+                Assert.AreEqual(typeof(ArgonSkin), s.CreateInstance(null, skinManager).GetType());
             });
         });
 
@@ -275,7 +275,7 @@ namespace osu.Game.Tests.Skins.IO
             await skinManager.CurrentSkinInfo.Value.PerformRead(async s =>
             {
                 Assert.IsFalse(s.Protected);
-                Assert.AreEqual(typeof(DefaultLegacySkin), s.CreateInstance(skinManager).GetType());
+                Assert.AreEqual(typeof(DefaultLegacySkin), s.CreateInstance(null, skinManager).GetType());
 
                 await new LegacySkinExporter(osu.Dependencies.Get<Storage>()).ExportToStreamAsync(skinManager.CurrentSkinInfo.Value, exportStream);
 
@@ -288,7 +288,7 @@ namespace osu.Game.Tests.Skins.IO
             {
                 Assert.IsFalse(s.Protected);
                 Assert.AreNotEqual(originalSkinId, s.ID);
-                Assert.AreEqual(typeof(DefaultLegacySkin), s.CreateInstance(skinManager).GetType());
+                Assert.AreEqual(typeof(DefaultLegacySkin), s.CreateInstance(null, skinManager).GetType());
             });
         });
 
@@ -302,7 +302,7 @@ namespace osu.Game.Tests.Skins.IO
                 Assert.That(i.Creator, Is.EqualTo(creator));
 
                 // for extra safety let's reconstruct the skin, reading from the skin.ini.
-                var instance = i.CreateInstance((IStorageResourceProvider)osu.Dependencies.Get(typeof(SkinManager)));
+                var instance = i.CreateInstance(null, (IStorageResourceProvider)osu.Dependencies.Get(typeof(SkinManager)));
 
                 Assert.That(instance.Configuration.SkinInfo.Name, Is.EqualTo(name));
                 Assert.That(instance.Configuration.SkinInfo.Creator, Is.EqualTo(creator));

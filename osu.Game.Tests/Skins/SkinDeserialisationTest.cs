@@ -159,7 +159,7 @@ namespace osu.Game.Tests.Skins
         private class TestSkin : Skin
         {
             public TestSkin(SkinInfo skin, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore = null, string configurationFilename = "skin.ini")
-                : base(skin, resources, fallbackStore, configurationFilename)
+                : base(skin, null, resources, fallbackStore, configurationFilename)
             {
             }
 

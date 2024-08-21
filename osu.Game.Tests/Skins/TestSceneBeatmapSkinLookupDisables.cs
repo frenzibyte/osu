@@ -65,7 +65,7 @@ namespace osu.Game.Tests.Skins
         public class UserSkinSource : LegacySkin
         {
             public UserSkinSource()
-                : base(new SkinInfo(), null, null, string.Empty)
+                : base(new SkinInfo(), null, null, null, string.Empty)
             {
             }
 
@@ -78,7 +78,7 @@ namespace osu.Game.Tests.Skins
         public class BeatmapSkinSource : LegacyBeatmapSkin
         {
             public BeatmapSkinSource()
-                : base(new TestBeatmap(new OsuRuleset().RulesetInfo).BeatmapInfo, null)
+                : base(new TestBeatmap(new OsuRuleset().RulesetInfo).BeatmapInfo, null, null)
             {
             }
 

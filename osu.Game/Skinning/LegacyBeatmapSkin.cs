@@ -11,6 +11,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Formats;
 using osu.Game.Database;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Objects.Legacy;
 using osu.Game.Rulesets.Objects.Types;
 using osuTK.Graphics;
@@ -31,9 +32,10 @@ namespace osu.Game.Skinning
         /// Construct a new legacy beatmap skin instance.
         /// </summary>
         /// <param name="beatmapInfo">The model for this beatmap.</param>
+        /// <param name="ruleset"></param>
         /// <param name="resources">Access to raw game resources.</param>
-        public LegacyBeatmapSkin(BeatmapInfo beatmapInfo, IStorageResourceProvider? resources)
-            : base(createSkinInfo(beatmapInfo), resources, createRealmBackedStore(beatmapInfo, resources), beatmapInfo.Path.AsNonNull())
+        public LegacyBeatmapSkin(BeatmapInfo beatmapInfo, Ruleset? ruleset, IStorageResourceProvider? resources)
+            : base(createSkinInfo(beatmapInfo), ruleset, resources, createRealmBackedStore(beatmapInfo, resources), beatmapInfo.Path.AsNonNull())
         {
             // Disallow default colours fallback on beatmap skins to allow using parent skin combo colours. (via SkinProvidingContainer)
             Configuration.AllowDefaultComboColoursFallback = false;

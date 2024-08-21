@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Catch.Tests
         {
             public TestLegacySkin(SkinInfo skin, IResourceStore<byte[]> fallbackStore)
                 // Bypass LegacySkinResourceStore to avoid returning null for retrieving files due to bad skin info (SkinInfo.Files = null).
-                : base(skin, null, fallbackStore)
+                : base(skin, null, null, fallbackStore)
             {
             }
         }

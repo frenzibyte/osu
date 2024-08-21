@@ -34,6 +34,7 @@ namespace osu.Game.Beatmaps
 
         public Storyboard Storyboard => storyboard.Value;
 
+        // todo: no please.
         public ISkin Skin => skin.Value;
 
         private AudioManager audioManager { get; }
@@ -77,6 +78,7 @@ namespace osu.Game.Beatmaps
         /// (e.g. for editing purposes, to avoid state pollution).
         /// For standard reading purposes, <see cref="Skin"/> should always be used directly.
         /// </remarks>
+        // todo: probably add Ruleset parameter here?
         protected internal abstract ISkin GetSkin();
 
         #endregion

@@ -85,13 +85,13 @@ namespace osu.Game.Skinning
         /// <param name="resources">Access to game-wide resources.</param>
         /// <param name="fallbackStore">An optional fallback store which will be used for file lookups that are not serviced by realm user storage.</param>
         /// <param name="configurationFilename">An optional filename to read the skin configuration from. If not provided, the configuration will be retrieved from the storage using "skin.ini".</param>
-        /// <param name="ruleset">The ruleset which this skin should provide components for. THIS SHOULD NOT BE OPTIONAL, I just cannot be arsed right now.</param>
-        protected Skin(SkinInfo skin, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore = null, string configurationFilename = @"skin.ini", Ruleset? ruleset = null)
+        /// <param name="ruleset">The ruleset which this skin should provide components for.</param>
+        protected Skin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore = null, string configurationFilename = @"skin.ini")
         {
             this.resources = resources;
             this.ruleset = ruleset;
 
-            rulesetImplementation = ruleset?.CreateSkinImplementation(this, null!);
+            rulesetImplementation = ruleset?.CreateSkinImplementation(this, null!); // todo: remove beatmap
 
             Name = skin.Name;
 

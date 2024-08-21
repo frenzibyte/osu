@@ -672,6 +672,10 @@ namespace osu.Game
 
             SelectedMods.Value = convertedMods;
 
+            // ...or I can just make the bindable RulesetInfo and bind it directly to Ruleset.Value,
+            // meh, either/or.
+            SkinManager.CurrentRuleset.Value = Ruleset.Value.CreateInstance();
+
             void revertRulesetChange() => Ruleset.Value = r.OldValue?.Available == true ? r.OldValue : RulesetStore.AvailableRulesets.First();
         }
 

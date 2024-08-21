@@ -12,6 +12,7 @@ using osu.Game.Audio;
 using osu.Game.Beatmaps.Formats;
 using osu.Game.Extensions;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Screens.Play.HUD.HitErrorMeters;
 using osu.Game.Skinning.Triangles;
@@ -31,16 +32,16 @@ namespace osu.Game.Skinning
             InstantiationInfo = typeof(TrianglesSkin).GetInvariantInstantiationInfo()
         };
 
-        private readonly IStorageResourceProvider resources;
+        private readonly IStorageResourceProvider? resources;
 
-        public TrianglesSkin(IStorageResourceProvider resources)
-            : this(CreateInfo(), resources)
+        public TrianglesSkin(Ruleset? ruleset, IStorageResourceProvider? resources)
+            : this(CreateInfo(), ruleset, resources)
         {
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-        public TrianglesSkin(SkinInfo skin, IStorageResourceProvider resources)
-            : base(skin, resources)
+        public TrianglesSkin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider? resources)
+            : base(skin, ruleset, resources)
         {
             this.resources = resources;
         }
@@ -51,7 +52,7 @@ namespace osu.Game.Skinning
         {
             foreach (string lookup in sampleInfo.LookupNames)
             {
-                var sample = Samples?.Get(lookup) ?? resources.AudioManager?.Samples.Get(lookup);
+                var sample = Samples?.Get(lookup) ?? resources?.AudioManager?.Samples.Get(lookup);
                 if (sample != null)
                     return sample;
             }

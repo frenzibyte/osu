@@ -12,6 +12,7 @@ using osu.Game.Audio;
 using osu.Game.Beatmaps.Formats;
 using osu.Game.Extensions;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Screens.Play.HUD.HitErrorMeters;
@@ -34,17 +35,14 @@ namespace osu.Game.Skinning
 
         protected readonly IStorageResourceProvider Resources;
 
-        public ArgonSkin(IStorageResourceProvider resources)
-            : this(CreateInfo(), resources)
+        public ArgonSkin(Ruleset? ruleset, IStorageResourceProvider resources)
+            : this(CreateInfo(), ruleset, resources)
         {
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-        public ArgonSkin(SkinInfo skin, IStorageResourceProvider resources)
-            : base(
-                skin,
-                resources
-            )
+        public ArgonSkin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider resources)
+            : base(skin, ruleset, resources)
         {
             Resources = resources;
 

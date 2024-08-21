@@ -49,12 +49,12 @@ namespace osu.Game.Tests.Visual
         {
             var dllStore = new DllResourceStore(GetType().Assembly);
 
-            argonSkin = new ArgonSkin(this);
-            trianglesSkin = new TrianglesSkin(this);
-            metricsSkin = new TestLegacySkin(new SkinInfo { Name = "metrics-skin" }, new NamespacedResourceStore<byte[]>(dllStore, "Resources/metrics_skin"), this, true);
-            legacySkin = new DefaultLegacySkin(this);
-            specialSkin = new TestLegacySkin(new SkinInfo { Name = "special-skin" }, new NamespacedResourceStore<byte[]>(dllStore, "Resources/special_skin"), this, true);
-            oldSkin = new TestLegacySkin(new SkinInfo { Name = "old-skin" }, new NamespacedResourceStore<byte[]>(dllStore, "Resources/old_skin"), this, true);
+            argonSkin = new ArgonSkin(CreateRuleset(), this);
+            trianglesSkin = new TrianglesSkin(CreateRuleset(), this);
+            metricsSkin = new TestLegacySkin(new SkinInfo { Name = "metrics-skin" }, CreateRuleset(), new NamespacedResourceStore<byte[]>(dllStore, "Resources/metrics_skin"), this, true);
+            legacySkin = new DefaultLegacySkin(CreateRuleset(), this);
+            specialSkin = new TestLegacySkin(new SkinInfo { Name = "special-skin" }, CreateRuleset(), new NamespacedResourceStore<byte[]>(dllStore, "Resources/special_skin"), this, true);
+            oldSkin = new TestLegacySkin(new SkinInfo { Name = "old-skin" }, CreateRuleset(), new NamespacedResourceStore<byte[]>(dllStore, "Resources/old_skin"), this, true);
         }
 
         private readonly List<Drawable> createdDrawables = new List<Drawable>();
@@ -201,8 +201,8 @@ namespace osu.Game.Tests.Visual
         {
             private readonly bool extrapolateAnimations;
 
-            public TestLegacySkin(SkinInfo skin, IResourceStore<byte[]> fallbackStore, IStorageResourceProvider resources, bool extrapolateAnimations)
-                : base(skin, resources, fallbackStore)
+            public TestLegacySkin(SkinInfo skin, Ruleset ruleset, IResourceStore<byte[]> fallbackStore, IStorageResourceProvider resources, bool extrapolateAnimations)
+                : base(skin, ruleset, resources, fallbackStore)
             {
                 this.extrapolateAnimations = extrapolateAnimations;
             }

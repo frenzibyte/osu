@@ -113,7 +113,7 @@ namespace osu.Game.Tests.Beatmaps
                     beatmapInfo.BeatmapSet.Files.Add(new RealmNamedFileUsage(new RealmFile { Hash = beatmapFile }, beatmapFile));
 
                 // Need to refresh the cached skin source to refresh the skin resource store.
-                dependencies.SkinSource = new SkinProvidingContainer(Skin = new LegacySkin(userSkinInfo, this));
+                dependencies.SkinSource = new SkinProvidingContainer(Skin = new LegacySkin(userSkinInfo, CreateRuleset(), this));
             });
         }
 
@@ -216,7 +216,7 @@ namespace osu.Game.Tests.Beatmaps
                 this.resources = resources;
             }
 
-            protected internal override ISkin GetSkin() => new LegacyBeatmapSkin(skinBeatmapInfo, this);
+            protected internal override ISkin GetSkin() => new LegacyBeatmapSkin(skinBeatmapInfo, skinBeatmapInfo.Ruleset.CreateInstance(), this);
 
             public IRenderer Renderer => resources.Renderer;
             public AudioManager AudioManager => resources.AudioManager;

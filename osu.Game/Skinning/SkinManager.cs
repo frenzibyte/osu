@@ -24,6 +24,7 @@ using osu.Game.Audio;
 using osu.Game.Database;
 using osu.Game.IO;
 using osu.Game.Overlays.Notifications;
+using osu.Game.Rulesets;
 using osu.Game.Utils;
 
 namespace osu.Game.Skinning
@@ -40,7 +41,7 @@ namespace osu.Game.Skinning
         /// <summary>
         /// The default "classic" skin.
         /// </summary>
-        public Skin DefaultClassicSkin { get; }
+        public Skin DefaultClassicSkin { get; private set; }
 
         private readonly AudioManager audio;
 
@@ -54,15 +55,17 @@ namespace osu.Game.Skinning
 
         public readonly Bindable<Live<SkinInfo>> CurrentSkinInfo = new Bindable<Live<SkinInfo>>(ArgonSkin.CreateInfo().ToLiveUnmanaged());
 
+        public readonly Bindable<Ruleset> CurrentRuleset = new Bindable<Ruleset>();
+
         private readonly SkinImporter skinImporter;
 
         private readonly LegacySkinExporter skinExporter;
 
         private readonly IResourceStore<byte[]> userFiles;
 
-        private Skin argonSkin { get; }
+        private Skin argonSkin { get; set; }
 
-        private Skin trianglesSkin { get; }
+        private Skin trianglesSkin { get; set; }
 
         public override bool PauseImports
         {
@@ -89,21 +92,21 @@ namespace osu.Game.Skinning
                 PostNotification = obj => PostNotification?.Invoke(obj),
             };
 
-            var defaultSkins = new[]
+            var defaultSkinInfos = new[]
             {
-                DefaultClassicSkin = new DefaultLegacySkin(this),
-                trianglesSkin = new TrianglesSkin(this),
-                argonSkin = new ArgonSkin(this),
-                new ArgonProSkin(this),
+                DefaultLegacySkin.CreateInfo(),
+                TrianglesSkin.CreateInfo(),
+                ArgonSkin.CreateInfo(),
+                ArgonProSkin.CreateInfo(),
             };
 
             // Ensure the default entries are present.
             realm.Write(r =>
             {
-                foreach (var skin in defaultSkins)
+                foreach (var skinInfo in defaultSkinInfos)
                 {
-                    if (r.Find<SkinInfo>(skin.SkinInfo.ID) == null)
-                        r.Add(skin.SkinInfo.Value);
+                    if (r.Find<SkinInfo>(skinInfo.ID) == null)
+                        r.Add(skinInfo);
                 }
             });
 
@@ -119,6 +122,14 @@ namespace osu.Game.Skinning
                     throw new InvalidOperationException($"Setting {nameof(CurrentSkin)}'s value directly is not supported. Use {nameof(CurrentSkinInfo)} instead.");
 
                 SourceChanged?.Invoke();
+            };
+
+            CurrentRuleset.ValueChanged += ruleset =>
+            {
+                DefaultClassicSkin = new DefaultLegacySkin(ruleset.NewValue, this);
+                trianglesSkin = new TrianglesSkin(ruleset.NewValue, this);
+                argonSkin = new ArgonSkin(ruleset.NewValue, this);
+                CurrentSkinInfo.TriggerChange();
             };
 
             skinExporter = new LegacySkinExporter(storage)
@@ -153,7 +164,7 @@ namespace osu.Game.Skinning
         /// </summary>
         /// <param name="skinInfo">The skin to lookup.</param>
         /// <returns>A <see cref="Skin"/> instance correlating to the provided <see cref="SkinInfo"/>.</returns>
-        public Skin GetSkin(SkinInfo skinInfo) => skinInfo.CreateInstance(this);
+        public Skin GetSkin(SkinInfo skinInfo) => skinInfo.CreateInstance(CurrentRuleset.Value, this);
 
         /// <summary>
         /// Ensure that the current skin is in a state it can accept user modifications.
@@ -191,7 +202,7 @@ namespace osu.Game.Skinning
                 {
                     // save once to ensure the required json content is populated.
                     // currently this only happens on save.
-                    result.PerformRead(skin => Save(skin.CreateInstance(this)));
+                    result.PerformRead(importedInfo => Save(GetSkin(importedInfo)));
                     CurrentSkinInfo.Value = result;
                     return true;
                 }

@@ -182,7 +182,7 @@ namespace osu.Game.Skinning
             }
         }
 
-        private Skin createInstance(SkinInfo item) => item.CreateInstance(skinResources);
+        private Skin createInstance(SkinInfo item) => item.CreateInstance(null, skinResources);
 
         /// <summary>
         /// Save a skin, serialising any changes to skin layouts to relevant JSON structures.

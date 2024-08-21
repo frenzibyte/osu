@@ -154,7 +154,7 @@ namespace osu.Game.Tests.NonVisual.Skinning
             protected override bool AllowHighResolutionSprites => HighResolutionSprites;
 
             public TestLegacySkin(IResourceStore<TextureUpload> textureStore)
-                : base(new SkinInfo(), new TestResourceProvider(textureStore), null, string.Empty)
+                : base(new SkinInfo(), null, new TestResourceProvider(textureStore), null, string.Empty)
             {
             }
 

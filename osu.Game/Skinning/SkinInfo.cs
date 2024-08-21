@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using osu.Game.Database;
 using osu.Game.IO;
 using osu.Game.Models;
+using osu.Game.Rulesets;
 using Realms;
 
 namespace osu.Game.Skinning
@@ -39,7 +40,7 @@ namespace osu.Game.Skinning
 
         public bool Protected { get; set; }
 
-        public virtual Skin CreateInstance(IStorageResourceProvider resources)
+        public virtual Skin CreateInstance(Ruleset? ruleset, IStorageResourceProvider resources)
         {
             var type = string.IsNullOrEmpty(InstantiationInfo)
                 // handle the case of skins imported before InstantiationInfo was added.
@@ -52,10 +53,10 @@ namespace osu.Game.Skinning
                 // for user modified skins. This aims to amicably handle that.
                 // If we ever add more default skins in the future this will need some kind of proper migration rather than
                 // a single fallback.
-                return new TrianglesSkin(this, resources);
+                return new TrianglesSkin(this, ruleset, resources);
             }
 
-            return (Skin)Activator.CreateInstance(type, this, resources)!;
+            return (Skin)Activator.CreateInstance(type, this, ruleset, resources)!;
         }
 
         public IList<RealmNamedFileUsage> Files { get; } = null!;

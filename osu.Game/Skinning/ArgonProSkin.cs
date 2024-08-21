@@ -6,6 +6,7 @@ using osu.Framework.Audio.Sample;
 using osu.Game.Audio;
 using osu.Game.Extensions;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 
 namespace osu.Game.Skinning
 {
@@ -36,14 +37,14 @@ namespace osu.Game.Skinning
             return null;
         }
 
-        public ArgonProSkin(IStorageResourceProvider resources)
-            : this(CreateInfo(), resources)
+        public ArgonProSkin(Ruleset? ruleset, IStorageResourceProvider resources)
+            : this(CreateInfo(), ruleset, resources)
         {
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-        public ArgonProSkin(SkinInfo skin, IStorageResourceProvider resources)
-            : base(skin, resources)
+        public ArgonProSkin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider resources)
+            : base(skin, ruleset, resources)
         {
         }
     }

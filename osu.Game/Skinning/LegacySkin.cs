@@ -19,6 +19,7 @@ using osu.Game.Audio;
 using osu.Game.Beatmaps.Formats;
 using osu.Game.Extensions;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
@@ -40,8 +41,8 @@ namespace osu.Game.Skinning
         private readonly Dictionary<int, LegacyManiaSkinConfiguration> maniaConfigurations = new Dictionary<int, LegacyManiaSkinConfiguration>();
 
         [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-        public LegacySkin(SkinInfo skin, IStorageResourceProvider resources)
-            : this(skin, resources, null)
+        public LegacySkin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider resources)
+            : this(skin, ruleset, resources, null)
         {
         }
 
@@ -49,11 +50,12 @@ namespace osu.Game.Skinning
         /// Construct a new legacy skin instance.
         /// </summary>
         /// <param name="skin">The model for this skin.</param>
+        /// <param name="ruleset"></param>
         /// <param name="resources">Access to raw game resources.</param>
         /// <param name="fallbackStore">An optional fallback store which will be used for file lookups that are not serviced by realm user storage.</param>
         /// <param name="configurationFilename">The user-facing filename of the configuration file to be parsed. Can accept an .osu or skin.ini file.</param>
-        protected LegacySkin(SkinInfo skin, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore, string configurationFilename = @"skin.ini")
-            : base(skin, resources, fallbackStore, configurationFilename)
+        protected LegacySkin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore, string configurationFilename = @"skin.ini")
+            : base(skin, ruleset, resources, fallbackStore, configurationFilename)
         {
         }
 

@@ -63,8 +63,9 @@ namespace osu.Game.Tests.Visual.Gameplay
 
         private class UpscaledLegacySkin : DefaultLegacySkin, ISkinSource
         {
+            // todo: this is completely broke, it must respect the ruleset because the skin is used in gameplay context.
             public UpscaledLegacySkin(IStorageResourceProvider resources)
-                : base(resources)
+                : base(null, resources)
             {
             }
 

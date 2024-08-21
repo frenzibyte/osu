@@ -20,6 +20,7 @@ using osu.Framework.Testing;
 using osu.Game.Audio;
 using osu.Game.Database;
 using osu.Game.IO;
+using osu.Game.Rulesets;
 using osu.Game.Skinning;
 using osu.Game.Tests.Resources;
 using osu.Game.Tests.Visual;
@@ -72,7 +73,7 @@ namespace osu.Game.Tests.Skins
 
             AddStep("query sample", () =>
             {
-                TestSkin testSkin = new TestSkin(new SkinInfo(), mockResourceProvider.Object, new ResourceStore<byte[]>(mockResourceStore.Object));
+                TestSkin testSkin = new TestSkin(new SkinInfo(), null, mockResourceProvider.Object, new ResourceStore<byte[]>(mockResourceStore.Object));
                 testSkin.GetSample(new SampleInfo());
             });
 
@@ -96,8 +97,8 @@ namespace osu.Game.Tests.Skins
         {
             public const string SAMPLE_NAME = "test-sample";
 
-            public TestSkin(SkinInfo skin, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore = null, string configurationFilename = "skin.ini")
-                : base(skin, resources, fallbackStore, configurationFilename)
+            public TestSkin(SkinInfo skin, Ruleset? ruleset, IStorageResourceProvider? resources, IResourceStore<byte[]>? fallbackStore = null, string configurationFilename = "skin.ini")
+                : base(skin, ruleset, resources, fallbackStore, configurationFilename)
             {
             }
 
