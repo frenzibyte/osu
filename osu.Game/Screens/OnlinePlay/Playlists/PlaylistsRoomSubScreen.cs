@@ -59,7 +59,7 @@ namespace osu.Game.Screens.OnlinePlay.Playlists
             if (idleTracker != null)
                 isIdle.BindTo(idleTracker.IsIdle);
 
-            AddInternal(selectionPollingComponent = new SelectionPollingComponent(Room));
+            Add(selectionPollingComponent = new SelectionPollingComponent(Room));
         }
 
         protected override void LoadComplete()

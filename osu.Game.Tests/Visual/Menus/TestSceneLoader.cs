@@ -96,7 +96,7 @@ namespace osu.Game.Tests.Visual.Menus
             {
                 public TestScreen()
                 {
-                    InternalChild = new Box
+                    Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
                         Colour = Color4.DarkSlateGray,
@@ -107,7 +107,7 @@ namespace osu.Game.Tests.Visual.Menus
                 protected override void LogoArriving(OsuLogo logo, bool resuming)
                 {
                     base.LogoArriving(logo, resuming);
-                    InternalChild.FadeInFromZero(200);
+                    Child.FadeInFromZero(200);
                 }
             }
         }

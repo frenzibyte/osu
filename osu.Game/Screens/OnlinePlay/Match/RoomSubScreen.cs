@@ -114,7 +114,7 @@ namespace osu.Game.Screens.OnlinePlay.Match
         {
             sampleStart = audio.Samples.Get(@"SongSelect/confirm-selection");
 
-            InternalChild = new PopoverContainer
+            Child = new PopoverContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]

@@ -79,7 +79,7 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer.Spectate
             FillFlowContainer leaderboardFlow;
             Container scoreDisplayContainer;
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 masterClockContainer = new MasterGameplayClockContainer(Beatmap.Value, 0)
                 {

@@ -96,7 +96,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge
 
             OsuScrollContainer scrollContainer;
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 ListingPollingComponent = CreatePollingComponent().With(c => c.Filter.BindTarget = filter),
                 popoverContainer = new PopoverContainer

@@ -168,7 +168,7 @@ namespace osu.Game.Screens.Select
             // initial value transfer is required for FilterControl (it uses our re-cached bindables in its async load for the initial filter).
             transferRulesetValue();
 
-            AddRangeInternal(new Drawable[]
+            AddRange(new Drawable[]
             {
                 new GlobalScrollAdjustsVolume(),
                 new VerticalMaskingContainer
@@ -350,7 +350,7 @@ namespace osu.Game.Screens.Select
 
             if (ShowSongSelectFooter)
             {
-                AddRangeInternal(new Drawable[]
+                AddRange(new Drawable[]
                 {
                     FooterPanels = new Container
                     {

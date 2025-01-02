@@ -246,12 +246,12 @@ namespace osu.Game.Screens.Play
 
             dependencies.CacheAs(HealthProcessor);
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 GameplayClockContainer = CreateGameplayClockContainer(Beatmap.Value, DrawableRuleset.GameplayStartTime),
             };
 
-            AddInternal(screenSuspension = new ScreenSuspensionHandler(GameplayClockContainer));
+            Add(screenSuspension = new ScreenSuspensionHandler(GameplayClockContainer));
 
             Score = CreateScore(playableBeatmap);
 

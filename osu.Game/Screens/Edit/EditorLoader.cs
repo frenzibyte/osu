@@ -53,7 +53,7 @@ namespace osu.Game.Screens.Edit
         [BackgroundDependencyLoader]
         private void load()
         {
-            AddRangeInternal(new Drawable[]
+            AddRange(new Drawable[]
             {
                 new LoadingSpinner(true)
                 {

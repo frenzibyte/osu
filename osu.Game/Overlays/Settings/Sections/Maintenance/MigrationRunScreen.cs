@@ -45,7 +45,7 @@ namespace osu.Game.Overlays.Settings.Sections.Maintenance
         {
             base.LoadComplete();
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 new FillFlowContainer
                 {

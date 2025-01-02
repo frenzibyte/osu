@@ -68,7 +68,7 @@ namespace osu.Game.Screens
         {
             base.OnEntering(e);
 
-            LoadComponentAsync(precompiler = CreateShaderPrecompiler(), AddInternal);
+            LoadComponentAsync(precompiler = CreateShaderPrecompiler(), Add);
 
             LoadComponentAsync(loadableScreen = CreateLoadableScreen());
 
@@ -79,7 +79,7 @@ namespace osu.Game.Screens
                 Margin = new MarginPadding(40),
             }, _ =>
             {
-                AddInternal(spinner);
+                Add(spinner);
                 spinnerShow = Scheduler.AddDelayed(spinner.Show, 200);
             });
 

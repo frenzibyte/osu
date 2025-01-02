@@ -100,7 +100,7 @@ namespace osu.Game.Screens.Ranking
 
             popInSample = audio.Samples.Get(@"UI/overlay-pop-in");
 
-            InternalChild = new PopoverContainer
+            Child = new PopoverContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Child = new GridContainer
@@ -211,7 +211,7 @@ namespace osu.Game.Screens.Ranking
 
             if (allowHotkeyRetry)
             {
-                AddInternal(new HotkeyRetryOverlay
+                Add(new HotkeyRetryOverlay
                 {
                     Action = () =>
                     {

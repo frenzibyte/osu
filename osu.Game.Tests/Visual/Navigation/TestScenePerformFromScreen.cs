@@ -292,7 +292,7 @@ namespace osu.Game.Tests.Visual.Navigation
 
             public TestScreenWithNestedStack()
             {
-                AddInternal(SubScreenStack);
+                Add(SubScreenStack);
 
                 SubScreenStack.Push(Blocker = new DialogBlockingScreen());
             }

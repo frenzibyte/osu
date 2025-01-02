@@ -189,7 +189,7 @@ namespace osu.Game.Screens.Play
 
             const float padding = 25;
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 new GlobalScrollAdjustsVolume(),
                 (content = new LogoTrackingContainer
@@ -488,7 +488,7 @@ namespace osu.Game.Screens.Play
                 BackButtonVisibility.Value = false;
 
                 // A quick restart starts by triggering a fade to black
-                AddInternal(quickRestartBlackLayer = new Box
+                Add(quickRestartBlackLayer = new Box
                 {
                     Colour = Color4.Black,
                     RelativeSizeAxes = Axes.Both,
@@ -528,7 +528,7 @@ namespace osu.Game.Screens.Play
                 }
             }
 
-            AddRangeInternal(new[]
+            AddRange(new[]
             {
                 lowPassFilter = new AudioFilter(audioManager.TrackMixer),
                 highPassFilter = new AudioFilter(audioManager.TrackMixer, BQFType.HighPass),

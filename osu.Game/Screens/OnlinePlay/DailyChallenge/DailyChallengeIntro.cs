@@ -105,7 +105,7 @@ namespace osu.Game.Screens.OnlinePlay.DailyChallenge
             IBeatmapInfo beatmap = item.Beatmap;
             Ruleset ruleset = rulesets.GetRuleset(item.Beatmap.Ruleset.ShortName)!.CreateInstance();
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 beatmapAvailabilityTracker,
                 introContent = new Container
@@ -528,7 +528,7 @@ namespace osu.Game.Screens.OnlinePlay.DailyChallenge
             [BackgroundDependencyLoader]
             private void load()
             {
-                AddInternal(new Box
+                Add(new Box
                 {
                     Depth = float.MinValue,
                     RelativeSizeAxes = Axes.Both,

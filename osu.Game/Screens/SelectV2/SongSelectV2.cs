@@ -37,7 +37,7 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load()
         {
-            AddRangeInternal(new Drawable[]
+            AddRange(new Drawable[]
             {
                 modSelectOverlay,
             });

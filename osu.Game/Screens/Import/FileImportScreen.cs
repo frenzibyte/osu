@@ -43,7 +43,7 @@ namespace osu.Game.Screens.Import
         [BackgroundDependencyLoader(true)]
         private void load()
         {
-            InternalChild = contentContainer = new Container
+            Child = contentContainer = new Container
             {
                 Masking = true,
                 CornerRadius = 10,

@@ -48,7 +48,7 @@ namespace osu.Game.Screens.OnlinePlay.Playlists
         [BackgroundDependencyLoader]
         private void load()
         {
-            AddInternal(new Container
+            Add(new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Bottom = TwoLayerButton.SIZE_EXTENDED.Y },

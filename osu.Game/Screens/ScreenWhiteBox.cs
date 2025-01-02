@@ -58,7 +58,7 @@ namespace osu.Game.Screens
         {
             FillFlowContainer childModeButtons;
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 message = new UnderConstructionMessage(GetType().Name),
                 childModeButtons = new FillFlowContainer

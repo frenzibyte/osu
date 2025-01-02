@@ -64,11 +64,11 @@ namespace osu.Game.Screens.Play
                 return;
             }
 
-            AddInternal(new PlayerTouchInputDetector());
+            Add(new PlayerTouchInputDetector());
 
             // We probably want to move this display to something more global.
             // Probably using the OSD somehow.
-            AddInternal(new GameplayOffsetControl
+            Add(new GameplayOffsetControl
             {
                 Margin = new MarginPadding(20),
                 Anchor = Anchor.CentreRight,

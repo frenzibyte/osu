@@ -59,7 +59,7 @@ namespace osu.Game.Seasonal
                     LoadMenu = LoadMenu
                 }, _ =>
                 {
-                    AddInternal(intro);
+                    Add(intro);
 
                     // There is a chance that the intro timed out before being displayed, and this scheduled callback could
                     // happen during the outro rather than intro.

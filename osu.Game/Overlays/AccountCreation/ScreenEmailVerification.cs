@@ -12,7 +12,7 @@ namespace osu.Game.Overlays.AccountCreation
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChild = new SecondFactorAuthForm
+            Child = new SecondFactorAuthForm
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding(20),

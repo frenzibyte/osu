@@ -60,7 +60,7 @@ namespace osu.Game.Screens.OnlinePlay
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChild = waves = new OnlinePlayScreenWaveContainer
+            Child = waves = new OnlinePlayScreenWaveContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]

@@ -19,7 +19,9 @@ namespace osu.Game.Overlays.FirstRunSetup
     {
         private const float offset = 100;
 
-        protected FillFlowContainer Content { get; private set; }
+        private FillFlowContainer content = null!;
+
+        protected override Container<Drawable> Content => content ?? base.Content;
 
         protected const float CONTENT_FONT_SIZE = 16;
 
@@ -35,7 +37,7 @@ namespace osu.Game.Overlays.FirstRunSetup
         {
             const float spacing = 20;
 
-            InternalChildren = new Drawable[]
+            base.Content.Children = new Drawable[]
             {
                 new OsuScrollContainer(Direction.Vertical)
                 {
@@ -54,7 +56,7 @@ namespace osu.Game.Overlays.FirstRunSetup
                                 Font = OsuFont.TorusAlternate.With(size: HEADER_FONT_SIZE),
                                 Colour = OverlayColourProvider.Light1,
                             },
-                            Content = new FillFlowContainer
+                            content = new FillFlowContainer
                             {
                                 Y = HEADER_FONT_SIZE + spacing,
                                 Spacing = new Vector2(spacing),

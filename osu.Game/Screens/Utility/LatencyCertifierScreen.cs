@@ -96,7 +96,7 @@ namespace osu.Game.Screens.Utility
 
         public LatencyCertifierScreen()
         {
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 new Box
                 {

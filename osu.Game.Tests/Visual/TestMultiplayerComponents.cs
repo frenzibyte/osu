@@ -59,7 +59,7 @@ namespace osu.Game.Tests.Visual
         {
             multiplayerScreen = new TestMultiplayer();
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 userLookupCache,
                 beatmapLookupCache,

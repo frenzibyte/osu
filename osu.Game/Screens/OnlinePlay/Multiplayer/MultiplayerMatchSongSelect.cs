@@ -46,7 +46,7 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer
         [BackgroundDependencyLoader]
         private void load()
         {
-            AddInternal(loadingLayer = new LoadingLayer(true));
+            Add(loadingLayer = new LoadingLayer(true));
         }
 
         protected override void LoadComplete()

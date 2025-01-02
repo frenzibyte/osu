@@ -160,7 +160,7 @@ namespace osu.Game.Overlays.FirstRunSetup
 
             tutorialDownloader = new BundledBeatmapDownloader(true);
 
-            AddInternal(tutorialDownloader);
+            Add(tutorialDownloader);
 
             var downloadTracker = tutorialDownloader.DownloadTrackers.First();
 
@@ -187,7 +187,7 @@ namespace osu.Game.Overlays.FirstRunSetup
 
             bundledDownloader = new BundledBeatmapDownloader(false);
 
-            AddInternal(bundledDownloader);
+            Add(bundledDownloader);
 
             foreach (var tracker in bundledDownloader.DownloadTrackers)
                 tracker.State.BindValueChanged(_ => updateProgress(), true);

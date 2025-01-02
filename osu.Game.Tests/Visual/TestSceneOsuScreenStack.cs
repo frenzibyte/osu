@@ -102,7 +102,7 @@ namespace osu.Game.Tests.Visual
             [BackgroundDependencyLoader]
             private void load()
             {
-                AddInternal(new OsuSpriteText
+                Add(new OsuSpriteText
                 {
                     Text = screenText,
                     Colour = Color4.White,

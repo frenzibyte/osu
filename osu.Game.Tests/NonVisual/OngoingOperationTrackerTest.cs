@@ -101,7 +101,7 @@ namespace osu.Game.Tests.NonVisual
             [BackgroundDependencyLoader]
             private void load()
             {
-                InternalChild = OngoingOperationTracker = new OngoingOperationTracker();
+                Child = OngoingOperationTracker = new OngoingOperationTracker();
             }
         }
     }

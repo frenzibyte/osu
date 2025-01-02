@@ -44,7 +44,7 @@ namespace osu.Game.Screens.Menu
             if (MenuVoice.Value)
             {
                 if (api.LocalUser.Value.IsSupporter)
-                    AddInternal(skinnableWelcome = new SkinnableSound(new SampleInfo(@"Intro/Welcome/welcome")));
+                    Add(skinnableWelcome = new SkinnableSound(new SampleInfo(@"Intro/Welcome/welcome")));
                 else
                     welcome = audio.Samples.Get(@"Intro/Welcome/welcome");
             }
@@ -67,7 +67,7 @@ namespace osu.Game.Screens.Menu
                 {
                     PrepareMenuLoad();
 
-                    AddInternal(intro);
+                    Add(intro);
 
                     if (skinnableWelcome != null)
                         skinnableWelcome.Play();

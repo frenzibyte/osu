@@ -50,7 +50,7 @@ namespace osu.Game.Screens.Backgrounds
             source = config.GetBindable<BackgroundSource>(OsuSetting.MenuBackgroundSource);
             introSequence = config.GetBindable<IntroSequence>(OsuSetting.IntroSequence);
 
-            AddInternal(seasonalBackgroundLoader);
+            Add(seasonalBackgroundLoader);
         }
 
         protected override void LoadComplete()
@@ -134,7 +134,7 @@ namespace osu.Game.Screens.Backgrounds
             background?.FadeOut(800, Easing.OutQuint);
             background?.Expire();
 
-            AddInternal(background = newBackground);
+            Add(background = newBackground);
             currentDisplay++;
         }
 

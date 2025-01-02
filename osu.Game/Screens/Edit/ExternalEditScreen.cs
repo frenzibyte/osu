@@ -54,7 +54,7 @@ namespace osu.Game.Screens.Edit
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChild = new Container
+            Child = new Container
             {
                 Masking = true,
                 CornerRadius = 20,

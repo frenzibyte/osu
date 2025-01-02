@@ -116,7 +116,7 @@ namespace osu.Game.Screens.Menu
             MenuMusic = config.GetBindable<bool>(OsuSetting.MenuMusic);
 
             if (api.LocalUser.Value.IsSupporter)
-                AddInternal(skinnableSeeya = new SkinnableSound(new SampleInfo(SeeyaSampleName)));
+                Add(skinnableSeeya = new SkinnableSound(new SampleInfo(SeeyaSampleName)));
             else
                 seeya = audio.Samples.Get(SeeyaSampleName);
 
@@ -176,7 +176,7 @@ namespace osu.Game.Screens.Menu
                 return UsingThemedIntro = initialBeatmap != null;
             }
 
-            AddInternal(new GlobalScrollAdjustsVolume());
+            Add(new GlobalScrollAdjustsVolume());
         }
 
         public override void OnEntering(ScreenTransitionEvent e)

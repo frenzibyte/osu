@@ -126,7 +126,7 @@ namespace osu.Game.Screens.OnlinePlay.DailyChallenge
 
             FillFlowContainer footerButtons;
 
-            InternalChild = waves = new OnlinePlayScreenWaveContainer
+            Child = waves = new OnlinePlayScreenWaveContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]

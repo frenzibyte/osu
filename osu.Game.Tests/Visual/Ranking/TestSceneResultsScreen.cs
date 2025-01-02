@@ -409,7 +409,7 @@ namespace osu.Game.Tests.Visual.Ranking
             {
                 base.LoadComplete();
 
-                RetryOverlay = InternalChildren.OfType<HotkeyRetryOverlay>().SingleOrDefault();
+                RetryOverlay = Children.OfType<HotkeyRetryOverlay>().SingleOrDefault();
             }
 
             protected override APIRequest FetchScores(Action<IEnumerable<ScoreInfo>> scoresCallback)
@@ -482,7 +482,7 @@ namespace osu.Game.Tests.Visual.Ranking
             {
                 base.LoadComplete();
 
-                RetryOverlay = InternalChildren.OfType<HotkeyRetryOverlay>().SingleOrDefault();
+                RetryOverlay = Children.OfType<HotkeyRetryOverlay>().SingleOrDefault();
             }
         }
 

@@ -282,14 +282,14 @@ namespace osu.Game.Screens.Edit
             clock.ChangeSource(loadableBeatmap.Track);
 
             dependencies.CacheAs(clock);
-            AddInternal(clock);
+            Add(clock);
 
             clock.SeekingOrStopped.BindValueChanged(_ => updateSampleDisabledState());
 
             // todo: remove caching of this and consume via editorBeatmap?
             dependencies.Cache(beatDivisor);
 
-            AddInternal(editorBeatmap = new EditorBeatmap(playableBeatmap, loadableBeatmap.GetSkin(), loadableBeatmap.BeatmapInfo));
+            Add(editorBeatmap = new EditorBeatmap(playableBeatmap, loadableBeatmap.GetSkin(), loadableBeatmap.BeatmapInfo));
             dependencies.CacheAs(editorBeatmap);
 
             editorBeatmap.UpdateInProgress.BindValueChanged(_ => updateSampleDisabledState());
@@ -328,7 +328,7 @@ namespace osu.Game.Screens.Edit
             editorTimelineShowTicks = config.GetBindable<bool>(OsuSetting.EditorTimelineShowTicks);
             editorContractSidebars = config.GetBindable<bool>(OsuSetting.EditorContractSidebars);
 
-            AddInternal(new OsuContextMenuContainer
+            Add(new OsuContextMenuContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
@@ -962,7 +962,7 @@ namespace osu.Game.Screens.Edit
                     beatmapManager.Delete(playableBeatmap.BeatmapInfo.BeatmapSet);
 
                 // eagerly clear contents before restoring default beatmap to prevent value change callbacks from firing.
-                ClearInternal();
+                Clear();
 
                 // in theory this shouldn't be required but due to EF core not sharing instance states 100%
                 // MusicController is unaware of the changed DeletePending state.

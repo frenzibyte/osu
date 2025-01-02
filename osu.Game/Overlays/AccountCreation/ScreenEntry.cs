@@ -55,7 +55,7 @@ namespace osu.Game.Overlays.AccountCreation
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 new FillFlowContainer
                 {

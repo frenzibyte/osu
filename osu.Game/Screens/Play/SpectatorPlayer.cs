@@ -42,7 +42,7 @@ namespace osu.Game.Screens.Play
         [BackgroundDependencyLoader]
         private void load()
         {
-            AddInternal(new OsuSpriteText
+            Add(new OsuSpriteText
             {
                 Text = $"Watching {score.ScoreInfo.User.Username} playing live!",
                 Font = OsuFont.Default.With(size: 30),

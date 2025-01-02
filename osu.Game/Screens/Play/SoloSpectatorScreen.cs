@@ -73,7 +73,7 @@ namespace osu.Game.Screens.Play
         [BackgroundDependencyLoader]
         private void load(OsuConfigManager config)
         {
-            InternalChild = new Container
+            Child = new Container
             {
                 Masking = true,
                 CornerRadius = 20,

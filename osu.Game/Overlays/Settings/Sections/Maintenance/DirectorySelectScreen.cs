@@ -54,7 +54,7 @@ namespace osu.Game.Overlays.Settings.Sections.Maintenance
         [BackgroundDependencyLoader]
         private void load()
         {
-            InternalChild = new Container
+            Child = new Container
             {
                 Masking = true,
                 CornerRadius = 10,

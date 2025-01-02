@@ -76,7 +76,7 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer
                 winnerColour = Colour4.White.Opacity(0.5f);
             }
 
-            AddRangeInternal(new Drawable[]
+            AddRange(new Drawable[]
             {
                 new MatchScoreDisplay
                 {

@@ -74,7 +74,7 @@ namespace osu.Game.Screens.OnlinePlay.Components
             newBackground.Colour = ColourInfo.GradientVertical(new Color4(0.1f, 0.1f, 0.1f, 1f), new Color4(0.4f, 0.4f, 0.4f, 1f));
             newBackground.BlurTo(new Vector2(10));
 
-            AddInternal(background = newBackground);
+            Add(background = newBackground);
         }
 
         public override void OnSuspending(ScreenTransitionEvent e)

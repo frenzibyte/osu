@@ -50,7 +50,7 @@ namespace osu.Game.Screens.Select
         {
             BeatmapOptions.AddButton(ButtonSystemStrings.Edit.ToSentence(), @"beatmap", FontAwesome.Solid.PencilAlt, colours.Yellow, () => Edit());
 
-            AddInternal(new SongSelectTouchInputDetector());
+            Add(new SongSelectTouchInputDetector());
         }
 
         protected void PresentScore(ScoreInfo score) =>

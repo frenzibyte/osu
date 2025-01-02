@@ -12,7 +12,7 @@ namespace osu.Game.Screens.Backgrounds
     {
         public BackgroundScreenBlack()
         {
-            InternalChild = new Box
+            Child = new Box
             {
                 Colour = Color4.Black,
                 RelativeSizeAxes = Axes.Both,

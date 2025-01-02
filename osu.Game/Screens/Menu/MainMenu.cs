@@ -114,7 +114,7 @@ namespace osu.Game.Screens.Menu
 
             if (host.CanExit)
             {
-                AddInternal(holdToExitGameOverlay = new HoldToExitGameOverlay
+                Add(holdToExitGameOverlay = new HoldToExitGameOverlay
                 {
                     Action = () =>
                     {
@@ -124,7 +124,7 @@ namespace osu.Game.Screens.Menu
                 });
             }
 
-            AddRangeInternal(new[]
+            AddRange(new[]
             {
                 SeasonalUIConfig.ENABLED ? new MainMenuSeasonalLighting() : Empty(),
                 new GlobalScrollAdjustsVolume(),

@@ -61,7 +61,7 @@ namespace osu.Game.Screens.Backgrounds
         {
             Beatmap = beatmap;
 
-            InternalChild = dimmable = CreateFadeContainer();
+            Child = dimmable = CreateFadeContainer();
 
             dimmable.StoryboardReplacesBackground.BindTo(StoryboardReplacesBackground);
             dimmable.IgnoreUserSettings.BindTo(IgnoreUserSettings);

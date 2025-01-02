@@ -50,7 +50,7 @@ namespace osu.Game.Overlays.AccountCreation
             if (string.IsNullOrEmpty(api?.ProvidedUsername))
                 return;
 
-            InternalChildren = new Drawable[]
+            Children = new Drawable[]
             {
                 new Sprite
                 {
