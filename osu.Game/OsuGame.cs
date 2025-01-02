@@ -1003,13 +1003,20 @@ namespace osu.Game
                             {
                                 backReceptor = new ScreenFooter.BackReceptor(),
                                 ScreenStack = new OsuScreenStack { RelativeSizeAxes = Axes.Both },
-                                BackButton = new BackButton(backReceptor)
+                                new SafeAreaContainer
                                 {
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft,
-                                    Action = () => ScreenFooter.OnBack?.Invoke(),
+                                    RelativeSizeAxes = Axes.Both,
+                                    Children = new[]
+                                    {
+                                        BackButton = new BackButton(backReceptor)
+                                        {
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft,
+                                            Action = () => ScreenFooter.OnBack?.Invoke(),
+                                        },
+                                        logoContainer = new Container { RelativeSizeAxes = Axes.Both },
+                                    }
                                 },
-                                logoContainer = new Container { RelativeSizeAxes = Axes.Both },
                                 footerBasedOverlayContent = new Container
                                 {
                                     Depth = -1,
