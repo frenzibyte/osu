@@ -94,7 +94,7 @@ namespace osu.Game.Tests.Visual
             AddGame(Game = CreateTestGame());
         }
 
-        protected virtual TestOsuGame CreateTestGame() => new TestOsuGame(LocalStorage, API);
+        protected virtual TestOsuGame CreateTestGame() => new TestOsuGame(LocalStorage, UseOnlineAPI ? null : API);
 
         protected void PushAndConfirm(Func<Screen> newScreen)
         {
@@ -169,7 +169,9 @@ namespace osu.Game.Tests.Visual
                 : base(args)
             {
                 base.Storage = storage;
-                API = api;
+
+                if (api != null)
+                    API = api;
             }
 
             protected override void LoadComplete()
@@ -179,8 +181,11 @@ namespace osu.Game.Tests.Visual
                 LocalConfig.SetValue(OsuSetting.IntroSequence, IntroSequence.Circles);
                 LocalConfig.SetValue(OsuSetting.ShowFirstRunSetup, false);
 
-                API.Login("Rhythm Champion", "osu!");
-                ((DummyAPIAccess)API).AuthenticateSecondFactor("abcdefgh");
+                if (API is DummyAPIAccess dummyAPI)
+                {
+                    dummyAPI.Login("Rhythm Champion", "osu!");
+                    dummyAPI.AuthenticateSecondFactor("abcdefgh");
+                }
 
                 Dependencies.Get<SessionStatics>().SetValue(Static.MutedAudioNotificationShownOnce, true);
 

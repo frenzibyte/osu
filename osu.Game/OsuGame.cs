@@ -1022,6 +1022,7 @@ namespace osu.Game
                                     Depth = -1,
                                     RelativeSizeAxes = Axes.Both,
                                 },
+                                // todo: add safe area here otherwise mod select overlay will be broken.
                                 new PopoverContainer
                                 {
                                     Depth = -1,

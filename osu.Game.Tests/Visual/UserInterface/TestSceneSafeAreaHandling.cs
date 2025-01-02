@@ -3,13 +3,13 @@
 
 #nullable disable
 
-using NUnit.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Configuration;
-using osu.Game.Overlays.Settings;
 using osuTK.Graphics;
 
 namespace osu.Game.Tests.Visual.UserInterface
@@ -17,8 +17,7 @@ namespace osu.Game.Tests.Visual.UserInterface
     public partial class TestSceneSafeAreaHandling : OsuGameTestScene
     {
         private SafeAreaDefiningContainer safeAreaContainer;
-
-        private static BindableSafeArea safeArea;
+        private BindableSafeArea safeArea;
 
         private readonly Bindable<float> safeAreaPaddingTop = new BindableFloat { MinValue = 0, MaxValue = 200 };
         private readonly Bindable<float> safeAreaPaddingBottom = new BindableFloat { MinValue = 0, MaxValue = 200 };
@@ -26,6 +25,7 @@ namespace osu.Game.Tests.Visual.UserInterface
         private readonly Bindable<float> safeAreaPaddingRight = new BindableFloat { MinValue = 0, MaxValue = 200 };
 
         private readonly Bindable<bool> applySafeAreaConsiderations = new Bindable<bool>(true);
+        private readonly Bindable<bool> visualiseNonSafeArea = new Bindable<bool>();
 
         protected override void LoadComplete()
         {
@@ -41,70 +41,32 @@ namespace osu.Game.Tests.Visual.UserInterface
 
             // Cache is required for the test game to see the safe area.
             Dependencies.CacheAs<ISafeArea>(safeAreaContainer);
+
+            Add(new SafeAreaVisualisation
+            {
+                Visualise = { BindTarget = visualiseNonSafeArea },
+                RelativeSizeAxes = Axes.Both,
+                Depth = float.MinValue,
+            });
+
+            safeAreaPaddingTop.BindValueChanged(_ => updateSafeArea());
+            safeAreaPaddingBottom.BindValueChanged(_ => updateSafeArea());
+            safeAreaPaddingLeft.BindValueChanged(_ => updateSafeArea());
+            safeAreaPaddingRight.BindValueChanged(_ => updateSafeArea());
+            applySafeAreaConsiderations.BindValueChanged(_ => updateSafeArea());
+
+            AddSliderStep("top", 0, 200, 0, v => safeAreaPaddingTop.Value = v);
+            AddSliderStep("bottom", 0, 200, 0, v => safeAreaPaddingBottom.Value = v);
+            AddSliderStep("left", 0, 200, 0, v => safeAreaPaddingLeft.Value = v);
+            AddSliderStep("right", 0, 200, 0, v => safeAreaPaddingRight.Value = v);
+            AddToggleStep("apply safe area", v => applySafeAreaConsiderations.Value = v);
+            AddToggleStep("visualise non-safe area", v => visualiseNonSafeArea.Value = v);
         }
 
         public override void SetUpSteps()
         {
-            AddStep("Add adjust controls", () =>
-            {
-                Add(new Container
-                {
-                    Depth = float.MinValue,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    AutoSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
-                        new Box
-                        {
-                            Colour = Color4.Black,
-                            RelativeSizeAxes = Axes.Both,
-                            Alpha = 0.8f,
-                        },
-                        new FillFlowContainer
-                        {
-                            AutoSizeAxes = Axes.Y,
-                            Width = 400,
-                            Children = new Drawable[]
-                            {
-                                new SettingsSlider<float>
-                                {
-                                    Current = safeAreaPaddingTop,
-                                    LabelText = "Top"
-                                },
-                                new SettingsSlider<float>
-                                {
-                                    Current = safeAreaPaddingBottom,
-                                    LabelText = "Bottom"
-                                },
-                                new SettingsSlider<float>
-                                {
-                                    Current = safeAreaPaddingLeft,
-                                    LabelText = "Left"
-                                },
-                                new SettingsSlider<float>
-                                {
-                                    Current = safeAreaPaddingRight,
-                                    LabelText = "Right"
-                                },
-                                new SettingsCheckbox
-                                {
-                                    LabelText = "Apply",
-                                    Current = applySafeAreaConsiderations,
-                                },
-                            }
-                        }
-                    }
-                });
-
-                safeAreaPaddingTop.BindValueChanged(_ => updateSafeArea());
-                safeAreaPaddingBottom.BindValueChanged(_ => updateSafeArea());
-                safeAreaPaddingLeft.BindValueChanged(_ => updateSafeArea());
-                safeAreaPaddingRight.BindValueChanged(_ => updateSafeArea());
-                applySafeAreaConsiderations.BindValueChanged(_ => updateSafeArea());
-            });
-
             base.SetUpSteps();
+            updateSafeArea();
         }
 
         private void updateSafeArea()
@@ -117,12 +79,70 @@ namespace osu.Game.Tests.Visual.UserInterface
                 Right = safeAreaPaddingRight.Value,
             };
 
-            Game.LocalConfig.SetValue(OsuSetting.SafeAreaConsiderations, applySafeAreaConsiderations.Value);
+            Game?.LocalConfig.SetValue(OsuSetting.SafeAreaConsiderations, applySafeAreaConsiderations.Value);
         }
 
-        [Test]
-        public void TestSafeArea()
+        private class SafeAreaVisualisation : CompositeDrawable
         {
+            public readonly BindableBool Visualise = new BindableBool(true);
+
+            [Resolved]
+            private ISafeArea safeArea { get; set; } = null!;
+
+            private IBindable<MarginPadding> safeAreaPadding;
+
+            private Box topBox;
+            private Box bottomBox;
+            private Box leftBox;
+            private Box rightBox;
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+
+                InternalChildren = new[]
+                {
+                    topBox = new Box
+                    {
+                        Anchor = Anchor.TopLeft,
+                        Origin = Anchor.TopLeft,
+                        RelativeSizeAxes = Axes.X,
+                        Colour = Color4.Red.Opacity(0.2f)
+                    },
+                    bottomBox = new Box
+                    {
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        RelativeSizeAxes = Axes.X,
+                        Colour = Color4.Red.Opacity(0.2f)
+                    },
+                    leftBox = new Box
+                    {
+                        Anchor = Anchor.TopLeft,
+                        Origin = Anchor.TopLeft,
+                        RelativeSizeAxes = Axes.Y,
+                        Colour = Color4.Red.Opacity(0.2f)
+                    },
+                    rightBox = new Box
+                    {
+                        Anchor = Anchor.TopRight,
+                        Origin = Anchor.TopRight,
+                        RelativeSizeAxes = Axes.Y,
+                        Colour = Color4.Red.Opacity(0.2f)
+                    },
+                };
+
+                safeAreaPadding = safeArea.SafeAreaPadding.GetBoundCopy();
+                safeAreaPadding.BindValueChanged(v =>
+                {
+                    topBox.Height = v.NewValue.Top;
+                    bottomBox.Height = v.NewValue.Bottom;
+                    leftBox.Width = v.NewValue.Left;
+                    rightBox.Width = v.NewValue.Right;
+                }, true);
+
+                Visualise.BindValueChanged(v => Alpha = v.NewValue ? 1 : 0);
+            }
         }
     }
 }

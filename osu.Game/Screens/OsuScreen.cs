@@ -11,6 +11,7 @@ using osu.Framework.Audio;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
 using osu.Game.Overlays;
@@ -101,6 +102,12 @@ namespace osu.Game.Screens
 
         public virtual bool? AllowGlobalTrackControl => null;
 
+        /// <summary>
+        /// Specifies <see cref="Edges"/> that the screen will draw on top of.
+        /// This is overriden by screens that display components at the edges and require local handling of safe area.
+        /// </summary>
+        protected virtual Edges SafeAreaOverrideEdges => Edges.None;
+
         public Bindable<WorkingBeatmap> Beatmap { get; private set; } = null!;
 
         public Bindable<RulesetInfo> Ruleset { get; private set; } = null!;
@@ -157,6 +164,8 @@ namespace osu.Game.Screens
         [CanBeNull]
         protected ScreenFooter Footer { get; private set; }
 
+        protected override Container<Drawable> Content { get; }
+
         protected OsuScreen()
         {
             Anchor = Anchor.Centre;
@@ -164,6 +173,16 @@ namespace osu.Game.Screens
 
             OverlayActivationMode = new Bindable<OverlayActivation>(InitialOverlayActivationMode);
             BackButtonVisibility = new Bindable<bool>(InitialBackButtonVisibility);
+
+            base.Content.Child = new SafeAreaContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                SafeAreaOverrideEdges = SafeAreaOverrideEdges,
+                Child = Content = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                }
+            };
         }
 
         [BackgroundDependencyLoader(true)]

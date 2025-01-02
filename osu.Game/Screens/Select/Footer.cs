@@ -69,7 +69,7 @@ namespace osu.Game.Screens.Select
                 modeLight.FadeOut(TRANSITION_LENGTH, Easing.OutQuint);
         }
 
-        private SafeAreaContainer safeArea;
+        private readonly SafeAreaContainer safeArea;
 
         public Footer()
         {
