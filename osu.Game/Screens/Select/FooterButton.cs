@@ -23,7 +23,7 @@ namespace osu.Game.Screens.Select
     {
         public const float SHEAR_WIDTH = 7.5f;
 
-        protected static readonly Vector2 SHEAR = new Vector2(SHEAR_WIDTH / Footer.HEIGHT, 0);
+        protected static readonly Vector2 SHEAR = new Vector2(SHEAR_WIDTH / Footer.BASE_HEIGHT, 0);
 
         public LocalisableString Text
         {

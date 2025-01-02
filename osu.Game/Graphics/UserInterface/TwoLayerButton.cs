@@ -31,7 +31,7 @@ namespace osu.Game.Graphics.UserInterface
 
         private const float shear_width = 5f;
 
-        private static readonly Vector2 shear = new Vector2(shear_width / Footer.HEIGHT, 0);
+        private static readonly Vector2 shear = new Vector2(shear_width / Footer.BASE_HEIGHT, 0);
 
         public static readonly Vector2 SIZE_EXTENDED = new Vector2(140, 50);
         public static readonly Vector2 SIZE_RETRACTED = new Vector2(100, 50);

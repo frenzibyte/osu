@@ -19,7 +19,7 @@ namespace osu.Game.Screens.Select
     {
         private readonly Box modeLight;
 
-        public const float HEIGHT = 50;
+        public const float BASE_HEIGHT = 50;
 
         public const int TRANSITION_LENGTH = 300;
 
@@ -69,10 +69,11 @@ namespace osu.Game.Screens.Select
                 modeLight.FadeOut(TRANSITION_LENGTH, Easing.OutQuint);
         }
 
+        private SafeAreaContainer safeArea;
+
         public Footer()
         {
             RelativeSizeAxes = Axes.X;
-            Height = HEIGHT;
             Anchor = Anchor.BottomCentre;
             Origin = Anchor.BottomCentre;
             Children = new Drawable[]
@@ -84,35 +85,48 @@ namespace osu.Game.Screens.Select
                     Colour = OsuColour.Gray(0.1f),
                     Alpha = 0.96f,
                 },
-                modeLight = new Box
+                safeArea = new SafeAreaContainer
                 {
-                    RelativeSizeAxes = Axes.X,
-                    Height = 3,
-                    Position = new Vector2(0, -3),
-                    Colour = OsuColour.Gray(0.1f),
-                },
-                new FillFlowContainer
-                {
-                    Anchor = Anchor.BottomLeft,
-                    Origin = Anchor.BottomLeft,
-                    Position = new Vector2(TwoLayerButton.SIZE_EXTENDED.X + padding, 0),
-                    RelativeSizeAxes = Axes.Y,
-                    AutoSizeAxes = Axes.X,
-                    Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(padding, 0),
+                    RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        buttons = new FillFlowContainer<FooterButton>
+                        modeLight = new Box
                         {
+                            RelativeSizeAxes = Axes.X,
+                            Height = 3,
+                            Position = new Vector2(0, -3),
+                            Colour = OsuColour.Gray(0.1f),
+                        },
+                        new FillFlowContainer
+                        {
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Position = new Vector2(TwoLayerButton.SIZE_EXTENDED.X + padding, 0),
+                            RelativeSizeAxes = Axes.Y,
+                            AutoSizeAxes = Axes.X,
                             Direction = FillDirection.Horizontal,
-                            Spacing = new Vector2(-FooterButton.SHEAR_WIDTH, 0),
-                            AutoSizeAxes = Axes.Both,
+                            Spacing = new Vector2(padding, 0),
+                            Children = new Drawable[]
+                            {
+                                buttons = new FillFlowContainer<FooterButton>
+                                {
+                                    Direction = FillDirection.Horizontal,
+                                    Spacing = new Vector2(-FooterButton.SHEAR_WIDTH, 0),
+                                    AutoSizeAxes = Axes.Both,
+                                }
+                            }
                         }
                     }
-                }
+                },
             };
 
             updateModeLight();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            Height = BASE_HEIGHT + safeArea.Padding.Bottom;
         }
 
         protected override bool OnMouseDown(MouseDownEvent e) => true;
