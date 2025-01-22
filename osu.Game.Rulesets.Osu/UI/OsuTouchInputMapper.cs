@@ -49,13 +49,51 @@ namespace osu.Game.Rulesets.Osu.UI
         // Required to handle touches outside of the playfield when screen scaling is enabled.
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
-        protected override void OnTouchMove(TouchMoveEvent e)
+        protected override bool OnTouchDown(TouchDownEvent e)
         {
-            base.OnTouchMove(e);
-            handleTouchMovement(e);
+            trackNewTouch(e.Touch.Source, e.ScreenSpaceTouchDownPosition);
+            return true;
         }
 
-        protected override bool OnTouchDown(TouchDownEvent e)
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            if (e.CurrentState.Mouse.LastSource is not ISourcedFromPen penInput || penInput.DeviceType != TabletPenDeviceType.Direct)
+                return false;
+
+            trackNewTouch(null, e.ScreenSpaceMousePosition);
+            return true;
+        }
+
+        protected override void OnTouchMove(TouchMoveEvent e)
+        {
+            handleTouchMovement(e.Touch.Source, e.ScreenSpaceTouch.Position, e.Delta);
+        }
+
+        protected override bool OnMouseMove(MouseMoveEvent e)
+        {
+            if (e.CurrentState.Mouse.LastSource is not ISourcedFromPen penInput
+                || penInput.DeviceType != TabletPenDeviceType.Direct
+                || !e.HasAnyButtonPressed)
+                return false;
+
+            handleTouchMovement(null, e.ScreenSpaceMousePosition, e.Delta);
+            return true;
+        }
+
+        protected override void OnTouchUp(TouchUpEvent e)
+        {
+            removeTrackedTouch(e.Touch.Source);
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            if (e.CurrentState.Mouse.LastSource is not ISourcedFromPen penInput || penInput.DeviceType != TabletPenDeviceType.Direct)
+                return;
+
+            removeTrackedTouch(null);
+        }
+
+        private void trackNewTouch(TouchSource? source, Vector2 screenSpacePosition)
         {
             OsuAction action = trackedTouches.Any(t => t.Action == OsuAction.LeftButton)
                 ? OsuAction.RightButton
@@ -66,21 +104,19 @@ namespace osu.Game.Rulesets.Osu.UI
 
             // If we can actually accept as an action, check whether this tap was on a circle's receptor.
             // This case gets special handling to allow for empty-space stream tapping.
-            bool isDirectCircleTouch = osuInputManager.CheckScreenSpaceActionPressJudgeable(e.ScreenSpaceTouchDownPosition);
+            bool isDirectCircleTouch = osuInputManager.CheckScreenSpaceActionPressJudgeable(screenSpacePosition);
 
-            var newTouch = new TrackedTouch(e.Touch.Source, shouldResultInAction ? action : null, isDirectCircleTouch);
+            var newTouch = new TrackedTouch(source, shouldResultInAction ? action : null, isDirectCircleTouch);
 
             updatePositionTracking(newTouch);
 
             trackedTouches.Add(newTouch);
 
             // Important to update position before triggering the pressed action.
-            handleTouchMovement(e);
+            handleTouchMovement(source, screenSpacePosition, Vector2.Zero);
 
             if (shouldResultInAction)
                 osuInputManager.KeyBindingContainer.TriggerPressed(action);
-
-            return true;
         }
 
         /// <summary>
@@ -120,27 +156,24 @@ namespace osu.Game.Rulesets.Osu.UI
             }
         }
 
-        private void handleTouchMovement(TouchEvent touchEvent)
+        private void handleTouchMovement(TouchSource? source, Vector2 screenSpacePosition, Vector2 delta)
         {
-            if (touchEvent is TouchMoveEvent moveEvent)
-            {
-                var trackedTouch = trackedTouches.Single(t => t.Source == touchEvent.Touch.Source);
-                trackedTouch.DistanceTravelled += moveEvent.Delta.Length;
-            }
+            var trackedTouch = trackedTouches.Single(t => t.Source == source);
+            trackedTouch.DistanceTravelled += delta.Length;
 
-            // Movement should only be tracked for the most recent touch.
-            if (touchEvent.Touch.Source != positionTrackingTouch?.Source)
+            // Movement should only be tracked by the "position tracking touch".
+            if (source != positionTrackingTouch?.Source)
                 return;
 
             if (!osuInputManager.AllowUserCursorMovement)
                 return;
 
-            new MousePositionAbsoluteInput { Position = touchEvent.ScreenSpaceTouch.Position }.Apply(osuInputManager.CurrentState, osuInputManager);
+            new MousePositionAbsoluteInput { Position = screenSpacePosition }.Apply(osuInputManager.CurrentState, osuInputManager);
         }
 
-        protected override void OnTouchUp(TouchUpEvent e)
+        private void removeTrackedTouch(TouchSource? source)
         {
-            var tracked = trackedTouches.Single(t => t.Source == e.Touch.Source);
+            var tracked = trackedTouches.Single(t => t.Source == source);
 
             if (tracked.Action is OsuAction action)
                 osuInputManager.KeyBindingContainer.TriggerReleased(action);
@@ -149,13 +182,14 @@ namespace osu.Game.Rulesets.Osu.UI
                 positionTrackingTouch = null;
 
             trackedTouches.Remove(tracked);
-
-            base.OnTouchUp(e);
         }
 
         private class TrackedTouch
         {
-            public readonly TouchSource Source;
+            /// <summary>
+            /// The <see cref="TouchSource"/> associated with this touch, or null to signify direct/on-screen pen input (e.g. Apple Pencil).
+            /// </summary>
+            public readonly TouchSource? Source;
 
             public OsuAction? Action;
 
@@ -169,7 +203,7 @@ namespace osu.Game.Rulesets.Osu.UI
             /// </summary>
             public float DistanceTravelled;
 
-            public TrackedTouch(TouchSource source, OsuAction? action, bool directTouch)
+            public TrackedTouch(TouchSource? source, OsuAction? action, bool directTouch)
             {
                 Source = source;
                 Action = action;
