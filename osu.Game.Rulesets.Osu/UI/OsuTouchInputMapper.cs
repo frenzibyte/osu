@@ -9,6 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Input.StateChanges;
+using osu.Framework.Logging;
 using osu.Game.Configuration;
 using osuTK;
 
@@ -87,10 +88,14 @@ namespace osu.Game.Rulesets.Osu.UI
 
         protected override void OnMouseUp(MouseUpEvent e)
         {
-            if (e.CurrentState.Mouse.LastSource is not ISourcedFromPen penInput || penInput.DeviceType != TabletPenDeviceType.Direct)
-                return;
+            // todo: PassThroughInputManager obscures whether the input is sourced from a pen due to its "sync released input" logic.
+            // see: https://github.com/ppy/osu-framework/issues/6508
+            // for now, comment this conditional until the issue above is fixed.
+            // if (e.CurrentState.Mouse.LastSource is not ISourcedFromPen penInput || penInput.DeviceType != TabletPenDeviceType.Direct)
+            //     return;
 
-            removeTrackedTouch(null);
+            if (trackedTouches.Any(t => t.Source == null))
+                removeTrackedTouch(null);
         }
 
         private void trackNewTouch(TouchSource? source, Vector2 screenSpacePosition)
