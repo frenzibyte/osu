@@ -3,8 +3,7 @@
 
 using System;
 using System.Text;
-using DiscordRPC;
-using DiscordRPC.Message;
+using Discord;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -29,9 +28,10 @@ namespace osu.Desktop
 {
     internal partial class DiscordRichPresence : Component
     {
-        private const string client_id = "1216669957799018608";
+        private const long client_id = 1332169862365184061;
 
-        private DiscordRpcClient client = null!;
+        private Discord.Discord discord = null!;
+        private ActivityManager activityManager = null!;
 
         [Resolved]
         private IBindable<RulesetInfo> ruleset { get; set; } = null!;
@@ -55,14 +55,10 @@ namespace osu.Desktop
         private IBindable<UserStatus> userStatus = null!;
         private IBindable<UserActivity?> userActivity = null!;
 
-        private readonly RichPresence presence = new RichPresence
+        private Activity activity = new Activity
         {
-            Assets = new Assets { LargeImageKey = "osu_logo_lazer" },
-            Secrets = new Secrets
-            {
-                JoinSecret = null,
-                SpectateSecret = null,
-            },
+            Assets = new ActivityAssets { LargeImage = "osu_logo_lazer" },
+            Secrets = new ActivitySecrets(), // todo: may have broke this?
         };
 
         private IBindable<APIUser>? user;
@@ -74,21 +70,36 @@ namespace osu.Desktop
             userStatus = config.GetBindable<UserStatus>(OsuSetting.UserOnlineStatus);
             userActivity = session.GetBindable<UserActivity?>(Static.UserOnlineActivity);
 
-            client = new DiscordRpcClient(client_id)
+            discord = new Discord.Discord(client_id, (ulong)CreateFlags.Default);
+            discord.SetLogHook(Discord.LogLevel.Debug, (level, message) =>
             {
-                // SkipIdenticalPresence allows us to fire SetPresence at any point and leave it to the underlying implementation
-                // to check whether a difference has actually occurred before sending a command to Discord (with a minor caveat that's handled in onReady).
-                SkipIdenticalPresence = true
-            };
+                switch (level)
+                {
+                    case Discord.LogLevel.Debug:
+                        Logger.Log($"Discord RPC log: {message}", LoggingTarget.Runtime, LogLevel.Debug);
+                        break;
 
-            client.OnReady += onReady;
-            client.OnError += (_, e) => Logger.Log($"An error occurred with Discord RPC Client: {e.Message} ({e.Code})", LoggingTarget.Network);
+                    case Discord.LogLevel.Info:
+                        Logger.Log($"Discord RPC log: {message}", LoggingTarget.Runtime, LogLevel.Verbose);
+                        break;
+
+                    case Discord.LogLevel.Warn:
+                        Logger.Log($"Discord RPC log: {message}", LoggingTarget.Runtime, LogLevel.Important);
+                        break;
+
+                    case Discord.LogLevel.Error:
+                        Logger.Log($"Discord RPC log: {message}", LoggingTarget.Runtime, LogLevel.Error);
+                        break;
+                }
+            });
+
+            activityManager = discord.GetActivityManager();
 
             try
             {
-                client.RegisterUriScheme();
-                client.Subscribe(EventType.Join);
-                client.OnJoin += onJoin;
+                activityManager.RegisterCommand();
+                // client.Subscribe(EventType.Join);
+                activityManager.OnActivityJoin += onActivityJoin;
             }
             catch (Exception ex)
             {
@@ -99,7 +110,9 @@ namespace osu.Desktop
                 Logger.Log($"Failed to register Discord URI scheme: {ex}");
             }
 
-            client.Initialize();
+            // client.Initialize();
+            Logger.Log("Discord RPC Client ready.", LoggingTarget.Network, LogLevel.Debug);
+            schedulePresenceUpdate();
         }
 
         protected override void LoadComplete()
@@ -117,16 +130,21 @@ namespace osu.Desktop
             statisticsProvider.StatisticsUpdated += onStatisticsUpdated;
         }
 
-        private void onReady(object _, ReadyMessage __)
+        protected override void Update()
         {
-            Logger.Log("Discord RPC Client ready.", LoggingTarget.Network, LogLevel.Debug);
-
-            // when RPC is lost and reconnected, we have to clear presence state for updatePresence to work (see DiscordRpcClient.SkipIdenticalPresence).
-            if (client.CurrentPresence != null)
-                client.SetPresence(null);
-
-            schedulePresenceUpdate();
+            base.Update();
+            discord.RunCallbacks();
         }
+
+        // todo: apparently not needed?
+        // private void onReady(object _, ReadyMessage __)
+        // {
+        //     // when RPC is lost and reconnected, we have to clear presence state for updatePresence to work (see DiscordRpcClient.SkipIdenticalPresence).
+        //     if (client.CurrentPresence != null)
+        //         client.SetPresence(null);
+        //
+        //     schedulePresenceUpdate();
+        // }
 
         private void onRoomUpdated() => schedulePresenceUpdate();
 
@@ -139,19 +157,19 @@ namespace osu.Desktop
             presenceUpdateDelegate?.Cancel();
             presenceUpdateDelegate = Scheduler.AddDelayed(() =>
             {
-                if (!client.IsInitialized)
-                    return;
+                // if (!client.IsInitialized)
+                //     return;
 
                 if (!api.IsLoggedIn || userStatus.Value == UserStatus.Offline || privacyMode.Value == DiscordRichPresenceMode.Off)
                 {
-                    client.ClearPresence();
+                    activityManager.ClearActivity(_ => { });
                     return;
                 }
 
                 bool hideIdentifiableInformation = privacyMode.Value == DiscordRichPresenceMode.Limited || userStatus.Value == UserStatus.DoNotDisturb;
 
                 updatePresence(hideIdentifiableInformation);
-                client.SetPresence(presence);
+                activityManager.UpdateActivity(activity, _ => { });
             }, 200);
         }
 
@@ -163,29 +181,30 @@ namespace osu.Desktop
             // user activity
             if (userActivity.Value != null)
             {
-                presence.State = clampLength(userActivity.Value.GetStatus(hideIdentifiableInformation));
-                presence.Details = clampLength(userActivity.Value.GetDetails(hideIdentifiableInformation) ?? string.Empty);
+                activity.State = clampLength(userActivity.Value.GetStatus(hideIdentifiableInformation));
+                activity.Details = clampLength(userActivity.Value.GetDetails(hideIdentifiableInformation) ?? string.Empty);
 
                 if (userActivity.Value.GetBeatmapID(hideIdentifiableInformation) is int beatmapId && beatmapId > 0)
                 {
-                    presence.Buttons = new[]
-                    {
-                        new Button
-                        {
-                            Label = "View beatmap",
-                            Url = $@"{api.WebsiteRootUrl}/beatmaps/{beatmapId}?mode={ruleset.Value.ShortName}"
-                        }
-                    };
+                    // todo: not a thing?????????
+                    // activity.Buttons = new[]
+                    // {
+                    //     new Button
+                    //     {
+                    //         Label = "View beatmap",
+                    //         Url = $@"{api.WebsiteRootUrl}/beatmaps/{beatmapId}?mode={ruleset.Value.ShortName}"
+                    //     }
+                    // };
                 }
                 else
                 {
-                    presence.Buttons = null;
+                    // activity.Buttons = null;
                 }
             }
             else
             {
-                presence.State = "Idle";
-                presence.Details = string.Empty;
+                activity.State = "Idle";
+                activity.Details = string.Empty;
             }
 
             // user party
@@ -193,14 +212,17 @@ namespace osu.Desktop
             {
                 MultiplayerRoom room = multiplayerClient.Room;
 
-                presence.Party = new Party
+                activity.Party = new ActivityParty
                 {
-                    Privacy = string.IsNullOrEmpty(room.Settings.Password) ? Party.PrivacySetting.Public : Party.PrivacySetting.Private,
-                    ID = room.RoomID.ToString(),
-                    // technically lobbies can have infinite users, but Discord needs this to be set to something.
-                    // to make party display sensible, assign a powers of two above participants count (8 at minimum).
-                    Max = (int)Math.Max(8, Math.Pow(2, Math.Ceiling(Math.Log2(room.Users.Count)))),
-                    Size = room.Users.Count,
+                    Privacy = string.IsNullOrEmpty(room.Settings.Password) ? ActivityPartyPrivacy.Public : ActivityPartyPrivacy.Private,
+                    Id = room.RoomID.ToString(),
+                    Size = new PartySize
+                    {
+                        // technically lobbies can have infinite users, but Discord needs this to be set to something.
+                        // to make party display sensible, assign a powers of two above participants count (8 at minimum).
+                        MaxSize = (int)Math.Max(8, Math.Pow(2, Math.Ceiling(Math.Log2(room.Users.Count)))),
+                        CurrentSize = room.Users.Count,
+                    }
                 };
 
                 RoomSecret roomSecret = new RoomSecret
@@ -209,35 +231,36 @@ namespace osu.Desktop
                     Password = room.Settings.Password,
                 };
 
-                if (client.HasRegisteredUriScheme)
-                    presence.Secrets.JoinSecret = JsonConvert.SerializeObject(roomSecret);
+                // todo: not needed I think?
+                // if (client.HasRegisteredUriScheme)
+                activity.Secrets.Join = JsonConvert.SerializeObject(roomSecret);
 
                 // discord cannot handle both secrets and buttons at the same time, so we need to choose something.
                 // the multiplayer room seems more important.
-                presence.Buttons = null;
+                // activity.Buttons = null;
             }
             else
             {
-                presence.Party = null;
-                presence.Secrets.JoinSecret = null;
+                activity.Party = new ActivityParty();
+                activity.Secrets.Join = string.Empty;
             }
 
             // game images:
             // large image tooltip
             if (privacyMode.Value == DiscordRichPresenceMode.Limited)
-                presence.Assets.LargeImageText = string.Empty;
+                activity.Assets.LargeText = string.Empty;
             else
             {
                 var statistics = statisticsProvider.GetStatisticsFor(ruleset.Value);
-                presence.Assets.LargeImageText = $"{user.Value.Username}" + (statistics?.GlobalRank > 0 ? $" (rank #{statistics.GlobalRank:N0})" : string.Empty);
+                activity.Assets.LargeText = $"{user.Value.Username}" + (statistics?.GlobalRank > 0 ? $" (rank #{statistics.GlobalRank:N0})" : string.Empty);
             }
 
             // small image
-            presence.Assets.SmallImageKey = ruleset.Value.IsLegacyRuleset() ? $"mode_{ruleset.Value.OnlineID}" : "mode_custom";
-            presence.Assets.SmallImageText = ruleset.Value.Name;
+            activity.Assets.SmallImage = ruleset.Value.IsLegacyRuleset() ? $"mode_{ruleset.Value.OnlineID}" : "mode_custom";
+            activity.Assets.SmallText = ruleset.Value.Name;
         }
 
-        private void onJoin(object sender, JoinMessage args) => Scheduler.AddOnce(() =>
+        private void onActivityJoin(string secret) => Scheduler.AddOnce(() =>
         {
             game.Window?.Raise();
 
@@ -247,11 +270,11 @@ namespace osu.Desktop
                 return;
             }
 
-            Logger.Log($"Received room secret from Discord RPC Client: \"{args.Secret}\"", LoggingTarget.Network, LogLevel.Debug);
+            Logger.Log($"Received room secret from Discord RPC Client: \"{secret}\"", LoggingTarget.Network, LogLevel.Debug);
 
             // Stable and lazer share the same Discord client ID, meaning they can accept join requests from each other.
             // Since they aren't compatible in multi, see if stable's format is being used and log to avoid confusion.
-            if (args.Secret[0] != '{' || !tryParseRoomSecret(args.Secret, out long roomId, out string? password))
+            if (secret[0] != '{' || !tryParseRoomSecret(secret, out long roomId, out string? password))
             {
                 Logger.Log("Could not join multiplayer room, invitation is invalid or incompatible.", LoggingTarget.Network, LogLevel.Important);
                 return;
