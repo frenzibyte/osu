@@ -59,9 +59,8 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapInfoWedgeV2()
         {
-            RelativeSizeAxes = Axes.X;
+            Width = 700f;
             Y = 90;
-            Width = 0.5f;
         }
 
         [BackgroundDependencyLoader]
