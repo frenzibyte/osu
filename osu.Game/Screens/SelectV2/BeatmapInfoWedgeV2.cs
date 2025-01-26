@@ -25,7 +25,7 @@ namespace osu.Game.Screens.SelectV2
     public partial class BeatmapInfoWedgeV2 : VisibilityContainer
     {
         public const float WEDGE_HEIGHT = 120;
-        private const float shear_width = 21;
+        private const float shear_width = OsuGame.SHEAR * WEDGE_HEIGHT;
         private const float transition_duration = 250;
         private const float corner_radius = 10;
         private const float colour_bar_width = 30;
@@ -33,7 +33,7 @@ namespace osu.Game.Screens.SelectV2
         /// Todo: move this const out to song select when more new design elements are implemented for the beatmap details area, since it applies to text alignment of various elements
         private const float text_margin = 62;
 
-        private static readonly Vector2 wedged_container_shear = new Vector2(shear_width / WEDGE_HEIGHT, 0);
+        private static readonly Vector2 wedged_container_shear = new Vector2(OsuGame.SHEAR, 0);
 
         [Resolved]
         private IBindable<RulesetInfo> ruleset { get; set; } = null!;
@@ -59,6 +59,14 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapInfoWedgeV2()
         {
+            RelativeSizeAxes = Axes.X;
+            Y = 90;
+            Width = 0.5f;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
             Height = WEDGE_HEIGHT;
             Shear = wedged_container_shear;
             Masking = true;
@@ -70,11 +78,7 @@ namespace osu.Game.Screens.SelectV2
                 Radius = 3,
             };
             CornerRadius = corner_radius;
-        }
 
-        [BackgroundDependencyLoader]
-        private void load()
-        {
             Child = content = new Container
             {
                 RelativeSizeAxes = Axes.Both,
