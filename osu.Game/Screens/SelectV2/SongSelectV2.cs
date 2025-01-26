@@ -19,6 +19,7 @@ using osu.Game.Screens.Footer;
 using osu.Game.Screens.Menu;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.SelectV2.Footer;
+using osu.Game.Screens.SelectV2.Leaderboards;
 using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
@@ -73,6 +74,7 @@ namespace osu.Game.Screens.SelectV2
                     Height = (float)Math.Sqrt(0.5f),
                 },
                 beatmapInfoWedge = new BeatmapInfoWedgeV2(),
+                new LeaderboardSection(),
                 modSelectOverlay,
             });
         }
