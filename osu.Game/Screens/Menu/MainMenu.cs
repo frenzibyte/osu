@@ -42,6 +42,7 @@ using osu.Game.Seasonal;
 using osuTK;
 using osuTK.Graphics;
 using osu.Game.Localisation;
+using osu.Game.Screens.SelectV2;
 
 namespace osu.Game.Screens.Menu
 {
@@ -109,6 +110,11 @@ namespace osu.Game.Screens.Menu
 
         [Resolved(canBeNull: true)]
         private SkinEditorOverlay skinEditor { get; set; }
+
+        /// <summary>
+        /// Used by tests to load <see cref="SongSelectV2"/> instead for navigation testing.
+        /// </summary>
+        public bool LoadNewSongSelect { get; set; }
 
         [BackgroundDependencyLoader(true)]
         private void load(BeatmapListingOverlay beatmapListing, SettingsOverlay settings, OsuConfigManager config, SessionStatics statics, AudioManager audio)
@@ -234,7 +240,7 @@ namespace osu.Game.Screens.Menu
 
         public void ReturnToOsuLogo() => Buttons.State = ButtonSystemState.Initial;
 
-        private void loadSoloSongSelect() => this.Push(new PlaySongSelect());
+        private void loadSoloSongSelect() => this.Push(LoadNewSongSelect ? new SongSelectV2() : new PlaySongSelect());
 
         public override void OnEntering(ScreenTransitionEvent e)
         {

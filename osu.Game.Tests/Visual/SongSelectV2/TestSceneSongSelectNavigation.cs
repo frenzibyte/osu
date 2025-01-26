@@ -14,15 +14,15 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         public override void SetUpSteps()
         {
             base.SetUpSteps();
-            AddStep("press enter", () => InputManager.Key(Key.Enter));
+            AddStep("hook new song select", () => Game.ChildrenOfType<MainMenu>().Single().LoadNewSongSelect = true);
+            AddRepeatStep("press enter", () => InputManager.Key(Key.Enter), 3);
             AddWaitStep("wait", 5);
-            PushAndConfirm(() => new Screens.SelectV2.SongSelectV2());
         }
 
         [Test]
-        public void TestClickLogo()
+        public void TestStartGameplay()
         {
-            AddStep("click", () =>
+            AddStep("click logo", () =>
             {
                 InputManager.MoveMouseTo(Game.ChildrenOfType<OsuLogo>().Single());
                 InputManager.Click(MouseButton.Left);
