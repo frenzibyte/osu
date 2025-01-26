@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Mania.Skinning.Legacy
         private IBindable<ScrollingDirection> direction = null!;
 
         [Resolved]
-        private ISkinSource skin { get; set; }
+        private ISkinSource skin { get; set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load(IScrollingInfo scrollingInfo)
