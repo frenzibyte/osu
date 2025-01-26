@@ -6,18 +6,26 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osu.Framework.Testing;
+using osu.Game.Beatmaps;
+using osu.Game.Database;
+using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
+using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Screens;
 using osu.Game.Screens.Footer;
 using osu.Game.Screens.Menu;
 using osu.Game.Screens.SelectV2.Footer;
+using osu.Game.Tests.Resources;
 using osuTK.Input;
 
 namespace osu.Game.Tests.Visual.SongSelectV2
@@ -29,6 +37,9 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
         [Cached]
         private readonly OsuLogo logo;
+
+        private BeatmapManager manager = null!;
+        private MusicController music = null!;
 
         public TestSceneSongSelect()
         {
@@ -49,6 +60,25 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             };
         }
 
+        [BackgroundDependencyLoader]
+        private void load(GameHost host, AudioManager audio)
+        {
+            BeatmapStore beatmapStore;
+
+            // These DI caches are required to ensure for interactive runs this test scene doesn't nuke all user beatmaps in the local install.
+            // At a point we have isolated interactive test runs enough, this can likely be removed.
+            Dependencies.Cache(new RealmRulesetStore(Realm));
+            Dependencies.Cache(Realm);
+            Dependencies.Cache(manager = new BeatmapManager(LocalStorage, Realm, null, audio, Resources, host, Beatmap.Default));
+            Dependencies.CacheAs(beatmapStore = new RealmDetachedBeatmapStore());
+
+            Dependencies.Cache(music = new MusicController());
+
+            // required to get bindables attached
+            Add(music);
+            Add(beatmapStore);
+        }
+
         protected override void LoadComplete()
         {
             base.LoadComplete();
@@ -64,6 +94,12 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             AddStep("load screen", () => Stack.Push(new Screens.SelectV2.SongSelectV2()));
             AddUntilStep("wait for load", () => Stack.CurrentScreen is Screens.SelectV2.SongSelectV2 songSelect && songSelect.IsLoaded);
+
+            AddStep("import test beatmap", () =>
+            {
+                var beatmap = manager.Import(new ImportTask(TestResources.GetTestBeatmapForImport())).GetResultSafely();
+                Beatmap.Value = manager.GetWorkingBeatmap(beatmap!.Value.Beatmaps.First());
+            });
         }
 
         #region Footer
