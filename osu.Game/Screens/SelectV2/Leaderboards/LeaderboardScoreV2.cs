@@ -133,7 +133,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
             var user = score.User;
 
             foregroundColour = IsPersonalBest ? colourProvider.Background1 : colourProvider.Background5;
-            backgroundColour = IsPersonalBest ? colourProvider.Background2 : colourProvider.Background4;
+            backgroundColour = IsPersonalBest ? colourProvider.Background2 : colourProvider.Background3;
             totalScoreBackgroundGradient = ColourInfo.GradientHorizontal(backgroundColour.Opacity(0), backgroundColour);
 
             statisticsLabels = GetStatistics(score).Select(s => new ScoreComponentLabel(s, score)

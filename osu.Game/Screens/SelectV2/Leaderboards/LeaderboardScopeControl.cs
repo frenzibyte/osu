@@ -9,6 +9,7 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
@@ -58,7 +59,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                 Anchor = Anchor.CentreRight;
                 Origin = Anchor.CentreRight;
 
-                Size = new Vector2(80, 25);
+                Size = new Vector2(70, 25);
 
                 Vector2 shear = new Vector2(OsuGame.SHEAR, 0f);
                 float shearWidth = shear.X * Height;
@@ -73,6 +74,13 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         Masking = true,
                         Shear = shear,
                         CornerRadius = 5f,
+                        EdgeEffect = new EdgeEffectParameters
+                        {
+                            Type = EdgeEffectType.Shadow,
+                            Radius = 8f,
+                            Colour = Color4.Black.Opacity(0.125f),
+                            Offset = new Vector2(0f, 4f),
+                        },
                         Child = new Box { RelativeSizeAxes = Axes.Both },
                     },
                     text = new OsuSpriteText
@@ -81,8 +89,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         Origin = Anchor.Centre,
                         Colour = OsuColour.ForegroundTextColourFor(colourForScope(Value)),
                         UseFullGlyphHeight = true,
-                        Y = -1f,
-                        Margin = new MarginPadding { Right = shearWidth / 2 },
+                        Margin = new MarginPadding { Right = shearWidth, Bottom = 1f },
                         Text = textForScope(Value),
                     },
                     new HoverSounds(HoverSampleSet.TabSelect),
@@ -126,7 +133,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                 else if (IsHovered)
                     colour = colourForScope(Value).Darken(0.5f);
                 else
-                    colour = colourProvider.Dark2;
+                    colour = colourProvider.Background3;
 
                 text.Font = text.Font.With(weight: Active.Value ? FontWeight.SemiBold : FontWeight.Regular);
                 text.Colour = OsuColour.ForegroundTextColourFor(colour);

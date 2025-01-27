@@ -2,18 +2,22 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays;
+using osu.Game.Screens.Select.Leaderboards;
 using osuTK;
 
 namespace osu.Game.Screens.SelectV2.Leaderboards
 {
     public partial class LeaderboardSectionHeader : CompositeDrawable
     {
+        public readonly Bindable<BeatmapLeaderboardScope> Scope = new Bindable<BeatmapLeaderboardScope>();
+
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
@@ -34,24 +38,24 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                 },
                 new FillFlowContainer
                 {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
+                    AutoSizeAxes = Axes.Both,
                     Margin = new MarginPadding { Left = left_margin, Vertical = 15f },
                     Shear = -shear,
                     Direction = FillDirection.Vertical,
-                    Spacing = new Vector2(0, 6),
+                    Spacing = new Vector2(0, 3),
                     Children = new Drawable[]
                     {
                         new OsuSpriteText
                         {
                             Text = "Ranking", // todo: localisation
                             UseFullGlyphHeight = false,
-                            Font = OsuFont.TorusAlternate.With(size: 18 * 1.2f),
+                            Font = OsuFont.TorusAlternate.With(size: 18 * 1.2f, weight: FontWeight.SemiBold),
                         },
                         new Circle
                         {
+                            RelativeSizeAxes = Axes.X,
                             Colour = colourProvider.Highlight1,
-                            Size = new Vector2(30f, 2f),
+                            Height = 2f
                         },
                     },
                 },
@@ -62,6 +66,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                     Origin = Anchor.CentreRight,
                     Margin = new MarginPadding { Right = 12 },
                     Shear = -shear,
+                    Current = { BindTarget = Scope },
                 },
             };
         }

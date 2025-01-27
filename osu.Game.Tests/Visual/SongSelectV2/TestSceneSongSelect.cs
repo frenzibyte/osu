@@ -14,18 +14,25 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osu.Framework.Testing;
+using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Database;
+using osu.Game.Online.API;
+using osu.Game.Online.API.Requests;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu.Mods;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Scoring;
 using osu.Game.Screens;
 using osu.Game.Screens.Footer;
 using osu.Game.Screens.Menu;
 using osu.Game.Screens.SelectV2.Footer;
 using osu.Game.Tests.Resources;
+using osu.Game.Users;
 using osuTK.Input;
 
 namespace osu.Game.Tests.Visual.SongSelectV2
@@ -97,8 +104,33 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             AddStep("import test beatmap", () =>
             {
-                var beatmap = manager.Import(new ImportTask(TestResources.GetTestBeatmapForImport())).GetResultSafely();
-                Beatmap.Value = manager.GetWorkingBeatmap(beatmap!.Value.Beatmaps.First());
+                var beatmapSet = manager.Import(new ImportTask(TestResources.GetTestBeatmapForImport())).GetResultSafely()!;
+
+                beatmapSet.PerformWrite(b =>
+                {
+                    b.Status = BeatmapOnlineStatus.Ranked;
+                    b.Beatmaps.First().Status = BeatmapOnlineStatus.Ranked;
+                });
+
+                Beatmap.Value = manager.GetWorkingBeatmap(beatmapSet.Value.Beatmaps.First());
+            });
+
+            AddStep("hook up api", () =>
+            {
+                var dummyAPI = (DummyAPIAccess)API;
+                dummyAPI.LocalUser.Value.IsSupporter = true;
+                dummyAPI.HandleRequest = r =>
+                {
+                    switch (r)
+                    {
+                        case GetScoresRequest scoresRequest:
+                            scoresRequest.TriggerSuccess(createScores());
+                            return true;
+
+                        default:
+                            return false;
+                    }
+                };
             });
         }
 
@@ -228,6 +260,165 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 screenScreenFooter.Hide();
                 screenScreenFooter.SetButtons(Array.Empty<ScreenFooterButton>());
             }
+        }
+
+        private ulong onlineID = 1;
+
+        private APIScoresCollection createScores()
+        {
+            var scores = new APIScoresCollection
+            {
+                Scores = new List<SoloScoreInfo>
+                {
+                    new SoloScoreInfo
+                    {
+                        EndedAt = DateTimeOffset.Now,
+                        ID = onlineID++,
+                        User = new APIUser
+                        {
+                            Id = 6602580,
+                            Username = @"waaiiru",
+                            CountryCode = CountryCode.ES,
+                        },
+                        Mods = new[]
+                        {
+                            new APIMod { Acronym = new OsuModDoubleTime().Acronym },
+                            new APIMod { Acronym = new OsuModHidden().Acronym },
+                            new APIMod { Acronym = new OsuModFlashlight().Acronym },
+                            new APIMod { Acronym = new OsuModHardRock().Acronym },
+                        },
+                        Rank = ScoreRank.XH,
+                        PP = 200,
+                        MaxCombo = 1234,
+                        TotalScore = 1000000,
+                        Accuracy = 1,
+                        Ranked = true,
+                    },
+                    new SoloScoreInfo
+                    {
+                        EndedAt = DateTimeOffset.Now,
+                        ID = onlineID++,
+                        User = new APIUser
+                        {
+                            Id = 4608074,
+                            Username = @"Skycries",
+                            CountryCode = CountryCode.BR,
+                        },
+                        Mods = new[]
+                        {
+                            new APIMod { Acronym = new OsuModDoubleTime().Acronym },
+                            new APIMod { Acronym = new OsuModHidden().Acronym },
+                            new APIMod { Acronym = new OsuModFlashlight().Acronym },
+                        },
+                        Rank = ScoreRank.S,
+                        PP = 190,
+                        MaxCombo = 1234,
+                        TotalScore = 823478,
+                        Accuracy = 0.9997,
+                        Ranked = true,
+                    },
+                    new SoloScoreInfo
+                    {
+                        EndedAt = DateTimeOffset.Now,
+                        ID = onlineID++,
+                        User = new APIUser
+                        {
+                            Id = 1014222,
+                            Username = @"eLy",
+                            CountryCode = CountryCode.JP,
+                        },
+                        Mods = new[]
+                        {
+                            new APIMod { Acronym = new OsuModDoubleTime().Acronym },
+                            new APIMod { Acronym = new OsuModHidden().Acronym },
+                        },
+                        Rank = ScoreRank.B,
+                        PP = 180,
+                        MaxCombo = 1234,
+                        TotalScore = 934567,
+                        Accuracy = 0.9854,
+                        Ranked = true,
+                    },
+                    new SoloScoreInfo
+                    {
+                        EndedAt = DateTimeOffset.Now,
+                        ID = onlineID++,
+                        User = new APIUser
+                        {
+                            Id = 1541390,
+                            Username = @"Toukai",
+                            CountryCode = CountryCode.CA,
+                        },
+                        Mods = new[]
+                        {
+                            new APIMod { Acronym = new OsuModDoubleTime().Acronym },
+                        },
+                        Rank = ScoreRank.C,
+                        PP = 170,
+                        MaxCombo = 1234,
+                        TotalScore = 723456,
+                        Accuracy = 0.8765,
+                        Ranked = true,
+                    },
+                    new SoloScoreInfo
+                    {
+                        EndedAt = DateTimeOffset.Now,
+                        ID = onlineID++,
+                        User = new APIUser
+                        {
+                            Id = 7151382,
+                            Username = @"Mayuri Hana",
+                            CountryCode = CountryCode.TH,
+                        },
+                        Rank = ScoreRank.D,
+                        PP = 160,
+                        MaxCombo = 1234,
+                        TotalScore = 123456,
+                        Accuracy = 0.6543,
+                        Ranked = true,
+                    },
+                }
+            };
+
+            double maxScore = scores.Scores.Max(s => s.TotalScore);
+            scores.Scores = Enumerable.Repeat(scores.Scores, 10).SelectMany(s => s).ToList();
+
+            const int initial_great_count = 2000;
+            const int initial_tick_count = 100;
+            const int initial_slider_end_count = 500;
+
+            int greatCount = initial_great_count;
+            int tickCount = initial_tick_count;
+            int sliderEndCount = initial_slider_end_count;
+
+            foreach (var (score, index) in scores.Scores.Select((s, i) => (s, i)))
+            {
+                HitResult sliderEndResult = index % 2 == 0 ? HitResult.SliderTailHit : HitResult.SmallTickHit;
+
+                score.Statistics = new Dictionary<HitResult, int>
+                {
+                    { HitResult.Great, greatCount },
+                    { HitResult.LargeTickHit, tickCount },
+                    { HitResult.Ok, RNG.Next(100) },
+                    { HitResult.Meh, RNG.Next(100) },
+                    { HitResult.Miss, initial_great_count - greatCount },
+                    { HitResult.LargeTickMiss, initial_tick_count - tickCount },
+                    { sliderEndResult, sliderEndCount },
+                };
+
+                // Some hit results, including SliderTailHit and SmallTickHit, are only displayed
+                // when the maximum number is known
+                score.MaximumStatistics = new Dictionary<HitResult, int>
+                {
+                    { sliderEndResult, initial_slider_end_count },
+                };
+
+                greatCount -= 100;
+                tickCount -= RNG.Next(1, 5);
+                sliderEndCount -= 20;
+            }
+
+            return scores;
         }
     }
 }
