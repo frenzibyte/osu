@@ -40,7 +40,7 @@ namespace osu.Game.Screens.SelectV2.Wedge
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold),
+                        Font = OsuFont.GetFont(size: 16 * 1.2f, weight: FontWeight.SemiBold),
                     },
                     mappedByLabel = new OsuSpriteText
                     {
@@ -48,7 +48,7 @@ namespace osu.Game.Screens.SelectV2.Wedge
                         Origin = Anchor.BottomLeft,
                         // TODO: better null display? beatmap carousel panels also just show this text currently.
                         Text = " mapped by ",
-                        Font = OsuFont.GetFont(size: 14),
+                        Font = OsuFont.GetFont(size: 14 * 1.2f),
                     },
                     // This is not a `LinkFlowContainer` as there are single-frame layout issues when Update()
                     // is being used for layout, see https://github.com/ppy/osu-framework/issues/3369.
@@ -59,7 +59,7 @@ namespace osu.Game.Screens.SelectV2.Wedge
                         AutoSizeAxes = Axes.Both,
                         Child = MapperName = new OsuSpriteText
                         {
-                            Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 14),
+                            Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 14 * 1.2f),
                         }
                     },
                 }

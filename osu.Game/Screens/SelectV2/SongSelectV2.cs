@@ -34,7 +34,8 @@ namespace osu.Game.Screens.SelectV2
 
         protected const float BACKGROUND_BLUR = 20;
 
-        private BeatmapInfoWedgeV2 beatmapInfoWedge = null!;
+        private BeatmapBackgroundWedge beatmapBackgroundWedge = null!;
+        private BeatmapContentWedge beatmapContentWedge = null!;
 
         private readonly ModSelectOverlay modSelectOverlay = new SoloModSelectOverlay();
 
@@ -73,7 +74,10 @@ namespace osu.Game.Screens.SelectV2
                     Colour = ColourInfo.GradientVertical(Color4.Black, Color4.Black.Opacity(0f)),
                     Height = (float)Math.Sqrt(0.5f),
                 },
-                beatmapInfoWedge = new BeatmapInfoWedgeV2(),
+                beatmapBackgroundWedge = new BeatmapBackgroundWedge(),
+                beatmapContentWedge = new BeatmapContentWedge(),
+                new BeatmapCountWedge(),
+                new BeatmapStatisticsWedge(),
                 new LeaderboardSection(),
                 modSelectOverlay,
             });
@@ -90,7 +94,8 @@ namespace osu.Game.Screens.SelectV2
             modSelectOverlay.State.BindValueChanged(onModSelectStateChanged, true);
             modSelectOverlay.SelectedMods.BindTo(Mods);
 
-            beatmapInfoWedge.Show();
+            beatmapBackgroundWedge.Show();
+            beatmapContentWedge.Show();
 
             updateScreenBackground();
         }
@@ -101,7 +106,8 @@ namespace osu.Game.Screens.SelectV2
 
             this.FadeIn();
 
-            beatmapInfoWedge.Show();
+            beatmapBackgroundWedge.Show();
+            beatmapContentWedge.Show();
 
             // required due to https://github.com/ppy/osu-framework/issues/3218
             modSelectOverlay.SelectedMods.Disabled = false;
@@ -114,7 +120,8 @@ namespace osu.Game.Screens.SelectV2
         {
             this.FadeOut(400, Easing.OutQuint);
 
-            beatmapInfoWedge.Hide();
+            beatmapBackgroundWedge.Hide();
+            beatmapContentWedge.Hide();
 
             modSelectOverlay.SelectedMods.UnbindFrom(Mods);
 
@@ -125,7 +132,8 @@ namespace osu.Game.Screens.SelectV2
         {
             this.FadeOut(400, Easing.OutQuint);
 
-            beatmapInfoWedge.Hide();
+            beatmapBackgroundWedge.Hide();
+            beatmapContentWedge.Hide();
 
             return base.OnExiting(e);
         }
@@ -172,7 +180,7 @@ namespace osu.Game.Screens.SelectV2
             if (this.IsCurrentScreen())
                 updateScreenBackground();
 
-            beatmapInfoWedge.Beatmap = b.NewValue;
+            beatmapBackgroundWedge.Beatmap = b.NewValue;
         }
 
         private void updateScreenBackground()

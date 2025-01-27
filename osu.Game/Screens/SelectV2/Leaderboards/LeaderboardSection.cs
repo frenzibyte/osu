@@ -55,7 +55,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
         {
             Width = 700;
             Height = 310;
-            Y = 400;
+            Y = 375;
         }
 
         [BackgroundDependencyLoader]
