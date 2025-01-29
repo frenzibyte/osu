@@ -80,6 +80,7 @@ namespace osu.Game.Screens.SelectV2
                     Children = new Drawable[]
                     {
                         new BeatmapBackgroundWedge(),
+                        new BeatmapContentWedge(),
                     }
                 },
                 modSelectOverlay,
