@@ -9,18 +9,39 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Localisation;
+using osu.Game.Online;
+using osu.Game.Online.Chat;
 using osu.Game.Overlays;
+using osu.Game.Users;
 
 namespace osu.Game.Screens.SelectV2.Wedge
 {
-    public abstract partial class DifficultyNameContent : CompositeDrawable
+    public partial class DifficultyNameContent : CompositeDrawable
     {
-        protected OsuSpriteText DifficultyName = null!;
+        private OsuSpriteText difficultyName = null!;
         private OsuSpriteText mappedByLabel = null!;
-        protected OsuHoverContainer MapperLink = null!;
-        protected OsuSpriteText MapperName = null!;
+        private OsuHoverContainer mapperLink = null!;
+        private OsuSpriteText mapperName = null!;
 
-        protected DifficultyNameContent()
+        private Data? value;
+
+        public Data? Value
+        {
+            get => value;
+            set
+            {
+                if (this.value == value)
+                    return;
+
+                this.value = value;
+                updateDisplay();
+            }
+        }
+
+        [Resolved]
+        private ILinkHandler? linkHandler { get; set; }
+
+        public DifficultyNameContent()
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
@@ -36,7 +57,7 @@ namespace osu.Game.Screens.SelectV2.Wedge
                 Direction = FillDirection.Horizontal,
                 Children = new Drawable[]
                 {
-                    DifficultyName = new TruncatingSpriteText
+                    difficultyName = new TruncatingSpriteText
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
@@ -46,18 +67,16 @@ namespace osu.Game.Screens.SelectV2.Wedge
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        // TODO: better null display? beatmap carousel panels also just show this text currently.
-                        Text = " mapped by ",
                         Font = OsuFont.GetFont(size: 16.8f),
                     },
                     // This is not a `LinkFlowContainer` as there are single-frame layout issues when Update()
                     // is being used for layout, see https://github.com/ppy/osu-framework/issues/3369.
-                    MapperLink = new MapperLinkContainer
+                    mapperLink = new MapperLinkContainer
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
                         AutoSizeAxes = Axes.Both,
-                        Child = MapperName = new OsuSpriteText
+                        Child = mapperName = new OsuSpriteText
                         {
                             Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 16.8f),
                         }
@@ -66,14 +85,30 @@ namespace osu.Game.Screens.SelectV2.Wedge
             };
         }
 
+        private void updateDisplay()
+        {
+            difficultyName.Text = value?.DifficultyName ?? string.Empty;
+            mappedByLabel.Text = value != null ? " mapped by " : string.Empty;
+
+            // TODO: should be the mapper of the guest difficulty, but that isn't stored correctly yet (see https://github.com/ppy/osu/issues/12965)
+            mapperName.Text = value?.Mapper.Username ?? string.Empty;
+            mapperLink.Action = () =>
+            {
+                if (value != null)
+                    linkHandler?.HandleLink(new LinkDetails(LinkAction.OpenUserProfile, value.Value.Mapper));
+            };
+        }
+
         protected override void Update()
         {
             base.Update();
 
             // truncate difficulty name when width exceeds bounds, prioritizing mapper name display
-            DifficultyName.MaxWidth = Math.Max(DrawWidth - mappedByLabel.DrawWidth
-                                                         - MapperName.DrawWidth, 0);
+            difficultyName.MaxWidth = Math.Max(DrawWidth - mappedByLabel.DrawWidth
+                                                         - mapperName.DrawWidth, 0);
         }
+
+        public record struct Data(string DifficultyName, IUser Mapper);
 
         private partial class MapperLinkContainer : OsuHoverContainer
         {
