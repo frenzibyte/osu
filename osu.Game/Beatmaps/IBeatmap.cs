@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Lists;
 using osu.Game.Beatmaps.ControlPoints;
@@ -207,6 +208,39 @@ namespace osu.Game.Beatmaps
             double firstObjectTime = objects.First().StartTime;
 
             return (firstObjectTime, lastObjectTime);
+        }
+
+        /// <summary>
+        /// Computes a list of values indicating the beatmap's density throughout gameplay,
+        /// with data granularity specified by <paramref name="granularity"/>.
+        /// </summary>
+        public static int[] CalculateDensity(IEnumerable<HitObject> objects, int granularity)
+        {
+            int[] values = new int[granularity];
+
+            if (!objects.Any())
+                return values;
+
+            (double firstHit, double lastHit) = CalculatePlayableBounds(objects);
+
+            if (lastHit == 0)
+                lastHit = objects.Last().StartTime;
+
+            double interval = (lastHit - firstHit + 1) / granularity;
+
+            foreach (var h in objects)
+            {
+                double endTime = h.GetEndTime();
+
+                Debug.Assert(endTime >= h.StartTime);
+
+                int startRange = (int)((h.StartTime - firstHit) / interval);
+                int endRange = (int)((endTime - firstHit) / interval);
+                for (int i = startRange; i <= endRange; i++)
+                    values[i]++;
+            }
+
+            return values;
         }
 
         #endregion
