@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Lists;
@@ -13,6 +14,7 @@ using osu.Game.Rulesets.Osu.Objects.Drawables;
 using osu.Game.Rulesets.Osu.UI;
 using osu.Game.Rulesets.UI;
 using osuTK;
+using Container = osu.Framework.Graphics.Containers.Container;
 
 namespace osu.Game.Rulesets.Osu
 {
@@ -58,6 +60,15 @@ namespace osu.Game.Rulesets.Osu
         private void load()
         {
             Add(new OsuTouchInputMapper(this) { RelativeSizeAxes = Axes.Both });
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            // let children change their load state from Ready to Loaded first before syncing input from parent,
+            // otherwise no drawable will receive their input. See Drawable.ShouldBeConsideredForInput()
+            ScheduleAfterChildren(() => Sync(ButtonSyncKind.Pressed));
         }
 
         protected override bool Handle(UIEvent e)
