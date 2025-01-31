@@ -15,6 +15,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Database;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
+using osu.Game.Overlays;
 using osu.Game.Screens.Select;
 using osu.Game.Screens.Select.Filter;
 using osu.Game.Screens.SelectV2;
@@ -35,6 +36,9 @@ namespace osu.Game.Tests.Visual.SongSelect
 
         [Cached(typeof(BeatmapStore))]
         private BeatmapStore store;
+
+        [Cached]
+        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
 
         private OsuTextFlowContainer stats = null!;
 
