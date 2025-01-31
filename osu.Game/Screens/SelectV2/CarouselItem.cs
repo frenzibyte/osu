@@ -35,7 +35,7 @@ namespace osu.Game.Screens.SelectV2
         public bool IsGroupSelectionTarget { get; set; }
 
         /// <summary>
-        /// Whether this item is visible or collapsed (hidden).
+        /// Whether this item is visible. If <c>false</c>, the item is either hidden or part of a collapsed group.
         /// </summary>
         public bool IsVisible { get; set; } = true;
 
