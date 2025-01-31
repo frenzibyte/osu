@@ -65,6 +65,8 @@ namespace osu.Game.Screens.SelectV2
         private Box backgroundPlaceholder = null!;
         private Container iconContainer = null!;
 
+        private readonly BindableBool expanded = new BindableBool();
+
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -144,8 +146,8 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
-            Selected.BindValueChanged(_ => updateSelectionDisplay());
-            KeyboardSelected.BindValueChanged(_ => updateSelectionDisplay(), true);
+            expanded.BindValueChanged(_ => updateSelectionDisplay(), true);
+            KeyboardSelected.BindValueChanged(_ => updateSelectionDisplay());
         }
 
         protected override void PrepareForUse()
@@ -200,6 +202,15 @@ namespace osu.Game.Screens.SelectV2
             updateSelectionDisplay();
         }
 
+        protected override void Update()
+        {
+            base.Update();
+
+            var ourBeatmapSet = (BeatmapSetInfo?)Item?.Model;
+            var expandedBeatmapSet = ((BeatmapInfo?)carousel.CurrentSelection)?.BeatmapSet;
+            expanded.Value = ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true;
+        }
+
         private void updateSelectionDisplay()
         {
             if (Item == null)
@@ -209,8 +220,7 @@ namespace osu.Game.Screens.SelectV2
 
             float colourBoxWidth = beatmapSet.Beatmaps.Count == 1 ? difficulty_icon_container_width : arrow_container_width;
 
-            // todo: this is broke, 'selected' does not get set to true when a containing difficulty is selected.
-            bool selected = true;
+            bool selected = expanded.Value;
 
             header.MoveToX(selected ? -100 : 0, duration, Easing.OutQuint);
 
