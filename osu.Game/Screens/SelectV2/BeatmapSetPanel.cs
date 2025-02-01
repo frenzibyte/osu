@@ -31,6 +31,7 @@ namespace osu.Game.Screens.SelectV2
     public partial class BeatmapSetPanel : PoolableDrawable, ICarouselPanel
     {
         public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT * 1.6f;
+
         private const float arrow_container_width = 20;
         private const float difficulty_icon_container_width = 30;
         private const float corner_radius = 10;
@@ -64,13 +65,16 @@ namespace osu.Game.Screens.SelectV2
         private Container mainFlowContainer = null!;
         private Box backgroundPlaceholder = null!;
         private Container iconContainer = null!;
+        private Box hoverLayer = null!;
 
         private readonly BindableBool expanded = new BindableBool();
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = new Vector2(650, HEIGHT);
+            RelativeSizeAxes = Axes.X;
+            Width = 1.25f;
+            Height = HEIGHT;
 
             InternalChild = header = new Container
             {
@@ -79,67 +83,86 @@ namespace osu.Game.Screens.SelectV2
                 Masking = true,
                 CornerRadius = corner_radius,
                 RelativeSizeAxes = Axes.Both,
-                Child = new Container
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
+                    new Container
                     {
-                        new BufferedContainer
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Children = new Drawable[]
+                            new BufferedContainer
                             {
-                                colourBox = new Box
+                                RelativeSizeAxes = Axes.Both,
+                                Children = new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.Y,
-                                    Alpha = 0,
-                                    EdgeSmoothness = new Vector2(2, 0),
-                                },
-                                backgroundContentContainer = new Container
-                                {
-                                    Masking = true,
-                                    CornerRadius = corner_radius,
-                                    RelativeSizeAxes = Axes.X,
-                                    MaskingSmoothness = 2,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Children = new Drawable[]
+                                    colourBox = new Box
                                     {
-                                        backgroundPlaceholder = new Box
+                                        RelativeSizeAxes = Axes.Y,
+                                        Alpha = 0,
+                                        EdgeSmoothness = new Vector2(2, 0),
+                                    },
+                                    backgroundContentContainer = new Container
+                                    {
+                                        Masking = true,
+                                        CornerRadius = corner_radius,
+                                        RelativeSizeAxes = Axes.X,
+                                        MaskingSmoothness = 2,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Children = new Drawable[]
                                         {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Colour = colourProvider.Background5,
-                                            Alpha = 0,
-                                        },
-                                        backgroundContainer = new Container
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
+                                            backgroundPlaceholder = new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = colourProvider.Background5,
+                                                Alpha = 0,
+                                            },
+                                            backgroundContainer = new Container
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                            },
                                         },
                                     },
-                                },
-                            }
-                        },
-                        iconContainer = new Container
-                        {
-                            AutoSizeAxes = Axes.Both,
-                            Shear = -shear,
-                            Alpha = 0,
-                            Origin = Anchor.Centre,
-                            Anchor = Anchor.CentreLeft,
-                        },
-                        mainFlowContainer = new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                        },
-                        new HoverLayer(),
-                        new HeaderSounds(),
-                    }
+                                }
+                            },
+                            iconContainer = new Container
+                            {
+                                AutoSizeAxes = Axes.Both,
+                                Shear = -shear,
+                                Alpha = 0,
+                                Origin = Anchor.Centre,
+                                Anchor = Anchor.CentreLeft,
+                            },
+                            mainFlowContainer = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                            },
+                            hoverLayer = new Box
+                            {
+                                Colour = colours.Blue.Opacity(0.1f),
+                                Alpha = 0,
+                                Blending = BlendingParameters.Additive,
+                                RelativeSizeAxes = Axes.Both,
+                            },
+                        }
+                    },
+                    new HeaderSounds(),
                 }
             };
 
             // Header.AddRange(drawables);
             // drawables.ForEach(d => d.FadeInFromZero(150));
             // updateSelectionState();
+        }
+
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        {
+            var inputRectangle = DrawRectangle;
+
+            // Cover a gap that could be introduced by the spacing between a BeatmapSetPanel and a BeatmapPanel either above it or below it.
+            inputRectangle = inputRectangle.Inflate(new MarginPadding { Vertical = BeatmapCarousel.SPACING / 2f });
+
+            return inputRectangle.Contains(ToLocalSpace(screenSpacePos));
         }
 
         protected override void LoadComplete()
@@ -211,6 +234,18 @@ namespace osu.Game.Screens.SelectV2
             expanded.Value = ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true;
         }
 
+        protected override bool OnHover(HoverEvent e)
+        {
+            hoverLayer.FadeIn(100, Easing.OutQuint);
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            hoverLayer.FadeOut(1000, Easing.OutQuint);
+            base.OnHoverLost(e);
+        }
+
         private void updateSelectionDisplay()
         {
             if (Item == null)
@@ -222,7 +257,7 @@ namespace osu.Game.Screens.SelectV2
 
             bool selected = expanded.Value;
 
-            header.MoveToX(selected ? -100 : 0, duration, Easing.OutQuint);
+            header.MoveToX(selected ? -75f : 0, duration, Easing.OutQuint);
 
             backgroundContentContainer.Height = selected ? HEIGHT - 4 : HEIGHT;
 
@@ -290,40 +325,6 @@ namespace osu.Game.Screens.SelectV2
         }
 
         #endregion
-
-        public partial class HoverLayer : CompositeDrawable
-        {
-            private Box box = null!;
-
-            public HoverLayer()
-            {
-                RelativeSizeAxes = Axes.Both;
-            }
-
-            [BackgroundDependencyLoader]
-            private void load(OsuColour colours)
-            {
-                InternalChild = box = new Box
-                {
-                    Colour = colours.Blue.Opacity(0.1f),
-                    Alpha = 0,
-                    Blending = BlendingParameters.Additive,
-                    RelativeSizeAxes = Axes.Both,
-                };
-            }
-
-            protected override bool OnHover(HoverEvent e)
-            {
-                box.FadeIn(100, Easing.OutQuint);
-                return base.OnHover(e);
-            }
-
-            protected override void OnHoverLost(HoverLostEvent e)
-            {
-                box.FadeOut(1000, Easing.OutQuint);
-                base.OnHoverLost(e);
-            }
-        }
 
         public partial class HeaderSounds : HoverSampleDebounceComponent
         {
