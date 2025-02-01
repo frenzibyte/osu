@@ -28,7 +28,7 @@ namespace osu.Game.Screens.SelectV2
 
             return items.Order(Comparer<CarouselItem>.Create((a, b) =>
             {
-                int comparison;
+                int comparison = 0;
 
                 var ab = (BeatmapInfo)a.Model;
                 var bb = (BeatmapInfo)b.Model;
@@ -41,17 +41,13 @@ namespace osu.Game.Screens.SelectV2
                             goto case SortMode.Title;
                         break;
 
-                    case SortMode.Difficulty:
-                        comparison = ab.StarRating.CompareTo(bb.StarRating);
-                        break;
-
                     case SortMode.Title:
                         comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(ab.BeatmapSet!.Metadata.Title, bb.BeatmapSet!.Metadata.Title);
                         break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
                 }
+
+                if (comparison == 0)
+                    comparison = ab.StarRating.CompareTo(bb.StarRating);
 
                 return comparison;
             }));
