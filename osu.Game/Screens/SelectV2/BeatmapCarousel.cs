@@ -20,6 +20,8 @@ namespace osu.Game.Screens.SelectV2
     [Cached]
     public partial class BeatmapCarousel : Carousel<BeatmapInfo>
     {
+        public const float SPACING = 5f;
+
         private IBindableList<BeatmapSetInfo> detachedBeatmaps = null!;
 
         private readonly LoadingLayer loading;
@@ -122,6 +124,26 @@ namespace osu.Game.Screens.SelectV2
                 foreach (var i in group)
                     i.IsVisible = visible;
             }
+        }
+
+        #endregion
+
+        #region Display handling
+
+        protected override float GetSpacingBetweenPanels(CarouselItem top, CarouselItem bottom)
+        {
+            var highlightedSet = ((BeatmapInfo?)CurrentSelection)?.BeatmapSet;
+
+            if (bottom.Model is BeatmapSetInfo set && set.Equals(highlightedSet))
+                // Add top spacing to a beatmap set panel that is currently highlighted.
+                return SPACING;
+
+            if (top.Model is BeatmapSetInfo && bottom.Model is BeatmapSetInfo)
+                // Add overlap between beatmap set panels.
+                return -SPACING;
+
+            // Add spacing between beatmap panels.
+            return SPACING;
         }
 
         #endregion

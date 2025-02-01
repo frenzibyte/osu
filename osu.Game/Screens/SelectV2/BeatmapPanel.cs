@@ -31,7 +31,7 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapPanel : PoolableDrawable, ICarouselPanel
     {
-        private const float height = CarouselItem.DEFAULT_HEIGHT;
+        public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT;
 
         private const float colour_box_width = 30;
         private const float corner_radius = 10;
@@ -50,6 +50,7 @@ namespace osu.Game.Screens.SelectV2
         private Container header = null!;
         private StarCounter starCounter = null!;
         private ConstrainedIconContainer iconContainer = null!;
+        private Box hoverLayer = null!;
 
         private Box colourBox = null!;
 
@@ -77,127 +78,152 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
-            Size = new Vector2(600, height);
+            RelativeSizeAxes = Axes.X;
+            Width = 1.25f;
+            Height = HEIGHT;
 
-            InternalChild = header = new Container
+            InternalChild = new Container
             {
-                Name = "CarouselHeader",
-                Shear = shear,
-                Masking = true,
-                CornerRadius = corner_radius,
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    new BufferedContainer
+                    header = new Container
                     {
+                        Name = "CarouselHeader",
+                        Shear = shear,
+                        Masking = true,
+                        CornerRadius = corner_radius,
                         RelativeSizeAxes = Axes.Both,
                         Children = new Drawable[]
                         {
-                            colourBox = new Box
+                            new BufferedContainer
                             {
-                                Width = colour_box_width + corner_radius,
-                                RelativeSizeAxes = Axes.Y,
-                                Colour = colours.ForStarDifficulty(0),
-                                EdgeSmoothness = new Vector2(2, 0),
+                                RelativeSizeAxes = Axes.Both,
+                                Children = new Drawable[]
+                                {
+                                    colourBox = new Box
+                                    {
+                                        Width = colour_box_width + corner_radius,
+                                        RelativeSizeAxes = Axes.Y,
+                                        Colour = colours.ForStarDifficulty(0),
+                                        EdgeSmoothness = new Vector2(2, 0),
+                                    },
+                                    rightContainer = new Container
+                                    {
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Masking = true,
+                                        CornerRadius = corner_radius,
+                                        RelativeSizeAxes = Axes.X,
+                                        // We don't want to match the header's size when its selected, hence no relative sizing.
+                                        Height = HEIGHT,
+                                        X = colour_box_width,
+                                        Children = new Drawable[]
+                                        {
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = ColourInfo.GradientHorizontal(colourProvider.Background3, colourProvider.Background4),
+                                            },
+                                            starRatingGradient = new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Alpha = 0,
+                                            },
+                                        },
+                                    },
+                                }
                             },
-                            rightContainer = new Container
+                            iconContainer = new ConstrainedIconContainer
                             {
+                                X = colour_box_width / 2,
+                                Origin = Anchor.Centre,
                                 Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                Masking = true,
-                                CornerRadius = corner_radius,
-                                RelativeSizeAxes = Axes.X,
-                                // We don't want to match the header's size when its selected, hence no relative sizing.
-                                Height = height,
-                                X = colour_box_width,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = ColourInfo.GradientHorizontal(colourProvider.Background3, colourProvider.Background4),
-                                    },
-                                    starRatingGradient = new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Alpha = 0,
-                                    },
-                                },
+                                Size = new Vector2(20),
+                                Colour = colourProvider.Background5,
+                                Shear = -shear,
                             },
-                        }
-                    },
-                    iconContainer = new ConstrainedIconContainer
-                    {
-                        X = colour_box_width / 2,
-                        Origin = Anchor.Centre,
-                        Anchor = Anchor.CentreLeft,
-                        Size = new Vector2(20),
-                        Colour = colourProvider.Background5,
-                        Shear = -shear,
-                    },
-                    new FillFlowContainer
-                    {
-                        Padding = new MarginPadding { Top = 8, Left = colour_box_width + corner_radius },
-                        Direction = FillDirection.Vertical,
-                        AutoSizeAxes = Axes.Both,
-                        Children = new Drawable[]
-                        {
                             new FillFlowContainer
                             {
-                                Direction = FillDirection.Horizontal,
-                                Spacing = new Vector2(3, 0),
+                                Padding = new MarginPadding { Top = 8, Left = colour_box_width + corner_radius },
+                                Direction = FillDirection.Vertical,
                                 AutoSizeAxes = Axes.Both,
-                                Shear = -shear,
                                 Children = new Drawable[]
                                 {
-                                    starRatingDisplay = new StarRatingDisplay(default, StarRatingDisplaySize.Small),
-                                    topLocalRankContainer = new Container
+                                    new FillFlowContainer
                                     {
+                                        Direction = FillDirection.Horizontal,
+                                        Spacing = new Vector2(3, 0),
                                         AutoSizeAxes = Axes.Both,
+                                        Shear = -shear,
+                                        Children = new Drawable[]
+                                        {
+                                            starRatingDisplay = new StarRatingDisplay(default, StarRatingDisplaySize.Small),
+                                            topLocalRankContainer = new Container
+                                            {
+                                                AutoSizeAxes = Axes.Both,
+                                            },
+                                            starCounter = new StarCounter
+                                            {
+                                                Margin = new MarginPadding { Top = 8 }, // Better aligns the stars with the star rating display
+                                                Scale = new Vector2(8 / 20f)
+                                            }
+                                        }
                                     },
-                                    starCounter = new StarCounter
+                                    new FillFlowContainer
                                     {
-                                        Margin = new MarginPadding { Top = 8 }, // Better aligns the stars with the star rating display
-                                        Scale = new Vector2(8 / 20f)
+                                        Direction = FillDirection.Horizontal,
+                                        Spacing = new Vector2(11, 0),
+                                        AutoSizeAxes = Axes.Both,
+                                        Shear = -shear,
+                                        Children = new[]
+                                        {
+                                            keyCountText = new OsuSpriteText
+                                            {
+                                                Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Alpha = 0,
+                                            },
+                                            difficultyText = new OsuSpriteText
+                                            {
+                                                Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft
+                                            },
+                                            authorText = new OsuSpriteText
+                                            {
+                                                Colour = colourProvider.Content2,
+                                                Font = OsuFont.GetFont(weight: FontWeight.SemiBold),
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft
+                                            }
+                                        }
                                     }
                                 }
                             },
-                            new FillFlowContainer
+                            hoverLayer = new Box
                             {
-                                Direction = FillDirection.Horizontal,
-                                Spacing = new Vector2(11, 0),
-                                AutoSizeAxes = Axes.Both,
-                                Shear = -shear,
-                                Children = new[]
-                                {
-                                    keyCountText = new OsuSpriteText
-                                    {
-                                        Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
-                                        Anchor = Anchor.BottomLeft,
-                                        Origin = Anchor.BottomLeft,
-                                        Alpha = 0,
-                                    },
-                                    difficultyText = new OsuSpriteText
-                                    {
-                                        Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
-                                        Anchor = Anchor.BottomLeft,
-                                        Origin = Anchor.BottomLeft
-                                    },
-                                    authorText = new OsuSpriteText
-                                    {
-                                        Colour = colourProvider.Content2,
-                                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold),
-                                        Anchor = Anchor.BottomLeft,
-                                        Origin = Anchor.BottomLeft
-                                    }
-                                }
-                            }
+                                Colour = colours.Blue.Opacity(0.1f),
+                                Alpha = 0,
+                                Blending = BlendingParameters.Additive,
+                                RelativeSizeAxes = Axes.Both,
+                            },
                         }
                     },
-                    new BeatmapSetPanel.HoverLayer(),
                     new BeatmapSetPanel.HeaderSounds(),
                 }
             };
+        }
+
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        {
+            var inputRectangle = DrawRectangle;
+
+            // Cover the gaps introduced by the spacing between BeatmapPanels.
+            inputRectangle = inputRectangle.Inflate(new MarginPadding { Vertical = BeatmapCarousel.SPACING / 2f });
+
+            return inputRectangle.Contains(ToLocalSpace(screenSpacePos));
         }
 
         protected override void LoadComplete()
@@ -256,6 +282,19 @@ namespace osu.Game.Screens.SelectV2
             updateKeyCount();
             // }
             this.FadeInFromZero(500, Easing.OutQuint);
+            updateSelectionDisplay();
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            hoverLayer.FadeIn(100, Easing.OutQuint);
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            hoverLayer.FadeOut(1000, Easing.OutQuint);
+            base.OnHoverLost(e);
         }
 
         private void updateSelectionDisplay()
@@ -265,9 +304,9 @@ namespace osu.Game.Screens.SelectV2
             // todo: completely missing keyboard selection feedback.
             if (selected)
             {
-                header.MoveToX(-50, 500, Easing.OutExpo);
+                header.MoveToX(25f, 500, Easing.OutExpo);
 
-                rightContainer.Height = height - 4;
+                rightContainer.Height = HEIGHT - 4;
 
                 colourBox.RelativeSizeAxes = Axes.Both;
                 colourBox.Width = 1;
@@ -280,9 +319,9 @@ namespace osu.Game.Screens.SelectV2
             }
             else
             {
-                header.MoveToX(0, 500, Easing.OutExpo);
+                header.MoveToX(75f, 500, Easing.OutExpo);
 
-                rightContainer.Height = height;
+                rightContainer.Height = HEIGHT;
 
                 header.EdgeEffect = new EdgeEffectParameters
                 {
