@@ -6,25 +6,27 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using osu.Framework.Allocation;
-using osu.Framework.Audio;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osu.Framework.Utils;
+using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.Drawables;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
-using osu.Game.Screens.Select.Carousel;
+using osu.Game.Resources.Localisation.Web;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
 {
@@ -55,19 +57,32 @@ namespace osu.Game.Screens.SelectV2
         [Resolved]
         private BeatmapDifficultyCache difficultyCache { get; set; } = null!;
 
-        private CancellationTokenSource? starDifficultyCancellationSource;
-        private IBindable<StarDifficulty?>? starDifficultyBindable;
+        private CancellationTokenSource? singleDiffStarsToken;
+        private IBindable<StarDifficulty?>? singleDiffStarsBindable;
 
-        private Container header = null!;
-        private Box colourBox = null!;
+        private Container panel = null!;
+        private Box backgroundBorder = null!;
+        private BeatmapSetPanelBackground background = null!;
         private Container backgroundContainer = null!;
-        private Container backgroundContentContainer = null!;
-        private Container mainFlowContainer = null!;
-        private Box backgroundPlaceholder = null!;
-        private Container iconContainer = null!;
+        private FillFlowContainer mainFlowContainer = null!;
+        private Container selectionIconContainer = null!;
+        private SpriteIcon chevronIcon = null!;
         private Box hoverLayer = null!;
 
         private readonly BindableBool expanded = new BindableBool();
+
+        private OsuSpriteText titleText = null!;
+        private OsuSpriteText artistText = null!;
+        private UpdateBeatmapSetButtonV2 updateButton = null!;
+        private BeatmapSetOnlineStatusPill statusPill = null!;
+        private DifficultySpectrumDisplay difficultiesDisplay = null!;
+
+        private ConstrainedIconContainer singleDiffIcon = null!;
+        private FillFlowContainer singleDiffLine = null!;
+        private StarRatingDisplay singleDiffStarRating = null!;
+        private TopLocalRankV2 singleDiffRank = null!;
+        private OsuSpriteText singleDiffName = null!;
+        private OsuSpriteText singleDiffAuthor = null!;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -76,101 +91,203 @@ namespace osu.Game.Screens.SelectV2
             Width = 1.25f;
             Height = HEIGHT;
 
-            InternalChild = header = new Container
+            InternalChild = panel = new Container
             {
-                Name = "CarouselHeader",
                 Shear = shear,
                 Masking = true,
                 CornerRadius = corner_radius,
                 RelativeSizeAxes = Axes.Both,
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Type = EdgeEffectType.Shadow,
+                    Radius = 10,
+                },
                 Children = new Drawable[]
                 {
-                    new Container
+                    new BufferedContainer
                     {
                         RelativeSizeAxes = Axes.Both,
                         Children = new Drawable[]
                         {
-                            new BufferedContainer
+                            backgroundBorder = new Box
                             {
-                                RelativeSizeAxes = Axes.Both,
+                                RelativeSizeAxes = Axes.Y,
+                                Alpha = 0,
+                                EdgeSmoothness = new Vector2(2, 0),
+                            },
+                            backgroundContainer = new Container
+                            {
+                                Masking = true,
+                                CornerRadius = corner_radius,
+                                RelativeSizeAxes = Axes.X,
+                                MaskingSmoothness = 2,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft,
                                 Children = new Drawable[]
                                 {
-                                    colourBox = new Box
+                                    background = new BeatmapSetPanelBackground
                                     {
-                                        RelativeSizeAxes = Axes.Y,
-                                        Alpha = 0,
-                                        EdgeSmoothness = new Vector2(2, 0),
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        RelativeSizeAxes = Axes.Both,
+                                        Shear = -shear,
+                                        // Scale up a bit to cover the sheared edges.
+                                        Scale = new Vector2(1.05f),
                                     },
-                                    backgroundContentContainer = new Container
+                                    new Box
                                     {
-                                        Masking = true,
-                                        CornerRadius = corner_radius,
-                                        RelativeSizeAxes = Axes.X,
-                                        MaskingSmoothness = 2,
-                                        Anchor = Anchor.CentreLeft,
-                                        Origin = Anchor.CentreLeft,
-                                        Children = new Drawable[]
-                                        {
-                                            backgroundPlaceholder = new Box
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Colour = colourProvider.Background5,
-                                                Alpha = 0,
-                                            },
-                                            backgroundContainer = new Container
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                            },
-                                        },
-                                    },
-                                }
-                            },
-                            iconContainer = new Container
-                            {
-                                AutoSizeAxes = Axes.Both,
-                                Shear = -shear,
-                                Alpha = 0,
-                                Origin = Anchor.Centre,
-                                Anchor = Anchor.CentreLeft,
-                            },
-                            mainFlowContainer = new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                            },
-                            hoverLayer = new Box
-                            {
-                                Colour = colours.Blue.Opacity(0.1f),
-                                Alpha = 0,
-                                Blending = BlendingParameters.Additive,
-                                RelativeSizeAxes = Axes.Both,
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = ColourInfo.GradientHorizontal(colourProvider.Background5.Opacity(0.5f), colourProvider.Background5.Opacity(0f)),
+                                    }
+                                },
                             },
                         }
                     },
-                    new HeaderSounds(),
+                    selectionIconContainer = new Container
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Shear = -shear,
+                        Alpha = 0,
+                        Origin = Anchor.Centre,
+                        Anchor = Anchor.CentreLeft,
+                        Children = new Drawable[]
+                        {
+                            singleDiffIcon = new ConstrainedIconContainer
+                            {
+                                X = difficulty_icon_container_width / 2,
+                                Origin = Anchor.Centre,
+                                Anchor = Anchor.Centre,
+                                Size = new Vector2(20),
+                            },
+                            chevronIcon = new SpriteIcon
+                            {
+                                X = arrow_container_width / 2,
+                                Origin = Anchor.Centre,
+                                Anchor = Anchor.Centre,
+                                Icon = FontAwesome.Solid.ChevronRight,
+                                Size = new Vector2(12),
+                                Colour = colourProvider.Background5,
+                            },
+                        }
+                    },
+                    mainFlowContainer = new FillFlowContainer
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Vertical,
+                        Padding = new MarginPadding { Top = 7.5f, Left = 15, Bottom = 5 },
+                        Children = new Drawable[]
+                        {
+                            titleText = new OsuSpriteText
+                            {
+                                Font = OsuFont.GetFont(weight: FontWeight.Bold, size: 22, italics: true),
+                                Shadow = true,
+                                Shear = -shear,
+                            },
+                            artistText = new OsuSpriteText
+                            {
+                                Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 17, italics: true),
+                                Shadow = true,
+                                Shear = -shear,
+                            },
+                            new FillFlowContainer
+                            {
+                                Direction = FillDirection.Horizontal,
+                                AutoSizeAxes = Axes.Both,
+                                Shear = -shear,
+                                Margin = new MarginPadding { Top = 5f },
+                                Children = new Drawable[]
+                                {
+                                    updateButton = new UpdateBeatmapSetButtonV2
+                                    {
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Margin = new MarginPadding { Right = 5f, Top = -2f },
+                                    },
+                                    statusPill = new BeatmapSetOnlineStatusPill
+                                    {
+                                        AutoSizeAxes = Axes.Both,
+                                        Origin = Anchor.CentreLeft,
+                                        Anchor = Anchor.CentreLeft,
+                                        TextSize = 11,
+                                        TextPadding = new MarginPadding { Horizontal = 8, Vertical = 2 },
+                                        Margin = new MarginPadding { Right = 5f },
+                                    },
+                                    difficultiesDisplay = new DifficultySpectrumDisplay
+                                    {
+                                        DotSize = new Vector2(5, 10),
+                                        DotSpacing = 2,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Alpha = 0f,
+                                    },
+                                    singleDiffLine = new FillFlowContainer
+                                    {
+                                        Direction = FillDirection.Horizontal,
+                                        AutoSizeAxes = Axes.Both,
+                                        Children = new Drawable[]
+                                        {
+                                            singleDiffStarRating = new StarRatingDisplay(default, StarRatingDisplaySize.Small)
+                                            {
+                                                Origin = Anchor.CentreLeft,
+                                                Anchor = Anchor.CentreLeft,
+                                                Margin = new MarginPadding { Right = 5f },
+                                            },
+                                            singleDiffRank = new TopLocalRankV2
+                                            {
+                                                Scale = new Vector2(8f / 11),
+                                                Origin = Anchor.CentreLeft,
+                                                Anchor = Anchor.CentreLeft,
+                                                Margin = new MarginPadding { Right = 5f },
+                                            },
+                                            singleDiffName = new OsuSpriteText
+                                            {
+                                                Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
+                                                Origin = Anchor.BottomLeft,
+                                                Anchor = Anchor.BottomLeft,
+                                                Margin = new MarginPadding { Right = 5f, Bottom = 2f },
+                                            },
+                                            singleDiffAuthor = new OsuSpriteText
+                                            {
+                                                Colour = colourProvider.Content2,
+                                                Font = OsuFont.GetFont(weight: FontWeight.SemiBold),
+                                                Origin = Anchor.BottomLeft,
+                                                Anchor = Anchor.BottomLeft,
+                                                Margin = new MarginPadding { Right = 5f, Bottom = 2f },
+                                            }
+                                        }
+                                    },
+                                },
+                            }
+                        }
+                    },
+                    hoverLayer = new Box
+                    {
+                        Colour = colours.Blue.Opacity(0.1f),
+                        Alpha = 0,
+                        Blending = BlendingParameters.Additive,
+                        RelativeSizeAxes = Axes.Both,
+                    },
+                    new HoverSounds(),
                 }
             };
-
-            // Header.AddRange(drawables);
-            // drawables.ForEach(d => d.FadeInFromZero(150));
-            // updateSelectionState();
         }
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
         {
-            var inputRectangle = DrawRectangle;
+            var inputRectangle = panel.DrawRectangle;
 
-            // Cover a gap that could be introduced by the spacing between a BeatmapSetPanel and a BeatmapPanel either above it or below it.
+            // Cover a gap introduced by the spacing between a BeatmapSetPanel and a BeatmapPanel either above it or below it.
             inputRectangle = inputRectangle.Inflate(new MarginPadding { Vertical = BeatmapCarousel.SPACING / 2f });
 
-            return inputRectangle.Contains(ToLocalSpace(screenSpacePos));
+            return inputRectangle.Contains(panel.ToLocalSpace(screenSpacePos));
         }
 
         protected override void LoadComplete()
         {
             base.LoadComplete();
 
-            expanded.BindValueChanged(_ => updateSelectionDisplay(), true);
-            KeyboardSelected.BindValueChanged(_ => updateSelectionDisplay());
+            expanded.BindValueChanged(_ => updateExpandedDisplay(), true);
+            KeyboardSelected.BindValueChanged(_ => updateKeyboardSelectedDisplay(), true);
         }
 
         protected override void PrepareForUse()
@@ -183,125 +300,156 @@ namespace osu.Game.Screens.SelectV2
             var beatmapSet = (BeatmapSetInfo)Item.Model;
 
             // Choice of background image matches BSS implementation (always uses the lowest `beatmap_id` from the set).
-            backgroundContainer.Child = new SetPanelBackground(beatmaps.GetWorkingBeatmap(beatmapSet.Beatmaps.MinBy(b => b.OnlineID)))
-            {
-                RelativeSizeAxes = Axes.Both,
-                Shear = -shear,
-                Anchor = Anchor.BottomLeft,
-                Origin = Anchor.BottomLeft,
-            };
+            background.Beatmap = beatmaps.GetWorkingBeatmap(beatmapSet.Beatmaps.MinBy(b => b.OnlineID));
 
-            mainFlowContainer.Child = new SetPanelContentV2(beatmapSet)
-            {
-                RelativeSizeAxes = Axes.Both
-            };
+            titleText.Text = new RomanisableString(beatmapSet.Metadata.TitleUnicode, beatmapSet.Metadata.Title);
+            artistText.Text = new RomanisableString(beatmapSet.Metadata.ArtistUnicode, beatmapSet.Metadata.Artist);
+            updateButton.BeatmapSet = beatmapSet;
+            statusPill.Status = beatmapSet.Status;
+
+            singleDiffStarsToken?.Cancel();
+            singleDiffStarsToken = new CancellationTokenSource();
+            singleDiffStarsBindable = null;
 
             if (beatmapSet.Beatmaps.Count == 1)
             {
-                iconContainer.Add(new ConstrainedIconContainer
-                {
-                    X = difficulty_icon_container_width / 2,
-                    Origin = Anchor.Centre,
-                    Anchor = Anchor.Centre,
-                    Icon = beatmapSet.Beatmaps.Single().Ruleset.CreateInstance().CreateIcon(),
-                    Size = new Vector2(20),
-                });
+                chevronIcon.Hide();
+                difficultiesDisplay.Hide();
+
+                var singleBeatmap = beatmapSet.Beatmaps.Single();
+
+                singleDiffIcon.Icon = singleBeatmap.Ruleset.CreateInstance().CreateIcon();
+                singleDiffIcon.Show();
+
+                singleDiffRank.Beatmap = singleBeatmap;
+                singleDiffName.Text = singleBeatmap.DifficultyName;
+                singleDiffAuthor.Text = BeatmapsetsStrings.ShowDetailsMappedBy(singleBeatmap.Metadata.Author.Username);
+                singleDiffLine.Show();
+
+                computeSingleDiffStars(singleBeatmap, singleDiffStarsToken.Token);
             }
             else
             {
-                iconContainer.Add(new SpriteIcon
-                {
-                    X = arrow_container_width / 2,
-                    Origin = Anchor.Centre,
-                    Anchor = Anchor.Centre,
-                    Icon = FontAwesome.Solid.ChevronRight,
-                    Size = new Vector2(12),
-                    // TODO: implement colour sampling of beatmap background
-                    Colour = colourProvider.Background5,
-                });
+                singleDiffIcon.Hide();
+                singleDiffLine.Hide();
+
+                chevronIcon.Show();
+
+                difficultiesDisplay.BeatmapSet = beatmapSet;
+                difficultiesDisplay.Show();
+
+                backgroundBorder.Colour = Color4.White;
+                selectionIconContainer.Colour = Color4.White;
             }
 
-            this.FadeInFromZero(500, Easing.OutQuint);
-            updateSelectionDisplay();
+            updateExpandedState();
+            updateExpandedDisplay();
+            FinishTransforms(true);
+
+            this.FadeInFromZero(duration, Easing.OutQuint);
         }
 
-        protected override void Update()
-        {
-            base.Update();
-
-            var ourBeatmapSet = (BeatmapSetInfo?)Item?.Model;
-            var expandedBeatmapSet = ((BeatmapInfo?)carousel.CurrentSelection)?.BeatmapSet;
-            expanded.Value = ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true;
-        }
-
-        protected override bool OnHover(HoverEvent e)
-        {
-            hoverLayer.FadeIn(100, Easing.OutQuint);
-            return true;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            hoverLayer.FadeOut(1000, Easing.OutQuint);
-            base.OnHoverLost(e);
-        }
-
-        private void updateSelectionDisplay()
+        private void updateExpandedDisplay()
         {
             if (Item == null)
                 return;
 
             var beatmapSet = (BeatmapSetInfo)Item.Model;
 
-            float colourBoxWidth = beatmapSet.Beatmaps.Count == 1 ? difficulty_icon_container_width : arrow_container_width;
+            float selectionIndicatorWidth = beatmapSet.Beatmaps.Count == 1 ? difficulty_icon_container_width : arrow_container_width;
 
-            bool selected = expanded.Value;
+            updatePanelPosition();
 
-            header.MoveToX(selected ? -75f : 0, duration, Easing.OutQuint);
+            backgroundBorder.RelativeSizeAxes = expanded.Value ? Axes.Both : Axes.Y;
+            backgroundBorder.Width = expanded.Value ? 1 : selectionIndicatorWidth + corner_radius;
+            backgroundBorder.FadeTo(expanded.Value ? 1 : 0, duration, Easing.OutQuint);
+            selectionIconContainer.FadeTo(expanded.Value ? 1 : 0, duration, Easing.OutQuint);
 
-            backgroundContentContainer.Height = selected ? HEIGHT - 4 : HEIGHT;
+            backgroundContainer.ResizeHeightTo(expanded.Value ? HEIGHT - 4 : HEIGHT, duration, Easing.OutQuint);
+            backgroundContainer.MoveToX(expanded.Value ? selectionIndicatorWidth : 0, duration, Easing.OutQuint);
+            mainFlowContainer.MoveToX(expanded.Value ? selectionIndicatorWidth : 0, duration, Easing.OutQuint);
 
-            // TODO: implement colour sampling of beatmap background for colour box and offset this by 10, hide for now
-            backgroundContentContainer.MoveToX(selected ? colourBoxWidth : 0, duration, Easing.OutQuint);
-            mainFlowContainer.MoveToX(selected ? colourBoxWidth : 0, duration, Easing.OutQuint);
+            panel.EdgeEffect = panel.EdgeEffect with { Radius = expanded.Value ? 15 : 10 };
+            updateEdgeEffectColour();
+        }
 
-            colourBox.RelativeSizeAxes = selected ? Axes.Both : Axes.Y;
-            colourBox.Width = selected ? 1 : colourBoxWidth + corner_radius;
-            colourBox.FadeTo(selected ? 1 : 0, duration, Easing.OutQuint);
-            iconContainer.FadeTo(selected ? 1 : 0, duration, Easing.OutQuint);
-            backgroundPlaceholder.FadeTo(selected ? 1 : 0, duration, Easing.OutQuint);
+        private void updateKeyboardSelectedDisplay()
+        {
+            updatePanelPosition();
+            updateHover();
+        }
 
-            starDifficultyCancellationSource?.Cancel();
+        private void updatePanelPosition()
+        {
+            if (expanded.Value)
+                panel.MoveToX(-75f, duration, Easing.OutQuint);
+            else if (KeyboardSelected.Value)
+                panel.MoveToX(-50f, duration, Easing.OutQuint);
+            else
+                panel.MoveToX(0f, duration, Easing.OutQuint);
+        }
 
-            if (beatmapSet.Beatmaps.Count == 1)
+        private void updateHover()
+        {
+            bool hovered = IsHovered || KeyboardSelected.Value;
+
+            if (hovered)
+                hoverLayer.FadeIn(100, Easing.OutQuint);
+            else
+                hoverLayer.FadeOut(1000, Easing.OutQuint);
+        }
+
+        private void computeSingleDiffStars(BeatmapInfo beatmap, CancellationToken cancellationToken)
+        {
+            singleDiffStarsBindable = difficultyCache.GetBindableDifficulty(beatmap, cancellationToken);
+            singleDiffStarsBindable.BindValueChanged(d =>
             {
-                starDifficultyBindable = difficultyCache.GetBindableDifficulty(beatmapSet.Beatmaps.Single(), (starDifficultyCancellationSource = new CancellationTokenSource()).Token);
-                starDifficultyBindable.BindValueChanged(d =>
-                {
-                    // We want to update the EdgeEffect here instead of in value() to make sure the colours are correct
-                    if (d.NewValue != null)
-                    {
-                        colourBox.Colour = colours.ForStarDifficulty(d.NewValue.Value.Stars);
-                        iconContainer.Colour = d.NewValue.Value.Stars > 6.5f ? Colour4.White : colourProvider.Background5;
+                if (d.NewValue == null)
+                    return;
 
-                        header.EdgeEffect = new EdgeEffectParameters
-                        {
-                            Type = EdgeEffectType.Shadow,
-                            Colour = selected ? colours.ForStarDifficulty(d.NewValue.Value.Stars).Opacity(0.5f) : Colour4.Black.Opacity(100),
-                            Radius = selected ? 15 : 10,
-                        };
-                    }
-                }, true);
+                backgroundBorder.FadeColour(colours.ForStarDifficulty(d.NewValue.Value.Stars), duration, Easing.OutQuint);
+                selectionIconContainer.FadeColour(d.NewValue.Value.Stars > 6.5f ? Colour4.White : colourProvider.Background5, duration, Easing.OutQuint);
+                singleDiffStarRating.Current.Value = d.NewValue.Value;
+
+                updateEdgeEffectColour();
+            }, true);
+        }
+
+        private void updateEdgeEffectColour()
+        {
+            if (Item == null)
+                return;
+
+            Color4 colour;
+
+            var beatmapSet = (BeatmapSetInfo)Item.Model;
+
+            if (expanded.Value)
+            {
+                if (beatmapSet.Beatmaps.Count == 1)
+                {
+                    Debug.Assert(singleDiffStarsBindable != null);
+                    colour = colours.ForStarDifficulty(singleDiffStarsBindable.Value?.Stars ?? 0f).Opacity(0.5f);
+                }
+                else
+                    colour = Color4Extensions.FromHex(@"4EBFFF").Opacity(0.5f);
             }
             else
-            {
-                header.EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = selected ? Color4Extensions.FromHex(@"4EBFFF").Opacity(0.5f) : Colour4.Black.Opacity(100),
-                    Radius = selected ? 15 : 10,
-                };
-            }
+                colour = Color4.Black.Opacity(0.4f);
+
+            panel.FadeEdgeEffectTo(colour, duration, Easing.OutQuint);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            updateHover();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            updateHover();
+            base.OnHoverLost(e);
         }
 
         protected override bool OnClick(ClickEvent e)
@@ -310,10 +458,23 @@ namespace osu.Game.Screens.SelectV2
             return true;
         }
 
+        protected override void Update()
+        {
+            base.Update();
+            updateExpandedState();
+        }
+
+        private void updateExpandedState()
+        {
+            var ourBeatmapSet = (BeatmapSetInfo?)Item?.Model;
+            var expandedBeatmapSet = ((BeatmapInfo?)carousel.CurrentSelection)?.BeatmapSet;
+            expanded.Value = ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true;
+        }
+
         #region ICarouselPanel
 
         public CarouselItem? Item { get; set; }
-        public BindableBool Selected { get; } = new BindableBool();
+        BindableBool ICarouselPanel.Selected { get; } = new BindableBool();
         public BindableBool KeyboardSelected { get; } = new BindableBool();
 
         public double DrawYPosition { get; set; }
@@ -325,24 +486,5 @@ namespace osu.Game.Screens.SelectV2
         }
 
         #endregion
-
-        public partial class HeaderSounds : HoverSampleDebounceComponent
-        {
-            private Sample? sampleHover;
-
-            [BackgroundDependencyLoader]
-            private void load(AudioManager audio)
-            {
-                sampleHover = audio.Samples.Get("UI/default-hover");
-            }
-
-            public override void PlayHoverSample()
-            {
-                if (sampleHover == null) return;
-
-                sampleHover.Frequency.Value = 0.99 + RNG.NextDouble(0.02);
-                sampleHover.Play();
-            }
-        }
     }
 }
