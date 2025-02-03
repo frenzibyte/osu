@@ -466,8 +466,10 @@ namespace osu.Game.Screens.SelectV2
 
         private void updateExpandedState()
         {
+            // todo: this should be sourced from CarouselItem instead of arbitrarily comparing against current selection.
             var ourBeatmapSet = (BeatmapSetInfo?)Item?.Model;
             var expandedBeatmapSet = ((BeatmapInfo?)carousel.CurrentSelection)?.BeatmapSet;
+
             expanded.Value = ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true;
         }
 
