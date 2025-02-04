@@ -36,6 +36,9 @@ namespace osu.Game.Screens.SelectV2
         private const float colour_box_width = 30;
         private const float corner_radius = 10;
 
+        private const float preselected_x_offset = -25f;
+        private const float selected_x_offset = -50f;
+
         private const float duration = 500;
 
         [Resolved]
@@ -84,8 +87,10 @@ namespace osu.Game.Screens.SelectV2
             Origin = Anchor.TopRight;
 
             RelativeSizeAxes = Axes.X;
-            Width = 1f;
+            Width = 0.9f;
             Height = HEIGHT;
+
+            Padding = new MarginPadding { Right = preselected_x_offset + selected_x_offset };
 
             InternalChild = panel = new Container
             {
@@ -228,12 +233,12 @@ namespace osu.Game.Screens.SelectV2
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
         {
-            var inputRectangle = DrawRectangle;
+            var inputRectangle = panel.DrawRectangle;
 
             // Cover the gaps introduced by the spacing between BeatmapPanels.
             inputRectangle = inputRectangle.Inflate(new MarginPadding { Vertical = BeatmapCarousel.SPACING / 2f });
 
-            return inputRectangle.Contains(ToLocalSpace(screenSpacePos));
+            return inputRectangle.Contains(panel.ToLocalSpace(screenSpacePos));
         }
 
         protected override void LoadComplete()
@@ -289,28 +294,28 @@ namespace osu.Game.Screens.SelectV2
 
             rightContainer.ResizeHeightTo(selected ? HEIGHT - 4 : HEIGHT, duration, Easing.OutQuint);
 
-            updatePanelWidth();
+            updatePanelPosition();
             updateEdgeEffectColour();
             updateHover();
         }
 
         private void updateKeyboardSelectedDisplay()
         {
-            updatePanelWidth();
+            updatePanelPosition();
             updateHover();
         }
 
-        private void updatePanelWidth()
+        private void updatePanelPosition()
         {
-            float width = 0.8f;
+            float x = 0f;
 
             if (Selected.Value)
-                width += 0.1f;
+                x += selected_x_offset;
 
             if (KeyboardSelected.Value)
-                width += 0.05f;
+                x += preselected_x_offset;
 
-            this.ResizeWidthTo(width, duration, Easing.OutQuint);
+            panel.MoveToX(x, duration, Easing.OutQuint);
         }
 
         private void updateHover()

@@ -38,6 +38,9 @@ namespace osu.Game.Screens.SelectV2
         private const float difficulty_icon_container_width = 30;
         private const float corner_radius = 10;
 
+        private const float preselected_x_offset = -25f;
+        private const float selected_x_offset = -50f;
+
         private const float duration = 500;
 
         [Resolved]
@@ -90,6 +93,8 @@ namespace osu.Game.Screens.SelectV2
             RelativeSizeAxes = Axes.X;
             Width = 1f;
             Height = HEIGHT;
+
+            Padding = new MarginPadding { Right = preselected_x_offset + selected_x_offset };
 
             InternalChild = panel = new Container
             {
@@ -362,7 +367,7 @@ namespace osu.Game.Screens.SelectV2
 
             float selectionIndicatorWidth = beatmapSet.Beatmaps.Count == 1 ? difficulty_icon_container_width : arrow_container_width;
 
-            updatePanelWidth();
+            updatePanelPosition();
 
             backgroundBorder.RelativeSizeAxes = expanded.Value ? Axes.Both : Axes.Y;
             backgroundBorder.Width = expanded.Value ? 1 : selectionIndicatorWidth + corner_radius;
@@ -379,21 +384,21 @@ namespace osu.Game.Screens.SelectV2
 
         private void updateKeyboardSelectedDisplay()
         {
-            updatePanelWidth();
+            updatePanelPosition();
             updateHover();
         }
 
-        private void updatePanelWidth()
+        private void updatePanelPosition()
         {
-            float width = 0.9f;
+            float x = 0f;
 
             if (expanded.Value)
-                width += 0.1f;
+                x += selected_x_offset;
 
             if (KeyboardSelected.Value)
-                width += 0.05f;
+                x += preselected_x_offset;
 
-            this.ResizeWidthTo(width, duration, Easing.OutQuint);
+            panel.MoveToX(x, duration, Easing.OutQuint);
         }
 
         private void updateHover()
