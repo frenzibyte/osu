@@ -51,6 +51,7 @@ namespace osu.Game.Screens.SelectV2
         private StarCounter starCounter = null!;
         private ConstrainedIconContainer iconContainer = null!;
         private Box hoverLayer = null!;
+        private Box activationFlash = null!;
 
         private Box backgroundBorder = null!;
 
@@ -214,6 +215,12 @@ namespace osu.Game.Screens.SelectV2
                         Blending = BlendingParameters.Additive,
                         RelativeSizeAxes = Axes.Both,
                     },
+                    activationFlash = new Box
+                    {
+                        Blending = BlendingParameters.Additive,
+                        Alpha = 0f,
+                        RelativeSizeAxes = Axes.Both,
+                    },
                     new HoverSounds(),
                 }
             };
@@ -343,6 +350,9 @@ namespace osu.Game.Screens.SelectV2
                 starRatingGradient.FadeColour(ColourInfo.GradientHorizontal(starRatingColour.Opacity(0.25f), starRatingColour.Opacity(0)), duration, Easing.OutQuint);
                 starRatingGradient.FadeIn(duration, Easing.OutQuint);
 
+                // todo: this doesn't work for dark star rating colours, still not sure how to fix.
+                activationFlash.FadeColour(starRatingColour, duration, Easing.OutQuint);
+
                 updateEdgeEffectColour();
             }, true);
         }
@@ -409,7 +419,7 @@ namespace osu.Game.Screens.SelectV2
 
         public void Activated()
         {
-            // activationFlash.FadeOutFromOne(500, Easing.OutQuint);
+            activationFlash.FadeOutFromOne(500, Easing.OutQuint);
         }
 
         #endregion
