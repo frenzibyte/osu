@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -13,25 +14,26 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
+using osu.Game.Resources.Localisation.Web;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapSetPanel : PoolableDrawable, ICarouselPanel
+    public partial class BeatmapStandalonePanel : PoolableDrawable, ICarouselPanel
     {
         public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT * 1.6f;
 
-        private const float arrow_container_width = 20;
+        private const float difficulty_icon_container_width = 30;
         private const float corner_radius = 10;
 
         private const float preselected_x_offset = -25f;
@@ -51,21 +53,30 @@ namespace osu.Game.Screens.SelectV2
         [Resolved]
         private OsuColour colours { get; set; } = null!;
 
+        [Resolved]
+        private BeatmapDifficultyCache difficultyCache { get; set; } = null!;
+
+        private CancellationTokenSource? starDifficultyToken;
+        private IBindable<StarDifficulty?>? starDifficultyBindable;
+
         private Container panel = null!;
         private Box backgroundBorder = null!;
         private BeatmapSetPanelBackground background = null!;
         private Container backgroundContainer = null!;
         private FillFlowContainer mainFlowContainer = null!;
-        private SpriteIcon chevronIcon = null!;
         private Box hoverLayer = null!;
-
-        private readonly BindableBool expanded = new BindableBool();
 
         private OsuSpriteText titleText = null!;
         private OsuSpriteText artistText = null!;
         private UpdateBeatmapSetButtonV2 updateButton = null!;
         private BeatmapSetOnlineStatusPill statusPill = null!;
-        private DifficultySpectrumDisplay difficultiesDisplay = null!;
+
+        private ConstrainedIconContainer difficultyIcon = null!;
+        private FillFlowContainer difficultyLine = null!;
+        private StarRatingDisplay difficultyStarRating = null!;
+        private TopLocalRankV2 difficultyRank = null!;
+        private OsuSpriteText difficultyName = null!;
+        private OsuSpriteText difficultyAuthor = null!;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -128,14 +139,12 @@ namespace osu.Game.Screens.SelectV2
                             },
                         }
                     },
-                    chevronIcon = new SpriteIcon
+                    difficultyIcon = new ConstrainedIconContainer
                     {
-                        X = arrow_container_width / 2,
+                        X = difficulty_icon_container_width / 2,
                         Origin = Anchor.Centre,
                         Anchor = Anchor.CentreLeft,
-                        Icon = FontAwesome.Solid.ChevronRight,
-                        Size = new Vector2(12),
-                        Colour = colourProvider.Background5,
+                        Size = new Vector2(20),
                     },
                     mainFlowContainer = new FillFlowContainer
                     {
@@ -176,13 +185,41 @@ namespace osu.Game.Screens.SelectV2
                                         TextPadding = new MarginPadding { Horizontal = 8, Vertical = 2 },
                                         Margin = new MarginPadding { Right = 5f },
                                     },
-                                    difficultiesDisplay = new DifficultySpectrumDisplay
+                                    difficultyLine = new FillFlowContainer
                                     {
-                                        DotSize = new Vector2(5, 10),
-                                        DotSpacing = 2,
-                                        Anchor = Anchor.CentreLeft,
-                                        Origin = Anchor.CentreLeft,
-                                        Alpha = 0f,
+                                        Direction = FillDirection.Horizontal,
+                                        AutoSizeAxes = Axes.Both,
+                                        Children = new Drawable[]
+                                        {
+                                            difficultyStarRating = new StarRatingDisplay(default, StarRatingDisplaySize.Small)
+                                            {
+                                                Origin = Anchor.CentreLeft,
+                                                Anchor = Anchor.CentreLeft,
+                                                Margin = new MarginPadding { Right = 5f },
+                                            },
+                                            difficultyRank = new TopLocalRankV2
+                                            {
+                                                Scale = new Vector2(8f / 11),
+                                                Origin = Anchor.CentreLeft,
+                                                Anchor = Anchor.CentreLeft,
+                                                Margin = new MarginPadding { Right = 5f },
+                                            },
+                                            difficultyName = new OsuSpriteText
+                                            {
+                                                Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
+                                                Origin = Anchor.BottomLeft,
+                                                Anchor = Anchor.BottomLeft,
+                                                Margin = new MarginPadding { Right = 5f, Bottom = 2f },
+                                            },
+                                            difficultyAuthor = new OsuSpriteText
+                                            {
+                                                Colour = colourProvider.Content2,
+                                                Font = OsuFont.GetFont(weight: FontWeight.SemiBold),
+                                                Origin = Anchor.BottomLeft,
+                                                Anchor = Anchor.BottomLeft,
+                                                Margin = new MarginPadding { Right = 5f, Bottom = 2f },
+                                            }
+                                        }
                                     },
                                 },
                             }
@@ -214,7 +251,7 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
-            expanded.BindValueChanged(_ => updateExpandedDisplay(), true);
+            Selected.BindValueChanged(_ => updateSelectedDisplay(), true);
             KeyboardSelected.BindValueChanged(_ => updateKeyboardSelectedDisplay(), true);
         }
 
@@ -226,6 +263,7 @@ namespace osu.Game.Screens.SelectV2
             Debug.Assert(Item.IsGroupSelectionTarget);
 
             var beatmapSet = (BeatmapSetInfo)Item.Model;
+            var singleBeatmap = beatmapSet.Beatmaps.Single();
 
             // Choice of background image matches BSS implementation (always uses the lowest `beatmap_id` from the set).
             background.Beatmap = beatmaps.GetWorkingBeatmap(beatmapSet.Beatmaps.MinBy(b => b.OnlineID));
@@ -234,10 +272,22 @@ namespace osu.Game.Screens.SelectV2
             artistText.Text = new RomanisableString(beatmapSet.Metadata.ArtistUnicode, beatmapSet.Metadata.Artist);
             updateButton.BeatmapSet = beatmapSet;
             statusPill.Status = beatmapSet.Status;
-            difficultiesDisplay.BeatmapSet = beatmapSet;
 
-            updateExpandedState();
-            updateExpandedDisplay();
+            starDifficultyToken?.Cancel();
+            starDifficultyToken = new CancellationTokenSource();
+            starDifficultyBindable = null;
+
+            difficultyIcon.Icon = singleBeatmap.Ruleset.CreateInstance().CreateIcon();
+            difficultyIcon.Show();
+
+            difficultyRank.Beatmap = singleBeatmap;
+            difficultyName.Text = singleBeatmap.DifficultyName;
+            difficultyAuthor.Text = BeatmapsetsStrings.ShowDetailsMappedBy(singleBeatmap.Metadata.Author.Username);
+            difficultyLine.Show();
+
+            computeStarRating(singleBeatmap, starDifficultyToken.Token);
+
+            updateSelectedDisplay();
             FinishTransforms(true);
 
             this.FadeInFromZero(duration, Easing.OutQuint);
@@ -249,30 +299,27 @@ namespace osu.Game.Screens.SelectV2
 
             background.Beatmap = null;
             updateButton.BeatmapSet = null;
-            difficultiesDisplay.BeatmapSet = null;
+            difficultyRank.Beatmap = null;
         }
 
-        private void updateExpandedDisplay()
+        private void updateSelectedDisplay()
         {
             if (Item == null)
                 return;
 
             updatePanelPosition();
 
-            backgroundBorder.RelativeSizeAxes = expanded.Value ? Axes.Both : Axes.Y;
-            backgroundBorder.Width = expanded.Value ? 1 : arrow_container_width + corner_radius;
-            backgroundBorder.FadeTo(expanded.Value ? 1 : 0, duration, Easing.OutQuint);
-            chevronIcon.FadeTo(expanded.Value ? 1 : 0, duration, Easing.OutQuint);
+            backgroundBorder.RelativeSizeAxes = Selected.Value ? Axes.Both : Axes.Y;
+            backgroundBorder.Width = Selected.Value ? 1 : difficulty_icon_container_width + corner_radius;
+            backgroundBorder.FadeTo(Selected.Value ? 1 : 0, duration, Easing.OutQuint);
+            difficultyIcon.FadeTo(Selected.Value ? 1 : 0, duration, Easing.OutQuint);
 
-            backgroundContainer.ResizeHeightTo(expanded.Value ? HEIGHT - 4 : HEIGHT, duration, Easing.OutQuint);
-            backgroundContainer.MoveToX(expanded.Value ? arrow_container_width : 0, duration, Easing.OutQuint);
-            mainFlowContainer.MoveToX(expanded.Value ? arrow_container_width : 0, duration, Easing.OutQuint);
+            backgroundContainer.ResizeHeightTo(Selected.Value ? HEIGHT - 4 : HEIGHT, duration, Easing.OutQuint);
+            backgroundContainer.MoveToX(Selected.Value ? difficulty_icon_container_width : 0, duration, Easing.OutQuint);
+            mainFlowContainer.MoveToX(Selected.Value ? difficulty_icon_container_width : 0, duration, Easing.OutQuint);
 
-            panel.EdgeEffect = panel.EdgeEffect with { Radius = expanded.Value ? 15 : 10 };
-
-            panel.FadeEdgeEffectTo(expanded.Value
-                ? Color4Extensions.FromHex(@"4EBFFF").Opacity(0.5f)
-                : Color4.Black.Opacity(0.4f), duration, Easing.OutQuint);
+            panel.EdgeEffect = panel.EdgeEffect with { Radius = Selected.Value ? 15 : 10 };
+            updateEdgeEffectColour();
         }
 
         private void updateKeyboardSelectedDisplay()
@@ -285,7 +332,7 @@ namespace osu.Game.Screens.SelectV2
         {
             float x = 0f;
 
-            if (expanded.Value)
+            if (Selected.Value)
                 x += selected_x_offset;
 
             if (KeyboardSelected.Value)
@@ -302,6 +349,29 @@ namespace osu.Game.Screens.SelectV2
                 hoverLayer.FadeIn(100, Easing.OutQuint);
             else
                 hoverLayer.FadeOut(1000, Easing.OutQuint);
+        }
+
+        private void computeStarRating(BeatmapInfo beatmap, CancellationToken cancellationToken)
+        {
+            starDifficultyBindable = difficultyCache.GetBindableDifficulty(beatmap, cancellationToken);
+            starDifficultyBindable.BindValueChanged(d =>
+            {
+                if (d.NewValue == null)
+                    return;
+
+                backgroundBorder.FadeColour(colours.ForStarDifficulty(d.NewValue.Value.Stars), duration, Easing.OutQuint);
+                difficultyIcon.FadeColour(d.NewValue.Value.Stars > 6.5f ? Colour4.White : colourProvider.Background5, duration, Easing.OutQuint);
+                difficultyStarRating.Current.Value = d.NewValue.Value;
+
+                updateEdgeEffectColour();
+            }, true);
+        }
+
+        private void updateEdgeEffectColour()
+        {
+            panel.FadeEdgeEffectTo(Selected.Value
+                ? colours.ForStarDifficulty(starDifficultyBindable?.Value?.Stars ?? 0f).Opacity(0.5f)
+                : Color4.Black.Opacity(0.4f), duration, Easing.OutQuint);
         }
 
         protected override bool OnHover(HoverEvent e)
@@ -322,25 +392,10 @@ namespace osu.Game.Screens.SelectV2
             return true;
         }
 
-        protected override void Update()
-        {
-            base.Update();
-            updateExpandedState();
-        }
-
-        private void updateExpandedState()
-        {
-            // todo: this should be sourced from CarouselItem instead of arbitrarily comparing against current selection.
-            var ourBeatmapSet = (BeatmapSetInfo?)Item?.Model;
-            var expandedBeatmapSet = ((BeatmapInfo?)carousel.CurrentSelection)?.BeatmapSet;
-
-            expanded.Value = ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true;
-        }
-
         #region ICarouselPanel
 
         public CarouselItem? Item { get; set; }
-        BindableBool ICarouselPanel.Selected { get; } = new BindableBool();
+        public BindableBool Selected { get; } = new BindableBool();
         public BindableBool KeyboardSelected { get; } = new BindableBool();
 
         public double DrawYPosition { get; set; }

@@ -29,7 +29,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapPanel : PoolableDrawable, ICarouselPanel
+    public partial class BeatmapSetDifficultyPanel : PoolableDrawable, ICarouselPanel
     {
         public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT;
 
