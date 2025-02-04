@@ -343,6 +343,16 @@ namespace osu.Game.Screens.SelectV2
             this.FadeInFromZero(duration, Easing.OutQuint);
         }
 
+        protected override void FreeAfterUse()
+        {
+            base.FreeAfterUse();
+
+            background.Beatmap = null;
+            updateButton.BeatmapSet = null;
+            singleDiffRank.Beatmap = null;
+            difficultiesDisplay.BeatmapSet = null;
+        }
+
         private void updateExpandedDisplay()
         {
             if (Item == null)
