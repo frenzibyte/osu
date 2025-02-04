@@ -40,8 +40,6 @@ namespace osu.Game.Screens.SelectV2
 
         private const float duration = 500;
 
-        private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
-
         [Resolved]
         private BeatmapCarousel carousel { get; set; } = null!;
 
@@ -93,7 +91,6 @@ namespace osu.Game.Screens.SelectV2
 
             InternalChild = panel = new Container
             {
-                Shear = shear,
                 Masking = true,
                 CornerRadius = corner_radius,
                 RelativeSizeAxes = Axes.Both,
@@ -130,7 +127,6 @@ namespace osu.Game.Screens.SelectV2
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
-                                        Shear = -shear,
                                         // Scale up a bit to cover the sheared edges.
                                         Scale = new Vector2(1.05f),
                                     },
@@ -146,7 +142,6 @@ namespace osu.Game.Screens.SelectV2
                     selectionIconContainer = new Container
                     {
                         AutoSizeAxes = Axes.Both,
-                        Shear = -shear,
                         Alpha = 0,
                         Origin = Anchor.Centre,
                         Anchor = Anchor.CentreLeft,
@@ -181,19 +176,16 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 Font = OsuFont.GetFont(weight: FontWeight.Bold, size: 22, italics: true),
                                 Shadow = true,
-                                Shear = -shear,
                             },
                             artistText = new OsuSpriteText
                             {
                                 Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 17, italics: true),
                                 Shadow = true,
-                                Shear = -shear,
                             },
                             new FillFlowContainer
                             {
                                 Direction = FillDirection.Horizontal,
                                 AutoSizeAxes = Axes.Both,
-                                Shear = -shear,
                                 Margin = new MarginPadding { Top = 5f },
                                 Children = new Drawable[]
                                 {

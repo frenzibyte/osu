@@ -38,8 +38,6 @@ namespace osu.Game.Screens.SelectV2
 
         private const float duration = 500;
 
-        private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
-
         [Resolved]
         private BeatmapCarousel carousel { get; set; } = null!;
 
@@ -91,7 +89,6 @@ namespace osu.Game.Screens.SelectV2
 
             InternalChild = panel = new Container
             {
-                Shear = shear,
                 Masking = true,
                 CornerRadius = corner_radius,
                 RelativeSizeAxes = Axes.Both,
@@ -146,7 +143,6 @@ namespace osu.Game.Screens.SelectV2
                         Anchor = Anchor.CentreLeft,
                         Size = new Vector2(20),
                         Colour = colourProvider.Background5,
-                        Shear = -shear,
                     },
                     new FillFlowContainer
                     {
@@ -160,7 +156,6 @@ namespace osu.Game.Screens.SelectV2
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(3, 0),
                                 AutoSizeAxes = Axes.Both,
-                                Shear = -shear,
                                 Children = new Drawable[]
                                 {
                                     starRatingDisplay = new StarRatingDisplay(default, StarRatingDisplaySize.Small)
@@ -186,7 +181,6 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 Direction = FillDirection.Horizontal,
                                 AutoSizeAxes = Axes.Both,
-                                Shear = -shear,
                                 Children = new[]
                                 {
                                     keyCountText = new OsuSpriteText
