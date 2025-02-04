@@ -132,12 +132,6 @@ namespace osu.Game.Screens.SelectV2
 
         protected override float GetSpacingBetweenPanels(CarouselItem top, CarouselItem bottom)
         {
-            var expandedSet = ((BeatmapInfo?)CurrentSelection)?.BeatmapSet;
-
-            if (bottom.Model is BeatmapSetInfo set && set.Equals(expandedSet))
-                // Add top spacing to a beatmap set panel that is currently expanded.
-                return SPACING;
-
             if (top.Model is BeatmapSetInfo && bottom.Model is BeatmapSetInfo)
                 // Add overlap between beatmap set panels.
                 return -SPACING;

@@ -282,22 +282,21 @@ namespace osu.Game.Screens.SelectV2
             CarouselItem? previousVisible = null;
 
             foreach (var item in carouselItems)
-            {
-                float spacing = previousVisible == null || !item.IsVisible ? 0 : GetSpacingBetweenPanels(previousVisible, item);
-                updateItemYPosition(item, ref offset, spacing);
-
-                if (item.IsVisible)
-                    previousVisible = item;
-            }
+                updateItemYPosition(item, ref previousVisible, ref offset);
         }
 
-        private void updateItemYPosition(CarouselItem item, ref float offset, float spacing)
+        private void updateItemYPosition(CarouselItem item, ref CarouselItem? previousVisible, ref float offset)
         {
+            float spacing = previousVisible == null || !item.IsVisible ? 0 : GetSpacingBetweenPanels(previousVisible, item);
+
             offset += spacing;
             item.CarouselYPosition = offset;
 
             if (item.IsVisible)
+            {
                 offset += item.DrawHeight;
+                previousVisible = item;
+            }
         }
 
         #endregion
@@ -459,6 +458,8 @@ namespace osu.Game.Screens.SelectV2
         /// </summary>
         private void refreshAfterSelection()
         {
+            float yPos = visibleHalfHeight;
+
             // Invalidate display range as panel positions and visible status may have changed.
             // Position transfer won't happen unless we invalidate this.
             displayedRange = null;
@@ -476,12 +477,14 @@ namespace osu.Game.Screens.SelectV2
             Selection prevKeyboard = currentKeyboardSelection;
 
             // We are performing two important operations here:
-            // - Link selected models to CarouselItems. If a selection changed, this is where we find the relevant CarouselItems for further use.
             // - Update all Y positions. After a selection occurs, panels may have changed visibility state and therefore Y positions.
-
+            // - Link selected models to CarouselItems. If a selection changed, this is where we find the relevant CarouselItems for further use.
             for (int i = 0; i < count; i++)
             {
                 var item = carouselItems[i];
+                CarouselItem? lastVisible = null;
+
+                updateItemYPosition(item, ref lastVisible, ref yPos);
 
                 if (ReferenceEquals(item.Model, currentKeyboardSelection.Model))
                     currentKeyboardSelection = new Selection(item.Model, item, item.CarouselYPosition, i);
@@ -489,8 +492,6 @@ namespace osu.Game.Screens.SelectV2
                 if (ReferenceEquals(item.Model, currentSelection.Model))
                     currentSelection = new Selection(item.Model, item, item.CarouselYPosition, i);
             }
-
-            updateYPositions(carouselItems, visibleHalfHeight);
 
             // If a keyboard selection is currently made, we want to keep the view stable around the selection.
             // That means that we should offset the immediate scroll position by any change in Y position for the selection.
