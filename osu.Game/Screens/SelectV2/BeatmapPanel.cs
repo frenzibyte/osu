@@ -76,8 +76,6 @@ namespace osu.Game.Screens.SelectV2
         private OsuSpriteText difficultyText = null!;
         private OsuSpriteText authorText = null!;
 
-        private readonly BindableBool isCurrentItemVisible = new BindableBool();
-
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
@@ -235,17 +233,17 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
-            isCurrentItemVisible.BindValueChanged(v =>
+            ruleset.BindValueChanged(_ =>
             {
-                if (v.NewValue)
-                {
-                    computeStarRatingIfNot();
-                    starCounter.ReplayAnimation();
-                }
-            }, true);
+                computeStarRating();
+                updateKeyCount();
+            });
 
-            ruleset.BindValueChanged(_ => updateKeyCount());
-            mods.BindValueChanged(_ => updateKeyCount(), true);
+            mods.BindValueChanged(_ =>
+            {
+                computeStarRating();
+                updateKeyCount();
+            }, true);
 
             Selected.BindValueChanged(_ => updateSelectionDisplay(), true);
             KeyboardSelected.BindValueChanged(_ => updateKeyboardSelectedDisplay(), true);
@@ -266,15 +264,16 @@ namespace osu.Game.Screens.SelectV2
 
             starDifficultyBindable = null;
 
+            computeStarRating();
             updateKeyCount();
-
-            updateVisibilityState();
-            isCurrentItemVisible.TriggerChange();
 
             updateSelectionDisplay();
             FinishTransforms(true);
 
             this.FadeInFromZero(duration, Easing.OutQuint);
+
+            // todo: only do this when visible.
+            // starCounter.ReplayAnimation();
         }
 
         private void updateSelectionDisplay()
@@ -314,15 +313,15 @@ namespace osu.Game.Screens.SelectV2
                 hoverLayer.FadeOut(1000, Easing.OutQuint);
         }
 
-        private void computeStarRatingIfNot()
+        private void computeStarRating()
         {
-            if (starDifficultyBindable != null || Item == null)
+            starDifficultyCancellationSource?.Cancel();
+            starDifficultyCancellationSource = new CancellationTokenSource();
+
+            if (Item == null)
                 return;
 
             var beatmap = (BeatmapInfo)Item.Model;
-
-            starDifficultyCancellationSource?.Cancel();
-            starDifficultyCancellationSource = new CancellationTokenSource();
 
             starDifficultyBindable = difficultyCache.GetBindableDifficulty(beatmap, starDifficultyCancellationSource.Token);
             starDifficultyBindable.BindValueChanged(d =>
@@ -395,17 +394,6 @@ namespace osu.Game.Screens.SelectV2
 
             carousel.TryActivateSelection();
             return true;
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-            updateVisibilityState();
-        }
-
-        private void updateVisibilityState()
-        {
-            isCurrentItemVisible.Value = Item?.IsVisible == true;
         }
 
         #region ICarouselPanel
