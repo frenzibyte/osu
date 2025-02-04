@@ -70,8 +70,6 @@ namespace osu.Game.Screens.SelectV2
         private IBindable<StarDifficulty?>? starDifficultyBindable;
         private CancellationTokenSource? starDifficultyCancellationSource;
 
-        private readonly Bindable<int?> keyCount = new Bindable<int?>();
-
         private Container rightContainer = null!;
         private Box starRatingGradient = null!;
         private TopLocalRankV2 difficultyRank = null!;
@@ -234,24 +232,10 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
-            keyCount.BindValueChanged(v =>
-            {
-                if (v.NewValue != null)
-                {
-                    keyCountText.Alpha = 1;
-                    keyCountText.Text = $"[{v.NewValue}K] ";
-                }
-                else
-                    keyCountText.Alpha = 0;
-            }, true);
-
             isCurrentItemVisible.BindValueChanged(v =>
             {
                 if (v.NewValue)
                 {
-                    if (keyCount.Value == null)
-                        updateKeyCount();
-
                     computeStarRatingIfNot();
                     starCounter.ReplayAnimation();
                 }
@@ -278,7 +262,8 @@ namespace osu.Game.Screens.SelectV2
             authorText.Text = BeatmapsetsStrings.ShowDetailsMappedBy(beatmap.Metadata.Author.Username);
 
             starDifficultyBindable = null;
-            keyCount.Value = null;
+
+            updateKeyCount();
 
             updateVisibilityState();
             isCurrentItemVisible.TriggerChange();
@@ -376,10 +361,13 @@ namespace osu.Game.Screens.SelectV2
                 // Account for mania differences locally for now.
                 // Eventually this should be handled in a more modular way, allowing rulesets to add more information to the panel.
                 ILegacyRuleset legacyRuleset = (ILegacyRuleset)ruleset.Value.CreateInstance();
-                keyCount.Value = legacyRuleset.GetKeyCount(beatmap, mods.Value);
+                int keyCount = legacyRuleset.GetKeyCount(beatmap, mods.Value);
+
+                keyCountText.Alpha = 1;
+                keyCountText.Text = $"[{keyCount}K] ";
             }
             else
-                keyCount.Value = null;
+                keyCountText.Alpha = 0;
         }
 
         protected override bool OnHover(HoverEvent e)

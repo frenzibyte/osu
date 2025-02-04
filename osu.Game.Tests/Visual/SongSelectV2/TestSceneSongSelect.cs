@@ -19,6 +19,7 @@ using osu.Game.Online.API;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Rulesets;
+using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Screens;
@@ -106,6 +107,12 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             AddStep("load screen", () => Stack.Push(new Screens.SelectV2.SongSelectV2()));
             AddUntilStep("wait for load", () => Stack.CurrentScreen is Screens.SelectV2.SongSelectV2 songSelect && songSelect.IsLoaded);
             AddStep("import test beatmap", () => beatmapManager.Import(TestResources.GetTestBeatmapForImport()));
+        }
+
+        [Test]
+        public void TestMania()
+        {
+            AddStep("set mania ruleset", () => Ruleset.Value = new ManiaRuleset().RulesetInfo);
         }
 
         #region Footer
