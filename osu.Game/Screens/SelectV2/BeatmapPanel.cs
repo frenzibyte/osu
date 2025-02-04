@@ -81,8 +81,11 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
+            Anchor = Anchor.TopRight;
+            Origin = Anchor.TopRight;
+
             RelativeSizeAxes = Axes.X;
-            Width = 1.25f;
+            Width = 1f;
             Height = HEIGHT;
 
             InternalChild = panel = new Container
@@ -294,11 +297,11 @@ namespace osu.Game.Screens.SelectV2
         private void updatePanelPosition()
         {
             if (Selected.Value)
-                panel.MoveToX(25f, duration, Easing.OutQuint);
+                this.ResizeWidthTo(0.9f, duration, Easing.OutQuint);
             else if (KeyboardSelected.Value)
-                panel.MoveToX(40f, duration, Easing.OutQuint);
+                this.ResizeWidthTo(0.85f, duration, Easing.OutQuint);
             else
-                panel.MoveToX(75f, duration, Easing.OutQuint);
+                this.ResizeWidthTo(0.8f, duration, Easing.OutQuint);
         }
 
         private void updateHover()
