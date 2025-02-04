@@ -282,25 +282,28 @@ namespace osu.Game.Screens.SelectV2
 
             rightContainer.ResizeHeightTo(selected ? HEIGHT - 4 : HEIGHT, duration, Easing.OutQuint);
 
-            updatePanelPosition();
+            updatePanelWidth();
             updateEdgeEffectColour();
             updateHover();
         }
 
         private void updateKeyboardSelectedDisplay()
         {
-            updatePanelPosition();
+            updatePanelWidth();
             updateHover();
         }
 
-        private void updatePanelPosition()
+        private void updatePanelWidth()
         {
+            float width = 0.8f;
+
             if (Selected.Value)
-                this.ResizeWidthTo(0.9f, duration, Easing.OutQuint);
-            else if (KeyboardSelected.Value)
-                this.ResizeWidthTo(0.85f, duration, Easing.OutQuint);
-            else
-                this.ResizeWidthTo(0.8f, duration, Easing.OutQuint);
+                width += 0.1f;
+
+            if (KeyboardSelected.Value)
+                width += 0.05f;
+
+            this.ResizeWidthTo(width, duration, Easing.OutQuint);
         }
 
         private void updateHover()
