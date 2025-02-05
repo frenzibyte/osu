@@ -42,7 +42,7 @@ namespace osu.Game.Screens.SelectV2
         private const float duration = 500;
 
         [Resolved]
-        private BeatmapCarousel carousel { get; set; } = null!;
+        private BeatmapCarousel? carousel { get; set; }
 
         [Resolved]
         private IBindable<RulesetInfo> ruleset { get; set; } = null!;
@@ -404,6 +404,9 @@ namespace osu.Game.Screens.SelectV2
 
         protected override bool OnClick(ClickEvent e)
         {
+            if (carousel == null)
+                return true;
+
             if (carousel.CurrentSelection != Item!.Model)
             {
                 carousel.CurrentSelection = Item!.Model;

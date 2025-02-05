@@ -40,7 +40,7 @@ namespace osu.Game.Screens.SelectV2
         private const float duration = 500;
 
         [Resolved]
-        private BeatmapCarousel carousel { get; set; } = null!;
+        private BeatmapCarousel? carousel { get; set; }
 
         [Resolved]
         private OverlayColourProvider colourProvider { get; set; } = null!;
@@ -60,6 +60,8 @@ namespace osu.Game.Screens.SelectV2
         private Box hoverLayer = null!;
 
         private readonly BindableBool expanded = new BindableBool();
+
+        public readonly BindableBool CustomExpanded = new BindableBool();
 
         private OsuSpriteText titleText = null!;
         private OsuSpriteText artistText = null!;
@@ -182,7 +184,6 @@ namespace osu.Game.Screens.SelectV2
                                         DotSpacing = 2,
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
-                                        Alpha = 0f,
                                     },
                                 },
                             }
@@ -318,7 +319,9 @@ namespace osu.Game.Screens.SelectV2
 
         protected override bool OnClick(ClickEvent e)
         {
-            carousel.CurrentSelection = Item!.Model;
+            if (carousel != null)
+                carousel.CurrentSelection = Item!.Model;
+
             return true;
         }
 
@@ -332,9 +335,9 @@ namespace osu.Game.Screens.SelectV2
         {
             // todo: this should be sourced from CarouselItem instead of arbitrarily comparing against current selection.
             var ourBeatmapSet = (BeatmapSetInfo?)Item?.Model;
-            var expandedBeatmapSet = ((BeatmapInfo?)carousel.CurrentSelection)?.BeatmapSet;
+            var expandedBeatmapSet = ((BeatmapInfo?)carousel?.CurrentSelection)?.BeatmapSet;
 
-            expanded.Value = ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true;
+            expanded.Value = CustomExpanded.Value || (ourBeatmapSet != null && expandedBeatmapSet?.Equals(ourBeatmapSet) == true);
         }
 
         #region ICarouselPanel

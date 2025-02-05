@@ -42,7 +42,7 @@ namespace osu.Game.Screens.SelectV2
         private const float duration = 500;
 
         [Resolved]
-        private BeatmapCarousel carousel { get; set; } = null!;
+        private BeatmapCarousel? carousel { get; set; }
 
         [Resolved]
         private OverlayColourProvider colourProvider { get; set; } = null!;
@@ -262,8 +262,8 @@ namespace osu.Game.Screens.SelectV2
             Debug.Assert(Item != null);
             Debug.Assert(Item.IsGroupSelectionTarget);
 
-            var beatmapSet = (BeatmapSetInfo)Item.Model;
-            var singleBeatmap = beatmapSet.Beatmaps.Single();
+            var beatmap = (BeatmapInfo)Item.Model;
+            var beatmapSet = beatmap.BeatmapSet!;
 
             // Choice of background image matches BSS implementation (always uses the lowest `beatmap_id` from the set).
             background.Beatmap = beatmaps.GetWorkingBeatmap(beatmapSet.Beatmaps.MinBy(b => b.OnlineID));
@@ -277,15 +277,15 @@ namespace osu.Game.Screens.SelectV2
             starDifficultyToken = new CancellationTokenSource();
             starDifficultyBindable = null;
 
-            difficultyIcon.Icon = singleBeatmap.Ruleset.CreateInstance().CreateIcon();
+            difficultyIcon.Icon = beatmap.Ruleset.CreateInstance().CreateIcon();
             difficultyIcon.Show();
 
-            difficultyRank.Beatmap = singleBeatmap;
-            difficultyName.Text = singleBeatmap.DifficultyName;
-            difficultyAuthor.Text = BeatmapsetsStrings.ShowDetailsMappedBy(singleBeatmap.Metadata.Author.Username);
+            difficultyRank.Beatmap = beatmap;
+            difficultyName.Text = beatmap.DifficultyName;
+            difficultyAuthor.Text = BeatmapsetsStrings.ShowDetailsMappedBy(beatmap.Metadata.Author.Username);
             difficultyLine.Show();
 
-            computeStarRating(singleBeatmap, starDifficultyToken.Token);
+            computeStarRating(beatmap, starDifficultyToken.Token);
 
             updateSelectedDisplay();
             FinishTransforms(true);
@@ -388,7 +388,9 @@ namespace osu.Game.Screens.SelectV2
 
         protected override bool OnClick(ClickEvent e)
         {
-            carousel.CurrentSelection = Item!.Model;
+            if (carousel != null)
+                carousel.CurrentSelection = Item!.Model;
+
             return true;
         }
 
