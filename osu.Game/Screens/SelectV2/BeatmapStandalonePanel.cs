@@ -388,7 +388,7 @@ namespace osu.Game.Screens.SelectV2
                 var value = d.NewValue ?? default;
 
                 backgroundBorder.FadeColour(colours.ForStarDifficulty(value.Stars), duration, Easing.OutQuint);
-                difficultyIcon.FadeColour(value.Stars > 6.5f ? Colour4.White : colourProvider.Background5, duration, Easing.OutQuint);
+                difficultyIcon.FadeColour(value.Stars > 6.5f ? colours.Orange1 : colourProvider.Background5, duration, Easing.OutQuint);
                 difficultyStarRating.Current.Value = value;
 
                 updateEdgeEffectColour();
