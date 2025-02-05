@@ -96,6 +96,7 @@ namespace osu.Game.Screens.SelectV2
             Width = 1f;
             Height = HEIGHT;
 
+            // Add extra width to the right of the panel to accommodate X offsets without showing off its end.
             Padding = new MarginPadding { Right = preselected_x_offset + selected_x_offset };
 
             InternalChild = panel = new Container
