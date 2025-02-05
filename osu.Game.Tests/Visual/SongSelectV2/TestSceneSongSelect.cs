@@ -19,9 +19,12 @@ using osu.Game.Online.API;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Rulesets;
+using osu.Game.Rulesets.Catch;
 using osu.Game.Rulesets.Mania;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Osu;
 using osu.Game.Rulesets.Osu.Mods;
+using osu.Game.Rulesets.Taiko;
 using osu.Game.Screens;
 using osu.Game.Screens.Footer;
 using osu.Game.Screens.Menu;
@@ -110,8 +113,11 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         }
 
         [Test]
-        public void TestMania()
+        public void TestRulesets()
         {
+            AddStep("set osu ruleset", () => Ruleset.Value = new OsuRuleset().RulesetInfo);
+            AddStep("set taiko ruleset", () => Ruleset.Value = new TaikoRuleset().RulesetInfo);
+            AddStep("set catch ruleset", () => Ruleset.Value = new CatchRuleset().RulesetInfo);
             AddStep("set mania ruleset", () => Ruleset.Value = new ManiaRuleset().RulesetInfo);
         }
 
