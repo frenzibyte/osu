@@ -36,8 +36,8 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 beatmapSet = beatmaps.GetAllUsableBeatmapSets().FirstOrDefault(b => b.OnlineID == 241526)
                              ?? beatmaps.GetAllUsableBeatmapSets().FirstOrDefault(b => !b.Protected)
                              ?? TestResources.CreateTestBeatmapSetInfo();
+                CreateThemedContent(OverlayColourScheme.Aquamarine);
             });
-            AddStep("load", () => CreateThemedContent(OverlayColourScheme.Aquamarine));
         }
 
         [Test]
@@ -46,8 +46,8 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             AddStep("random beatmap", () =>
             {
                 beatmapSet = beatmaps.GetAllUsableBeatmapSets().OrderBy(_ => RNG.Next()).First();
+                CreateThemedContent(OverlayColourScheme.Aquamarine);
             });
-            AddStep("reload", () => CreateThemedContent(OverlayColourScheme.Aquamarine));
         }
 
         protected override Drawable CreateContent()

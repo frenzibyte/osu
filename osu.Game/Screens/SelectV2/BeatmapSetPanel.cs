@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Pooling;
@@ -118,14 +117,7 @@ namespace osu.Game.Screens.SelectV2
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
-                                        // Scale up a bit to cover the sheared edges.
-                                        Scale = new Vector2(1.05f),
                                     },
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = ColourInfo.GradientHorizontal(colourProvider.Background5.Opacity(0.5f), colourProvider.Background5.Opacity(0f)),
-                                    }
                                 },
                             },
                         }

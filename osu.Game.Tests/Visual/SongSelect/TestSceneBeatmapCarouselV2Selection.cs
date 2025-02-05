@@ -97,7 +97,7 @@ namespace osu.Game.Tests.Visual.SongSelect
             AddUntilStep("drawable selection restored", () => getSelectedPanel()?.Item?.Model, () => Is.EqualTo(selection));
             AddAssert("drawable selection matches carousel selection", () => selection, () => Is.EqualTo(Carousel.CurrentSelection));
 
-            BeatmapSetDifficultyPanel? getSelectedPanel() => Carousel.ChildrenOfType<BeatmapSetDifficultyPanel>().SingleOrDefault(p => p.Selected.Value);
+            BeatmapDifficultyPanel? getSelectedPanel() => Carousel.ChildrenOfType<BeatmapDifficultyPanel>().SingleOrDefault(p => p.Selected.Value);
         }
 
         [Test]

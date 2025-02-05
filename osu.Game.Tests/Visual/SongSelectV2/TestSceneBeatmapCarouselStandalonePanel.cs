@@ -9,6 +9,8 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Overlays;
+using osu.Game.Rulesets.Mania;
+using osu.Game.Rulesets.Osu;
 using osu.Game.Screens.SelectV2;
 using osu.Game.Tests.Resources;
 using osu.Game.Tests.Visual.UserInterface;
@@ -38,8 +40,8 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                                  ?? TestResources.CreateTestBeatmapSetInfo();
 
                 beatmap = beatmapSet.Beatmaps.First();
+                CreateThemedContent(OverlayColourScheme.Aquamarine);
             });
-            AddStep("load", () => CreateThemedContent(OverlayColourScheme.Aquamarine));
         }
 
         [Test]
@@ -49,9 +51,14 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             {
                 beatmap = beatmaps.GetAllUsableBeatmapSets().OrderBy(_ => RNG.Next())
                                   .First().Beatmaps.OrderBy(_ => RNG.Next()).First();
+                CreateThemedContent(OverlayColourScheme.Aquamarine);
             });
+        }
 
-            AddStep("reload", () => CreateThemedContent(OverlayColourScheme.Aquamarine));
+        [Test]
+        public void TestManiaRuleset()
+        {
+            AddToggleStep("mania ruleset", v => Ruleset.Value = v ? new ManiaRuleset().RulesetInfo : new OsuRuleset().RulesetInfo);
         }
 
         protected override Drawable CreateContent()

@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -9,7 +10,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Pooling;
@@ -24,6 +24,8 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
+using osu.Game.Rulesets;
+using osu.Game.Rulesets.Mods;
 using osuTK;
 using osuTK.Graphics;
 
@@ -45,6 +47,12 @@ namespace osu.Game.Screens.SelectV2
         private BeatmapCarousel? carousel { get; set; }
 
         [Resolved]
+        private IBindable<RulesetInfo> ruleset { get; set; } = null!;
+
+        [Resolved]
+        private IBindable<IReadOnlyList<Mod>> mods { get; set; } = null!;
+
+        [Resolved]
         private OverlayColourProvider colourProvider { get; set; } = null!;
 
         [Resolved]
@@ -56,8 +64,8 @@ namespace osu.Game.Screens.SelectV2
         [Resolved]
         private BeatmapDifficultyCache difficultyCache { get; set; } = null!;
 
-        private CancellationTokenSource? starDifficultyToken;
         private IBindable<StarDifficulty?>? starDifficultyBindable;
+        private CancellationTokenSource? starDifficultyCancellationSource;
 
         private Container panel = null!;
         private Box backgroundBorder = null!;
@@ -75,6 +83,7 @@ namespace osu.Game.Screens.SelectV2
         private FillFlowContainer difficultyLine = null!;
         private StarRatingDisplay difficultyStarRating = null!;
         private TopLocalRankV2 difficultyRank = null!;
+        private OsuSpriteText difficultyKeyCountText = null!;
         private OsuSpriteText difficultyName = null!;
         private OsuSpriteText difficultyAuthor = null!;
 
@@ -127,14 +136,7 @@ namespace osu.Game.Screens.SelectV2
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
-                                        // Scale up a bit to cover the sheared edges.
-                                        Scale = new Vector2(1.05f),
                                     },
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = ColourInfo.GradientHorizontal(colourProvider.Background5.Opacity(0.5f), colourProvider.Background5.Opacity(0f)),
-                                    }
                                 },
                             },
                         }
@@ -195,6 +197,7 @@ namespace osu.Game.Screens.SelectV2
                                             {
                                                 Origin = Anchor.CentreLeft,
                                                 Anchor = Anchor.CentreLeft,
+                                                Scale = new Vector2(8f / 9f),
                                                 Margin = new MarginPadding { Right = 5f },
                                             },
                                             difficultyRank = new TopLocalRankV2
@@ -203,6 +206,14 @@ namespace osu.Game.Screens.SelectV2
                                                 Origin = Anchor.CentreLeft,
                                                 Anchor = Anchor.CentreLeft,
                                                 Margin = new MarginPadding { Right = 5f },
+                                            },
+                                            difficultyKeyCountText = new OsuSpriteText
+                                            {
+                                                Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Alpha = 0,
+                                                Margin = new MarginPadding { Bottom = 2f },
                                             },
                                             difficultyName = new OsuSpriteText
                                             {
@@ -251,6 +262,18 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
+            ruleset.BindValueChanged(_ =>
+            {
+                computeStarRating();
+                updateKeyCount();
+            });
+
+            mods.BindValueChanged(_ =>
+            {
+                computeStarRating();
+                updateKeyCount();
+            }, true);
+
             Selected.BindValueChanged(_ => updateSelectedDisplay(), true);
             KeyboardSelected.BindValueChanged(_ => updateKeyboardSelectedDisplay(), true);
         }
@@ -273,10 +296,6 @@ namespace osu.Game.Screens.SelectV2
             updateButton.BeatmapSet = beatmapSet;
             statusPill.Status = beatmapSet.Status;
 
-            starDifficultyToken?.Cancel();
-            starDifficultyToken = new CancellationTokenSource();
-            starDifficultyBindable = null;
-
             difficultyIcon.Icon = beatmap.Ruleset.CreateInstance().CreateIcon();
             difficultyIcon.Show();
 
@@ -285,7 +304,7 @@ namespace osu.Game.Screens.SelectV2
             difficultyAuthor.Text = BeatmapsetsStrings.ShowDetailsMappedBy(beatmap.Metadata.Author.Username);
             difficultyLine.Show();
 
-            computeStarRating(beatmap, starDifficultyToken.Token);
+            computeStarRating();
 
             updateSelectedDisplay();
             FinishTransforms(true);
@@ -300,6 +319,7 @@ namespace osu.Game.Screens.SelectV2
             background.Beatmap = null;
             updateButton.BeatmapSet = null;
             difficultyRank.Beatmap = null;
+            starDifficultyBindable = null;
         }
 
         private void updateSelectedDisplay()
@@ -351,17 +371,24 @@ namespace osu.Game.Screens.SelectV2
                 hoverLayer.FadeOut(1000, Easing.OutQuint);
         }
 
-        private void computeStarRating(BeatmapInfo beatmap, CancellationToken cancellationToken)
+        private void computeStarRating()
         {
-            starDifficultyBindable = difficultyCache.GetBindableDifficulty(beatmap, cancellationToken);
+            starDifficultyCancellationSource?.Cancel();
+            starDifficultyCancellationSource = new CancellationTokenSource();
+
+            if (Item == null)
+                return;
+
+            var beatmap = (BeatmapInfo)Item.Model;
+
+            starDifficultyBindable = difficultyCache.GetBindableDifficulty(beatmap, starDifficultyCancellationSource.Token);
             starDifficultyBindable.BindValueChanged(d =>
             {
-                if (d.NewValue == null)
-                    return;
+                var value = d.NewValue ?? default;
 
-                backgroundBorder.FadeColour(colours.ForStarDifficulty(d.NewValue.Value.Stars), duration, Easing.OutQuint);
-                difficultyIcon.FadeColour(d.NewValue.Value.Stars > 6.5f ? Colour4.White : colourProvider.Background5, duration, Easing.OutQuint);
-                difficultyStarRating.Current.Value = d.NewValue.Value;
+                backgroundBorder.FadeColour(colours.ForStarDifficulty(value.Stars), duration, Easing.OutQuint);
+                difficultyIcon.FadeColour(value.Stars > 6.5f ? Colour4.White : colourProvider.Background5, duration, Easing.OutQuint);
+                difficultyStarRating.Current.Value = value;
 
                 updateEdgeEffectColour();
             }, true);
@@ -372,6 +399,27 @@ namespace osu.Game.Screens.SelectV2
             panel.FadeEdgeEffectTo(Selected.Value
                 ? colours.ForStarDifficulty(starDifficultyBindable?.Value?.Stars ?? 0f).Opacity(0.5f)
                 : Color4.Black.Opacity(0.4f), duration, Easing.OutQuint);
+        }
+
+        private void updateKeyCount()
+        {
+            if (Item == null)
+                return;
+
+            var beatmap = (BeatmapInfo)Item.Model;
+
+            if (ruleset.Value.OnlineID == 3)
+            {
+                // Account for mania differences locally for now.
+                // Eventually this should be handled in a more modular way, allowing rulesets to add more information to the panel.
+                ILegacyRuleset legacyRuleset = (ILegacyRuleset)ruleset.Value.CreateInstance();
+                int keyCount = legacyRuleset.GetKeyCount(beatmap, mods.Value);
+
+                difficultyKeyCountText.Alpha = 1;
+                difficultyKeyCountText.Text = $"[{keyCount}K] ";
+            }
+            else
+                difficultyKeyCountText.Alpha = 0;
         }
 
         protected override bool OnHover(HoverEvent e)

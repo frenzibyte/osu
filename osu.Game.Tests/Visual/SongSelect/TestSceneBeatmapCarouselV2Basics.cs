@@ -56,16 +56,16 @@ namespace osu.Game.Tests.Visual.SongSelect
             WaitForDrawablePanels();
 
             AddStep("select middle beatmap", () => Carousel.CurrentSelection = BeatmapSets.ElementAt(BeatmapSets.Count - 2));
-            AddStep("scroll to selected item", () => Scroll.ScrollTo(Scroll.ChildrenOfType<BeatmapSetDifficultyPanel>().Single(p => p.Selected.Value)));
+            AddStep("scroll to selected item", () => Scroll.ScrollTo(Scroll.ChildrenOfType<BeatmapDifficultyPanel>().Single(p => p.Selected.Value)));
 
             WaitForScrolling();
 
-            AddStep("save selected screen position", () => positionBefore = Carousel.ChildrenOfType<BeatmapSetDifficultyPanel>().FirstOrDefault(p => p.Selected.Value)!.ScreenSpaceDrawQuad);
+            AddStep("save selected screen position", () => positionBefore = Carousel.ChildrenOfType<BeatmapDifficultyPanel>().FirstOrDefault(p => p.Selected.Value)!.ScreenSpaceDrawQuad);
 
             RemoveFirstBeatmap();
             WaitForSorting();
 
-            AddAssert("select screen position unchanged", () => Carousel.ChildrenOfType<BeatmapSetDifficultyPanel>().Single(p => p.Selected.Value).ScreenSpaceDrawQuad,
+            AddAssert("select screen position unchanged", () => Carousel.ChildrenOfType<BeatmapDifficultyPanel>().Single(p => p.Selected.Value).ScreenSpaceDrawQuad,
                 () => Is.EqualTo(positionBefore));
         }
 
@@ -83,11 +83,11 @@ namespace osu.Game.Tests.Visual.SongSelect
 
             WaitForScrolling();
 
-            AddStep("save selected screen position", () => positionBefore = Carousel.ChildrenOfType<BeatmapSetDifficultyPanel>().FirstOrDefault(p => p.Selected.Value)!.ScreenSpaceDrawQuad);
+            AddStep("save selected screen position", () => positionBefore = Carousel.ChildrenOfType<BeatmapDifficultyPanel>().FirstOrDefault(p => p.Selected.Value)!.ScreenSpaceDrawQuad);
 
             RemoveFirstBeatmap();
             WaitForSorting();
-            AddAssert("select screen position unchanged", () => Carousel.ChildrenOfType<BeatmapSetDifficultyPanel>().Single(p => p.Selected.Value).ScreenSpaceDrawQuad,
+            AddAssert("select screen position unchanged", () => Carousel.ChildrenOfType<BeatmapDifficultyPanel>().Single(p => p.Selected.Value).ScreenSpaceDrawQuad,
                 () => Is.EqualTo(positionBefore));
         }
 

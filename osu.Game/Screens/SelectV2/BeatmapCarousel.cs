@@ -157,7 +157,7 @@ namespace osu.Game.Screens.SelectV2
 
         #region Drawable pooling
 
-        private readonly DrawablePool<BeatmapSetDifficultyPanel> beatmapPanelPool = new DrawablePool<BeatmapSetDifficultyPanel>(100);
+        private readonly DrawablePool<BeatmapDifficultyPanel> beatmapPanelPool = new DrawablePool<BeatmapDifficultyPanel>(100);
         private readonly DrawablePool<BeatmapSetPanel> setPanelPool = new DrawablePool<BeatmapSetPanel>(100);
 
         private void setupPools()
