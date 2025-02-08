@@ -6,24 +6,29 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Online.API;
 using osu.Game.Overlays;
 using osu.Game.Screens.Select.Carousel;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class UpdateBeatmapSetButtonV2 : OsuAnimatedButton
+    public partial class UpdateBeatmapSetButtonV2 : CompositeDrawable, IHasTooltip
     {
+        public LocalisableString TooltipText => buttonState.Value == ButtonState.UpdateAvailable
+            ? "Update beatmap with online changes"
+            : string.Empty;
+
         private BeatmapSetInfo? beatmapSet;
 
         public BeatmapSetInfo? BeatmapSet
@@ -38,8 +43,15 @@ namespace osu.Game.Screens.SelectV2
             }
         }
 
+        private Container content = null!;
+        private Sprite buttonSprite = null!;
+        private Drawable hoverLayer = null!;
         private SpriteIcon icon = null!;
-        private Box progressFill = null!;
+
+        private ArchiveDownloadRequest<IBeatmapSetInfo>? currentDownloadRequest;
+
+        [Resolved]
+        private OsuColour colours { get; set; } = null!;
 
         [Resolved]
         private BeatmapModelDownloader beatmapDownloader { get; set; } = null!;
@@ -53,95 +65,147 @@ namespace osu.Game.Screens.SelectV2
         [Resolved]
         private IDialogOverlay? dialogOverlay { get; set; }
 
-        public UpdateBeatmapSetButtonV2()
-        {
-            Size = new Vector2(75f, 22f);
-        }
-
         private Bindable<bool> preferNoVideo = null!;
 
-        [BackgroundDependencyLoader]
-        private void load(OsuConfigManager config)
-        {
-            const float icon_size = 14;
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+            => content.ReceivePositionalInputAt(screenSpacePos);
 
+        private readonly Bindable<ButtonState> buttonState = new Bindable<ButtonState>();
+
+        [BackgroundDependencyLoader]
+        private void load(OsuConfigManager config, TextureStore textures)
+        {
             preferNoVideo = config.GetBindable<bool>(OsuSetting.PreferNoVideo);
 
-            Content.Anchor = Anchor.Centre;
-            Content.Origin = Anchor.Centre;
-            Content.Shear = new Vector2(OsuGame.SHEAR, 0);
-
-            Content.AddRange(new Drawable[]
+            InternalChild = content = new Container
             {
-                progressFill = new Box
+                Size = new Vector2(80f),
+                Children = new[]
                 {
-                    Colour = Color4.White,
-                    Alpha = 0.2f,
-                    Blending = BlendingParameters.Additive,
-                    RelativeSizeAxes = Axes.Both,
-                    Width = 0,
-                },
-                new FillFlowContainer
-                {
-                    Padding = new MarginPadding { Horizontal = 5, Vertical = 3 },
-                    AutoSizeAxes = Axes.Both,
-                    Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(4),
-                    Shear = new Vector2(-OsuGame.SHEAR, 0),
-                    Children = new Drawable[]
+                    buttonSprite = new Sprite
                     {
-                        new Container
-                        {
-                            Size = new Vector2(icon_size),
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                            Children = new Drawable[]
-                            {
-                                icon = new SpriteIcon
-                                {
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    Icon = FontAwesome.Solid.SyncAlt,
-                                    Size = new Vector2(icon_size),
-                                },
-                            }
-                        },
-                        new OsuSpriteText
-                        {
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                            Font = OsuFont.Default.With(weight: FontWeight.Bold),
-                            Text = "Update",
-                        }
-                    }
-                },
-            });
-
-            Action = performUpdate;
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Size = new Vector2(110f),
+                        Texture = textures.Get(@"Select/update-button"),
+                        Blending = BlendingParameters.Additive,
+                    },
+                    hoverLayer = new Container
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Blending = BlendingParameters.Additive,
+                        Size = new Vector2(80f),
+                        CornerRadius = 10f,
+                        Masking = true,
+                        // EdgeEffect = new EdgeEffectParameters
+                        // {
+                        //     Type = EdgeEffectType.Glow,
+                        //     Colour = colours.Orange1,
+                        //     Radius = 10f,
+                        // },
+                        Child = new Box { RelativeSizeAxes = Axes.Both },
+                    },
+                    icon = new SpriteIcon
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.Centre,
+                        X = 16f,
+                        Icon = FontAwesome.Solid.SyncAlt,
+                        Size = new Vector2(16f),
+                    },
+                    new HoverClickSounds(HoverSampleSet.Button),
+                }
+            };
         }
 
         protected override void LoadComplete()
         {
             base.LoadComplete();
+
             beatmapChanged();
+
+            buttonState.BindValueChanged(_ => updateDisplay());
+            updateDisplay();
         }
 
         private void beatmapChanged()
         {
-            Alpha = beatmapSet?.AllBeatmapsUpToDate == false ? 1 : 0;
-            icon.Spin(4000, RotationDirection.Clockwise);
+            // buttonState.Value = ...
+            // alpha = ...
+            updateDisplay();
+        }
+
+        private void updateDisplay()
+        {
+            // content.MoveToX(IsHovered ? -20f : 0f, 300, Easing.OutQuint);
+            // icon.MoveToX(IsHovered ? 28f : 16f, 300, Easing.OutQuint);
+
+            switch (buttonState.Value)
+            {
+                case ButtonState.UpdateAvailable:
+                    buttonSprite.FadeColour(colours.Orange2, 300, Easing.OutQuint);
+                    hoverLayer.FadeColour(colours.Orange2, 300, Easing.OutQuint);
+                    hoverLayer.FadeTo(IsHovered ? 0.3f : 0f, 300, Easing.OutQuint);
+
+                    icon.Icon = FontAwesome.Solid.SyncAlt;
+                    icon.ClearTransforms();
+                    icon.Spin(4000, RotationDirection.Clockwise, icon.Rotation);
+
+                    content.MoveToX(0f, 300, Easing.OutQuint);
+                    this.FadeIn(300, Easing.OutQuint);
+                    break;
+
+                case ButtonState.Updating:
+                    buttonSprite.FadeColour(colours.Blue1, 300, Easing.OutQuint);
+                    hoverLayer.FadeColour(colours.Blue1, 300, Easing.OutQuint);
+                    hoverLayer.FadeTo(IsHovered ? 0.5f : 0.3f, 300)
+                              .Then()
+                              .FadeTo(IsHovered ? 0.5f : 0.1f, 300)
+                              .Loop();
+
+                    icon.Icon = FontAwesome.Solid.SyncAlt;
+                    icon.Spin(4000, RotationDirection.Clockwise, icon.Rotation);
+
+                    content.MoveToX(0f, 300, Easing.OutQuint);
+                    this.FadeIn(300, Easing.OutQuint);
+                    break;
+
+                case ButtonState.Updated:
+                    buttonSprite.FadeColour(colours.Green1, 300, Easing.OutQuint);
+                    hoverLayer.FadeColour(colours.Green1, 300, Easing.OutQuint);
+                    hoverLayer.FadeTo(0.2f, 300, Easing.OutQuint);
+
+                    icon.Icon = FontAwesome.Regular.CheckCircle;
+                    icon.ClearTransforms();
+                    icon.Rotation = 0;
+
+                    content.Delay(500).MoveToX(20f, 500, Easing.OutQuint);
+                    this.Delay(500).FadeOut(200, Easing.OutQuint);
+                    break;
+            }
         }
 
         protected override bool OnHover(HoverEvent e)
         {
-            icon.Spin(400, RotationDirection.Clockwise);
-            return base.OnHover(e);
+            updateDisplay();
+            return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            icon.Spin(4000, RotationDirection.Clockwise);
+            updateDisplay();
             base.OnHoverLost(e);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            if (buttonState.Value == ButtonState.UpdateAvailable)
+                performUpdate();
+
+            hoverLayer.FadeTo(1f)
+                      .FadeTo(0.3f, 500, Easing.OutQuint);
+            return true;
         }
 
         private bool updateConfirmed;
@@ -176,23 +240,25 @@ namespace osu.Game.Screens.SelectV2
         private void attachExistingDownload()
         {
             Debug.Assert(beatmapSet != null);
-            var download = beatmapDownloader.GetExistingDownload(beatmapSet);
+            currentDownloadRequest = beatmapDownloader.GetExistingDownload(beatmapSet);
 
-            if (download != null)
+            if (currentDownloadRequest != null)
             {
-                Enabled.Value = false;
-                TooltipText = string.Empty;
-
-                download.DownloadProgressed += progress => progressFill.ResizeWidthTo(progress, 100, Easing.OutQuint);
-                download.Failure += _ => attachExistingDownload();
+                buttonState.Value = ButtonState.Updating;
+                Scheduler.AddDelayed(() => buttonState.Value = ButtonState.Updated, 2000);
+                // currentDownloadRequest.Failure += _ => buttonState.Value = ButtonState.UpdateAvailable;
             }
             else
             {
-                Enabled.Value = true;
-                TooltipText = "Update beatmap with online changes";
-
-                progressFill.ResizeWidthTo(0, 100, Easing.OutQuint);
+                buttonState.Value = ButtonState.UpdateAvailable;
             }
+        }
+
+        public enum ButtonState
+        {
+            UpdateAvailable,
+            Updating,
+            Updated,
         }
     }
 }

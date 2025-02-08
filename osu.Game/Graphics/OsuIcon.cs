@@ -108,6 +108,7 @@ namespace osu.Game.Graphics
 
         public const string FONT_NAME = @"Icons";
 
+        public static IconUsage ArrowCycle => get(OsuIconMapping.ArrowCycle);
         public static IconUsage Audio => get(OsuIconMapping.Audio);
         public static IconUsage Beatmap => get(OsuIconMapping.Beatmap);
         public static IconUsage Calendar => get(OsuIconMapping.Calendar);
@@ -183,6 +184,9 @@ namespace osu.Game.Graphics
 
         private enum OsuIconMapping
         {
+            [Description(@"arrow-cycle")]
+            ArrowCycle,
+
             [Description(@"audio")]
             Audio,
 

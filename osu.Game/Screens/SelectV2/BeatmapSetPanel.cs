@@ -57,7 +57,12 @@ namespace osu.Game.Screens.SelectV2
             RelativeSizeAxes = Axes.X;
             Height = HEIGHT;
 
-            InternalChild = panel = new CarouselPanelPiece(set_x_offset)
+            AddInternal(updateButton = new UpdateBeatmapSetButtonV2
+            {
+                Width = 75f,
+                RelativeSizeAxes = Axes.Y,
+            });
+            AddInternal(panel = new CarouselPanelPiece(set_x_offset)
             {
                 Action = onAction,
                 Icon = chevronIcon = new Container
@@ -99,12 +104,6 @@ namespace osu.Game.Screens.SelectV2
                             Margin = new MarginPadding { Top = 5f },
                             Children = new Drawable[]
                             {
-                                updateButton = new UpdateBeatmapSetButtonV2
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Margin = new MarginPadding { Right = 5f, Top = -2f },
-                                },
                                 statusPill = new BeatmapSetOnlineStatusPill
                                 {
                                     AutoSizeAxes = Axes.Both,
@@ -125,7 +124,7 @@ namespace osu.Game.Screens.SelectV2
                         }
                     }
                 }
-            };
+            });
         }
 
         protected override void LoadComplete()
@@ -171,6 +170,12 @@ namespace osu.Game.Screens.SelectV2
             background.Beatmap = null;
             updateButton.BeatmapSet = null;
             difficultiesDisplay.BeatmapSet = null;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            updateButton.X = panel.Padding.Left - 20f;
         }
 
         private void onAction()
