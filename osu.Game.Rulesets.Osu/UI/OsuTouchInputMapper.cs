@@ -16,6 +16,8 @@ namespace osu.Game.Rulesets.Osu.UI
 {
     public partial class OsuTouchInputMapper : Drawable
     {
+        public IReadOnlyList<TrackedTouch> TrackedTouches => trackedTouches;
+
         /// <summary>
         /// All the active <see cref="TouchSource"/>s and the <see cref="OsuAction"/> that it triggered (if any).
         /// Ordered from oldest to newest touch chronologically.
@@ -153,7 +155,7 @@ namespace osu.Game.Rulesets.Osu.UI
             base.OnTouchUp(e);
         }
 
-        private class TrackedTouch
+        public class TrackedTouch
         {
             public readonly TouchSource Source;
 
