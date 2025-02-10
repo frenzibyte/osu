@@ -60,6 +60,15 @@ namespace osu.Game.Rulesets.Osu
             Add(new OsuTouchInputMapper(this) { RelativeSizeAxes = Axes.Both });
         }
 
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            // sync input for OsuTouchInputMapper to receive touches already pressed before gameplay finished loading.
+            // use ScheduleAfterChildren to ensure syncing doesn't happen until OsuTouchInputMapper is loaded and able to receive input events.
+            ScheduleAfterChildren(() => Sync(ButtonSyncKind.Pressed));
+        }
+
         protected override bool Handle(UIEvent e)
         {
             if ((e is MouseMoveEvent || e is TouchMoveEvent) && !AllowUserCursorMovement) return false;
