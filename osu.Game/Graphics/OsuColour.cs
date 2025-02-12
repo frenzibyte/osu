@@ -20,10 +20,7 @@ namespace osu.Game.Graphics
         public static Color4 Gray(float amt) => new Color4(amt, amt, amt, 1f);
         public static Color4 Gray(byte amt) => new Color4(amt, amt, amt, 255);
 
-        /// <summary>
-        /// Retrieves the colour for a given point in the star range.
-        /// </summary>
-        public Color4 ForStarDifficulty(double starDifficulty) => ColourUtils.SampleFromLinearGradient(new[]
+        public static (float start, Color4 colour)[] StarDifficultyGradient => new[]
         {
             (0.1f, Color4Extensions.FromHex("aaaaaa")),
             (0.1f, Color4Extensions.FromHex("4290fb")),
@@ -37,7 +34,12 @@ namespace osu.Game.Graphics
             (6.7f, Color4Extensions.FromHex("6563de")),
             (7.7f, Color4Extensions.FromHex("18158e")),
             (9.0f, Color4.Black),
-        }, (float)Math.Round(starDifficulty, 2, MidpointRounding.AwayFromZero));
+        };
+
+        /// <summary>
+        /// Retrieves the colour for a given point in the star range.
+        /// </summary>
+        public Color4 ForStarDifficulty(double starDifficulty) => ColourUtils.SampleFromLinearGradient(StarDifficultyGradient, (float)Math.Round(starDifficulty, 2, MidpointRounding.AwayFromZero));
 
         /// <summary>
         /// Retrieves the colour for a <see cref="ScoreRank"/>.

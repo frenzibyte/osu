@@ -26,7 +26,7 @@ namespace osu.Game.Graphics.UserInterface
         public const int HEIGHT = 30;
         public const float EXPANDED_SIZE = 50;
 
-        public static readonly Vector2 SHEAR = new Vector2(0.15f, 0);
+        public static readonly Vector2 SHEAR = new Vector2(OsuGame.SHEAR, 0);
 
         private readonly Box fill;
         private readonly Container main;
