@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Testing;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
@@ -19,10 +19,12 @@ using osu.Game.Screens.SelectV2;
 
 namespace osu.Game.Tests.Visual.SongSelectV2
 {
-    public partial class TestSceneBeatmapInfoWedge : SongSelectComponentsTestScene
+    public partial class TestSceneSongSelectTopWedges : SongSelectComponentsTestScene
     {
         private RulesetStore rulesets = null!;
-        private TestBeatmapInfoWedgeV2 infoWedge = null!;
+        private TestBeatmapMainWedge mainWedge = null!;
+        private BeatmapDifficultyWedge diffWedge = null!;
+
         private readonly List<IBeatmap> beatmaps = new List<IBeatmap>();
 
         [BackgroundDependencyLoader]
@@ -49,7 +51,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 {
                     Y = -20,
                     Colour = Colour4.Cornsilk.Darken(0.2f),
-                    Height = BeatmapInfoWedgeV2.WEDGE_HEIGHT + 40,
+                    Height = 250,
                     Width = 0.65f,
                     RelativeSizeAxes = Axes.X,
                     Margin = new MarginPadding { Top = 20, Left = -10 }
@@ -58,18 +60,18 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 {
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding { Top = 20 },
-                    Child = infoWedge = new TestBeatmapInfoWedgeV2
+                    Children = new Drawable[]
                     {
-                        Width = 0.6f,
-                        RelativeSizeAxes = Axes.X,
+                        mainWedge = new TestBeatmapMainWedge(),
+                        diffWedge = new BeatmapDifficultyWedge(),
                     },
                 }
             });
 
-            AddSliderStep("change star difficulty", 0, 11.9, 5.55, v =>
+            AddSliderStep("change star difficulty", 0, 11.9, 4.18, v =>
             {
-                foreach (var hasCurrentValue in infoWedge.ChildrenOfType<IHasCurrentValue<StarDifficulty>>())
-                    hasCurrentValue.Current.Value = new StarDifficulty(v, 0);
+                ((BindableDouble)mainWedge.DisplayedStars).Value = v;
+                ((BindableDouble)diffWedge.DisplayedStars).Value = v;
             });
         }
 
@@ -98,18 +100,18 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         [Test]
         public void TestWedgeVisibility()
         {
-            AddStep("hide", () => { infoWedge.Hide(); });
+            AddStep("hide", () => { mainWedge.Hide(); });
             AddWaitStep("wait for hide", 3);
-            AddAssert("check visibility", () => infoWedge.Alpha == 0);
-            AddStep("show", () => { infoWedge.Show(); });
+            AddAssert("check visibility", () => mainWedge.Alpha == 0);
+            AddStep("show", () => { mainWedge.Show(); });
             AddWaitStep("wait for show", 1);
-            AddAssert("check visibility", () => infoWedge.Alpha > 0);
+            AddAssert("check visibility", () => mainWedge.Alpha > 0);
         }
 
         private void testBeatmapLabels(Ruleset ruleset)
         {
-            AddAssert("check title", () => infoWedge.Info!.TitleLabel.Current.Value == $"{ruleset.ShortName}Title");
-            AddAssert("check artist", () => infoWedge.Info!.ArtistLabel.Current.Value == $"{ruleset.ShortName}Artist");
+            AddAssert("check title", () => mainWedge.Content!.TitleLabel.Current.Value == $"{ruleset.ShortName}Title");
+            AddAssert("check artist", () => mainWedge.Content!.ArtistLabel.Current.Value == $"{ruleset.ShortName}Artist");
         }
 
         [Test]
@@ -122,9 +124,9 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         public void TestNullBeatmapWithBackground()
         {
             selectBeatmap(null);
-            AddAssert("check default title", () => infoWedge.Info!.TitleLabel.Current.Value == Beatmap.Default.BeatmapInfo.Metadata.Title);
-            AddAssert("check default artist", () => infoWedge.Info!.ArtistLabel.Current.Value == Beatmap.Default.BeatmapInfo.Metadata.Artist);
-            AddAssert("check no info labels", () => !infoWedge.Info.ChildrenOfType<BeatmapInfoWedge.WedgeInfoText.InfoLabel>().Any());
+            AddAssert("check default title", () => mainWedge.Content!.TitleLabel.Current.Value == Beatmap.Default.BeatmapInfo.Metadata.Title);
+            AddAssert("check default artist", () => mainWedge.Content!.ArtistLabel.Current.Value == Beatmap.Default.BeatmapInfo.Metadata.Artist);
+            AddAssert("check no info labels", () => !mainWedge.Content.ChildrenOfType<BeatmapInfoWedge.WedgeInfoText.InfoLabel>().Any());
         }
 
         private void setRuleset(RulesetInfo rulesetInfo)
@@ -135,12 +137,12 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             {
                 // wedge content is only refreshed if the ruleset changes, so only wait for load in that case.
                 if (!rulesetInfo.Equals(Ruleset.Value))
-                    containerBefore = infoWedge.DisplayedContent;
+                    containerBefore = mainWedge.DisplayedContent;
 
                 Ruleset.Value = rulesetInfo;
             });
 
-            AddUntilStep("wait for async load", () => infoWedge.DisplayedContent != containerBefore);
+            AddUntilStep("wait for async load", () => mainWedge.DisplayedContent != containerBefore);
         }
 
         private void selectBeatmap(IBeatmap? b)
@@ -149,12 +151,12 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             AddStep($"select {b?.Metadata.Title ?? "null"} beatmap", () =>
             {
-                containerBefore = infoWedge.DisplayedContent;
-                infoWedge.Beatmap = Beatmap.Value = b == null ? Beatmap.Default : CreateWorkingBeatmap(b);
-                infoWedge.Show();
+                containerBefore = mainWedge.DisplayedContent;
+                Beatmap.Value = b == null ? Beatmap.Default : CreateWorkingBeatmap(b);
+                mainWedge.Show();
             });
 
-            AddUntilStep("wait for async load", () => infoWedge.DisplayedContent != containerBefore);
+            AddUntilStep("wait for async load", () => mainWedge.DisplayedContent != containerBefore);
         }
 
         private IBeatmap createTestBeatmap(RulesetInfo ruleset)
@@ -202,10 +204,10 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             };
         }
 
-        private partial class TestBeatmapInfoWedgeV2 : BeatmapInfoWedgeV2
+        private partial class TestBeatmapMainWedge : BeatmapMainWedge
         {
             public new Container? DisplayedContent => base.DisplayedContent;
-            public new WedgeInfoText? Info => base.Info;
+            public new BeatmapMainWedgeContent? Content => base.Content;
         }
 
         private class TestHitObject : ConvertHitObject;
