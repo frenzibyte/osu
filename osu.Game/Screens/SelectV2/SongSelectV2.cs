@@ -9,6 +9,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
@@ -73,7 +74,7 @@ namespace osu.Game.Screens.SelectV2
                     Colour = ColourInfo.GradientVertical(Color4.Black, Color4.Black.Opacity(0f)),
                     Height = (float)Math.Sqrt(0.5f),
                 },
-                new Container
+                new PopoverContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding { Bottom = ScreenFooter.HEIGHT + 10f },
