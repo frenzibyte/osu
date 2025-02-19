@@ -19,7 +19,7 @@ namespace osu.Game.Screens.SelectV2
         {
             Width = 700;
             Height = 600;
-            Y = 320;
+            Y = 260;
         }
 
         [BackgroundDependencyLoader]

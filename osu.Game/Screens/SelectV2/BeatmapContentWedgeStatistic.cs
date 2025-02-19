@@ -31,7 +31,7 @@ namespace osu.Game.Screens.SelectV2
             set
             {
                 valueText.Clear();
-                valueText.AddArbitraryDrawable(new DrawableDate(value, textSize: 14.4f, italic: false, weight: FontWeight.Bold));
+                valueText.AddArbitraryDrawable(new DrawableDate(value, textSize: 14.4f, italic: false, weight: FontWeight.Regular));
             }
         }
 
@@ -47,9 +47,9 @@ namespace osu.Game.Screens.SelectV2
                     int lastLength = total;
                     total += tag.Length + 1;
 
-                    if (total > 90)
+                    if (total > 80)
                     {
-                        string displayTag = tag.Truncate(90 - lastLength);
+                        string displayTag = tag.Truncate(80 - lastLength);
 
                         valueText.AddLink(displayTag, LinkAction.SearchBeatmapSet, tag, displayTag != tag ? tag : null);
                         valueText.AddText(" ");
@@ -81,9 +81,9 @@ namespace osu.Game.Screens.SelectV2
                 {
                     Width = 80,
                     Text = label,
-                    Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
+                    Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Bold),
                 },
-                valueText = new LinkFlowContainer(t => t.Font = t.Font.With(size: 14.4f, weight: FontWeight.Bold))
+                valueText = new LinkFlowContainer(t => t.Font = t.Font.With(size: 14.4f, weight: FontWeight.Regular))
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,

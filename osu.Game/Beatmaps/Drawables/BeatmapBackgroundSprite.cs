@@ -26,7 +26,7 @@ namespace osu.Game.Beatmaps.Drawables
             if (background != null)
                 Texture = background;
 
-            Texture = textures.Get("https://media.discordapp.net/attachments/418500862319525892/1340379678346711172/Rectangle_4899.png?ex=67b2255a&is=67b0d3da&hm=f5a047825befe710e94942067d835d3fb31ce6e5af725bbcb97af798a9589cd5&=&format=webp&quality=lossless&width=1126&height=907");
+            // Texture = textures.Get("https://media.discordapp.net/attachments/418500862319525892/1340379678346711172/Rectangle_4899.png?ex=67b2255a&is=67b0d3da&hm=f5a047825befe710e94942067d835d3fb31ce6e5af725bbcb97af798a9589cd5&=&format=webp&quality=lossless&width=1126&height=907");
         }
     }
 }

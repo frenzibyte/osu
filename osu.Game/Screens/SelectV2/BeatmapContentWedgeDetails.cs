@@ -64,7 +64,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
-                                Padding = new MarginPadding { Horizontal = SongSelectV2.WEDGE_CONTENT_MARGIN + 14, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 14, Right = 35, Vertical = 16 },
                                 Children = new[]
                                 {
                                     new GridContainer
@@ -105,13 +105,34 @@ namespace osu.Game.Screens.SelectV2
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     AutoSizeAxes = Axes.Y,
+                                                    Shear = shear,
                                                     Direction = FillDirection.Vertical,
                                                     Spacing = new Vector2(0f, 15f),
                                                     Children = new Drawable[]
                                                     {
-                                                        successRate = new BeatmapContentSuccessRateBar(),
-                                                        userRating = new BeatmapContentUserRatingBar(),
-                                                        ratingSpread = new BeatmapContentRatingSpreadGraph(),
+                                                        new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.X,
+                                                            AutoSizeAxes = Axes.Y,
+                                                            Padding = new MarginPadding { Left = -22 },
+                                                            Shear = -shear,
+                                                            Child = successRate = new BeatmapContentSuccessRateBar(),
+                                                        },
+                                                        new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.X,
+                                                            AutoSizeAxes = Axes.Y,
+                                                            Padding = new MarginPadding { Left = -11 },
+                                                            Shear = -shear,
+                                                            Child = userRating = new BeatmapContentUserRatingBar(),
+                                                        },
+                                                        new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.X,
+                                                            AutoSizeAxes = Axes.Y,
+                                                            Shear = -shear,
+                                                            Child = ratingSpread = new BeatmapContentRatingSpreadGraph(),
+                                                        },
                                                     },
                                                 },
                                             },
@@ -139,7 +160,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
-                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 53, Right = 55f, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 53, Right = 40f, Vertical = 16 },
                                 Child = failRetryGraph = new BeatmapContentFailRetryGraph(),
                             },
                         },

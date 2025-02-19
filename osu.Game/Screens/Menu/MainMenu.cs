@@ -37,11 +37,11 @@ using osu.Game.Screens.Edit;
 using osu.Game.Screens.OnlinePlay.DailyChallenge;
 using osu.Game.Screens.OnlinePlay.Multiplayer;
 using osu.Game.Screens.OnlinePlay.Playlists;
-using osu.Game.Screens.Select;
 using osu.Game.Seasonal;
 using osuTK;
 using osuTK.Graphics;
 using osu.Game.Localisation;
+using osu.Game.Screens.SelectV2;
 
 namespace osu.Game.Screens.Menu
 {
@@ -234,7 +234,7 @@ namespace osu.Game.Screens.Menu
 
         public void ReturnToOsuLogo() => Buttons.State = ButtonSystemState.Initial;
 
-        private void loadSoloSongSelect() => this.Push(new PlaySongSelect());
+        private void loadSoloSongSelect() => this.Push(new SongSelectV2());
 
         public override void OnEntering(ScreenTransitionEvent e)
         {

@@ -18,7 +18,6 @@ using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Online.Leaderboards;
 using osu.Game.Overlays;
-using osu.Game.Rulesets.Mods;
 using osu.Game.Scoring;
 using osu.Game.Utils;
 using osuTK;
@@ -32,7 +31,6 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
 
         private DateAndStatisticsPanel dateAndStatistics = null!;
         private ModsPanel modsPanel = null!;
-        private MultiplierPanel multiplierPanel = null!;
         private TotalScoreRankPanel totalScoreRankPanel = null!;
 
         [Cached]
@@ -58,7 +56,6 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                 {
                     dateAndStatistics = new DateAndStatisticsPanel(),
                     modsPanel = new ModsPanel(),
-                    multiplierPanel = new MultiplierPanel(),
                     totalScoreRankPanel = new TotalScoreRankPanel(),
                 },
             };
@@ -73,7 +70,6 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
 
             dateAndStatistics.Score = content;
             modsPanel.Score = content;
-            multiplierPanel.Score = content;
             totalScoreRankPanel.Score = content;
             lastContent = content;
         }
@@ -110,8 +106,14 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         return new StatisticRow(s.DisplayName, lightColour, s.Count.ToLocalisableString("N0"));
                     });
 
+                    double multiplier = 1.0;
+
+                    foreach (var mod in value.Mods)
+                        multiplier *= mod.ScoreMultiplier;
+
                     var generalStatistics = new[]
                     {
+                        new StatisticRow("Score Multiplier", colourProvider.Content2, ModUtils.FormatScoreMultiplier(multiplier)),
                         new StatisticRow("Max Combo", colourProvider.Content2, value.MaxCombo.ToLocalisableString(@"0\x")),
                         new StatisticRow("Accuracy", colourProvider.Content2, value.Accuracy.FormatAccuracy()),
                     };
@@ -237,20 +239,34 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
 
         private partial class ModsPanel : CompositeDrawable
         {
+            public Box ModsBackground = null!;
             public FillFlowContainer Mods = null!;
+
+            [Resolved]
+            private OsuColour colours { get; set; } = null!;
 
             public ScoreInfo Score
             {
-                set => Mods.ChildrenEnumerable = value.Mods.Select(m => new LeaderboardScoreV2.ColouredModSwitchTiny(m)
+                set
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Scale = new Vector2(0.375f),
-                });
+                    double multiplier = 1.0;
+
+                    foreach (var mod in value.Mods)
+                        multiplier *= mod.ScoreMultiplier;
+
+                    Color4 colour = multiplier > 1 ? colours.Red1 : colours.Lime1;
+                    // ModsBackground.Colour = ColourInfo.GradientVertical(colour.Opacity(0f), colour.Opacity(0.25f));
+                    Mods.ChildrenEnumerable = value.Mods.Select(m => new LeaderboardScoreV2.ColouredModSwitchTiny(m)
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Scale = new Vector2(0.375f),
+                    });
+                }
             }
 
             [BackgroundDependencyLoader]
-            private void load(OverlayColourProvider colourProvider, OsuColour colours)
+            private void load(OverlayColourProvider colourProvider)
             {
                 RelativeSizeAxes = Axes.X;
                 AutoSizeAxes = Axes.Y;
@@ -271,10 +287,10 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         Colour = colourProvider.Background4,
                         RelativeSizeAxes = Axes.Both,
                     },
-                    new Box
+                    ModsBackground = new Box
                     {
-                        Colour = ColourInfo.GradientVertical(colours.Red1.Opacity(0f), colours.Red1.Opacity(0.25f)),
                         RelativeSizeAxes = Axes.Both,
+                        Colour = Color4.Transparent,
                     },
                     Mods = new FillFlowContainer
                     {
@@ -284,101 +300,6 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         Padding = new MarginPadding { Horizontal = 20f },
                         Spacing = new Vector2(3f),
                     },
-                };
-            }
-        }
-
-        private partial class MultiplierPanel : CompositeDrawable
-        {
-            public Box Background = null!;
-            public Box ValueBackground = null!;
-            public OsuSpriteText Label = null!;
-            public OsuSpriteText Value = null!;
-
-            [Resolved]
-            private OsuColour colours { get; set; } = null!;
-
-            public ScoreInfo Score
-            {
-                set
-                {
-                    double multiplier = 1.0;
-
-                    foreach (var mod in value.Mods)
-                        multiplier *= mod.ScoreMultiplier;
-
-                    Color4 light = multiplier > 1 ? colours.Red1 : colours.Lime1;
-                    Color4 dark = multiplier > 1 ? colours.Red4 : colours.Lime4;
-
-                    Background.Colour = light;
-                    ValueBackground.Colour = dark;
-                    Label.Colour = dark;
-                    Value.Text = ModUtils.FormatScoreMultiplier(multiplier);
-                }
-            }
-
-            [BackgroundDependencyLoader]
-            private void load()
-            {
-                RelativeSizeAxes = Axes.X;
-                AutoSizeAxes = Axes.Y;
-                CornerRadius = 10;
-                Masking = true;
-
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Color4.Black.Opacity(0.25f),
-                    Radius = 4f,
-                };
-
-                InternalChildren = new Drawable[]
-                {
-                    Background = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = colours.Red1,
-                    },
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Margin = new MarginPadding { Bottom = 4f, Top = 4f + spacing },
-                        Padding = new MarginPadding { Horizontal = 10f },
-                        Children = new Drawable[]
-                        {
-                            Label = new OsuSpriteText
-                            {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                Text = "Multiplier",
-                                Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
-                                Colour = colours.Red4,
-                            },
-                            new CircularContainer
-                            {
-                                Anchor = Anchor.CentreRight,
-                                Origin = Anchor.CentreRight,
-                                Masking = true,
-                                AutoSizeAxes = Axes.Both,
-                                Children = new Drawable[]
-                                {
-                                    ValueBackground = new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = colours.Red4,
-                                    },
-                                    Value = new OsuSpriteText
-                                    {
-                                        Text = "1.97x",
-                                        Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
-                                        Margin = new MarginPadding { Horizontal = 13f, Vertical = 4f },
-                                        UseFullGlyphHeight = false,
-                                    }
-                                },
-                            },
-                        }
-                    }
                 };
             }
         }
