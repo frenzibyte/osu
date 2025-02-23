@@ -44,6 +44,11 @@ namespace osu.Game.Rulesets.Mania
                     Keywords = new[] { "color" },
                     LabelText = RulesetSettingsStrings.TimingBasedColouring,
                     Current = config.GetBindable<bool>(ManiaRulesetSetting.TimingBasedNoteColouring),
+                },
+                new SettingsCheckbox
+                {
+                    LabelText = RulesetSettingsStrings.ManiaLandscapeTouchControls,
+                    Current = config.GetBindable<bool>(ManiaRulesetSetting.TouchControls),
                 }
             };
         }

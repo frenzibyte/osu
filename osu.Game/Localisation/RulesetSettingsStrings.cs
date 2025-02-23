@@ -89,6 +89,11 @@ namespace osu.Game.Localisation
         /// </summary>
         public static LocalisableString TouchControlScheme => new TranslatableString(getKey(@"touch_control_scheme"), @"Touch control scheme");
 
+        /// <summary>
+        /// "Prefer osu!mania on landscape mode with touch controls"
+        /// </summary>
+        public static LocalisableString ManiaLandscapeTouchControls => new TranslatableString(getKey(@"mania_landscape_touch_controls"), "Prefer osu!mania on landscape mode with touch controls");
+
         private static string getKey(string key) => $@"{prefix}:{key}";
     }
 }
