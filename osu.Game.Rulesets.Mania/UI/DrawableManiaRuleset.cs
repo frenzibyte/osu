@@ -50,7 +50,9 @@ namespace osu.Game.Rulesets.Mania.UI
 
         public IEnumerable<BarLine> BarLines;
 
-        public override bool RequiresPortraitOrientation => Beatmap.Stages.Count == 1;
+        public override bool RequiresPortraitOrientation
+            => Beatmap.Stages.Count == 1 &&
+               Config.Get<ManiaMobilePlayStyle>(ManiaRulesetSetting.MobilePlayStyle) == ManiaMobilePlayStyle.Portrait;
 
         protected override bool RelativeScaleBeatLengths => true;
 

@@ -44,6 +44,11 @@ namespace osu.Game.Rulesets.Mania
                     Keywords = new[] { "color" },
                     LabelText = RulesetSettingsStrings.TimingBasedColouring,
                     Current = config.GetBindable<bool>(ManiaRulesetSetting.TimingBasedNoteColouring),
+                },
+                new SettingsEnumDropdown<ManiaMobilePlayStyle>
+                {
+                    LabelText = RulesetSettingsStrings.MobilePlayStyle,
+                    Current = config.GetBindable<ManiaMobilePlayStyle>(ManiaRulesetSetting.MobilePlayStyle),
                 }
             };
         }
