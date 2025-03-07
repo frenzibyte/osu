@@ -3,12 +3,17 @@
 
 #nullable disable
 
+using System;
+using osu.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Mania.Beatmaps;
+using osu.Game.Rulesets.Mania.Configuration;
 using osu.Game.Rulesets.Mania.Skinning;
 using osu.Game.Skinning;
+using osuTK;
 
 namespace osu.Game.Rulesets.Mania.UI
 {
@@ -56,13 +61,24 @@ namespace osu.Game.Rulesets.Mania.UI
 
         private ISkinSource currentSkin;
 
+        private IBindable<ManiaMobilePlayStyle> mobilePlayStyle = null!;
+
         [BackgroundDependencyLoader]
-        private void load(ISkinSource skin)
+        private void load(ISkinSource skin, ManiaRulesetConfigManager rulesetConfig)
         {
             currentSkin = skin;
 
+            mobilePlayStyle = rulesetConfig.GetBindable<ManiaMobilePlayStyle>(ManiaRulesetSetting.MobilePlayStyle);
+            mobilePlayStyle.BindValueChanged(_ => updateMobileSizing());
+
             skin.SourceChanged += onSkinChanged;
             onSkinChanged();
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            updateMobileSizing();
         }
 
         private void onSkinChanged()
@@ -89,6 +105,8 @@ namespace osu.Game.Rulesets.Mania.UI
 
                 columns[i].Width = width.Value;
             }
+
+            updateMobileSizing();
         }
 
         /// <summary>
@@ -99,6 +117,26 @@ namespace osu.Game.Rulesets.Mania.UI
         public void SetContentForColumn(int column, TContent content)
         {
             Content[column] = columns[column].Child = content;
+        }
+
+        private void updateMobileSizing()
+        {
+            if (!IsLoaded || !RuntimeInfo.IsMobile || mobilePlayStyle.Value != ManiaMobilePlayStyle.LandscapeExtendedColumns)
+                return;
+
+            // GridContainer+CellContainer containing this stage (gets split up for dual stages).
+            Vector2? containingCell = this.FindClosestParent<Stage>()?.Parent?.DrawSize;
+
+            // Will be null in tests.
+            if (containingCell == null)
+                return;
+
+            // 2.83 is a mostly arbitrary scale-up (170 / 60, based on original implementation for argon)
+            float mobileAdjust = 2.83f * Math.Min(1, 7f / stageDefinition.Columns);
+
+            // Best effort until we have better mobile support.
+            for (int i = 0; i < stageDefinition.Columns; i++)
+                columns[i].Width *= mobileAdjust;
         }
 
         protected override void Dispose(bool isDisposing)
