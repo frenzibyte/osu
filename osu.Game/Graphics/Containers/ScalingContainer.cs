@@ -1,6 +1,8 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -83,7 +85,8 @@ namespace osu.Game.Graphics.Containers
             };
         }
 
-        public partial class ScalingDrawSizePreservingFillContainer : DrawSizePreservingFillContainer
+        // This container implements its own kind of scaling strategy, therefore it doesn't inherit from DrawSizePreservingFillContainer.
+        public partial class ScalingDrawSizePreservingFillContainer : Container
         {
             private readonly bool applyUIScale;
 
@@ -93,9 +96,18 @@ namespace osu.Game.Graphics.Containers
 
             public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
+            private Container content = null!;
+
             public ScalingDrawSizePreservingFillContainer(bool applyUIScale)
             {
                 this.applyUIScale = applyUIScale;
+
+                InternalChild = content = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                };
+
+                RelativeSizeAxes = Axes.Both;
             }
 
             [Resolved(canBeNull: true)]
@@ -113,12 +125,25 @@ namespace osu.Game.Graphics.Containers
 
             protected override void Update()
             {
+                Vector2 targetDrawSize = new Vector2(1024, 768);
+
                 if (game != null)
-                    TargetDrawSize = game.ScalingContainerTargetDrawSize;
+                    targetDrawSize = game.ScalingContainerTargetDrawSize;
+
                 Scale = new Vector2(CurrentScale);
                 Size = new Vector2(1 / CurrentScale);
 
-                base.Update();
+                Vector2 drawSizeRatio = Vector2.Divide(Parent!.ChildSize, targetDrawSize);
+
+                if (RuntimeInfo.IsMobile && Parent!.ChildSize.X < Parent!.ChildSize.Y)
+                    // Add lenience to the X ratio so the game doesn't look too much downscaled on portrait orientation.
+                    content.Scale = new Vector2(Math.Min(drawSizeRatio.X * 1.75f, drawSizeRatio.Y));
+                else
+                    content.Scale = new Vector2(Math.Min(drawSizeRatio.X, drawSizeRatio.Y));
+
+                content.Size = new Vector2(
+                    content.Scale.X == 0 ? 0 : 1 / content.Scale.X,
+                    content.Scale.Y == 0 ? 0 : 1 / content.Scale.Y);
             }
         }
 
