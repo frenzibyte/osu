@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osuTK;
 
@@ -57,7 +58,7 @@ namespace osu.Game.Screens.SelectV2
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.X,
-                    Height = 40f,
+                    AutoSizeAxes = Axes.Y,
                     Direction = FillDirection.Vertical,
                     Spacing = new Vector2(0f, 2f),
                     Children = new Drawable[]
@@ -71,6 +72,7 @@ namespace osu.Game.Screens.SelectV2
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
+                            Margin = new MarginPadding { Top = 10f },
                             Children = new[]
                             {
                                 negativeText = new OsuSpriteText
@@ -114,10 +116,12 @@ namespace osu.Game.Screens.SelectV2
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
+        private void load(OsuColour colours, OverlayColourProvider colourProvider)
         {
             backgroundBar.Colour = colours.DarkOrange2;
             positiveBar.Colour = colours.Lime1;
+            negativeText.Colour = colourProvider.Content2;
+            positiveText.Colour = colourProvider.Content2;
         }
     }
 }

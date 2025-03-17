@@ -39,7 +39,7 @@ namespace osu.Game.Screens.SelectV2
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.X,
-                    Height = 40f,
+                    AutoSizeAxes = Axes.Y,
                     Direction = FillDirection.Vertical,
                     Spacing = new Vector2(0f, 2f),
                     Children = new Drawable[]
@@ -55,6 +55,7 @@ namespace osu.Game.Screens.SelectV2
                             Origin = Anchor.TopRight,
                             Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Regular),
                             Text = "0.00%",
+                            Margin = new MarginPadding { Top = 10f },
                         },
                         new Container
                         {
@@ -85,6 +86,7 @@ namespace osu.Game.Screens.SelectV2
         {
             backgroundBar.Colour = colourProvider.Background6;
             valueBar.Colour = colours.Lime1;
+            valueText.Colour = colourProvider.Content2;
         }
     }
 }

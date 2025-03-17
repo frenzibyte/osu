@@ -18,7 +18,7 @@ namespace osu.Game.Screens.SelectV2
     public partial class BeatmapContentRatingSpreadGraph : CompositeDrawable
     {
         private const float min_height = 4f;
-        private const float max_height = 33f;
+        private const float max_height = 32f;
 
         private const int rating_range = 10;
 
@@ -49,20 +49,6 @@ namespace osu.Game.Screens.SelectV2
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
 
-            graph = new[]
-            {
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-                new GraphBar(),
-            };
-
             graph = Enumerable.Range(0, rating_range).Select(_ => new GraphBar()).ToArray();
 
             InternalChildren = new[]
@@ -70,7 +56,7 @@ namespace osu.Game.Screens.SelectV2
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.X,
-                    Height = 40f,
+                    AutoSizeAxes = Axes.Y,
                     Direction = FillDirection.Vertical,
                     Spacing = new Vector2(0f, 1f),
                     Children = new Drawable[]
@@ -88,7 +74,7 @@ namespace osu.Game.Screens.SelectV2
                             ColumnDimensions = graph.SkipLast(1).Select(_ => new[]
                             {
                                 new Dimension(),
-                                new Dimension(GridSizeMode.Absolute, 2f),
+                                new Dimension(GridSizeMode.Absolute, 1f),
                             }).SelectMany(d => d).Append(new Dimension()).ToArray(),
                             Content = new[]
                             {

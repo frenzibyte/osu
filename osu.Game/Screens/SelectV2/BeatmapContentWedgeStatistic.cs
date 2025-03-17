@@ -15,7 +15,7 @@ using osu.Game.Overlays;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentWedgeStatistic : CompositeDrawable
+    public partial class BeatmapContentWedgeStatistic : FillFlowContainer
     {
         public (LocalisableString value, LinkDetails link) Value
         {
@@ -66,28 +66,23 @@ namespace osu.Game.Screens.SelectV2
         private readonly OsuSpriteText labelText;
         private readonly LinkFlowContainer valueText;
 
-        public BeatmapContentWedgeStatistic(LocalisableString label, float? height = null)
+        public BeatmapContentWedgeStatistic(LocalisableString label)
         {
             RelativeSizeAxes = Axes.X;
-
-            if (height == null)
-                AutoSizeAxes = Axes.Y;
-            else
-                Height = height.Value;
+            AutoSizeAxes = Axes.Y;
 
             InternalChildren = new Drawable[]
             {
                 labelText = new OsuSpriteText
                 {
-                    Width = 80,
                     Text = label,
-                    Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Bold),
+                    Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
                 },
                 valueText = new LinkFlowContainer(t => t.Font = t.Font.With(size: 14.4f, weight: FontWeight.Regular))
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    Padding = new MarginPadding { Left = 80f },
+                    // Padding = new MarginPadding { Left = 80f },
                 }
             };
         }
@@ -96,6 +91,7 @@ namespace osu.Game.Screens.SelectV2
         private void load(OverlayColourProvider colourProvider)
         {
             labelText.Colour = colourProvider.Content1;
+            valueText.Colour = colourProvider.Content2;
         }
     }
 }

@@ -65,77 +65,71 @@ namespace osu.Game.Screens.SelectV2
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
                                 Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 14, Right = 35, Vertical = 16 },
-                                Children = new[]
+                                Children = new Drawable[]
                                 {
-                                    new GridContainer
+                                    new FillFlowContainer
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         AutoSizeAxes = Axes.Y,
-                                        RowDimensions = new[] { new Dimension(GridSizeMode.AutoSize) },
-                                        ColumnDimensions = new[]
+                                        Direction = FillDirection.Vertical,
+                                        Spacing = new Vector2(0f, 10f),
+                                        Children = new Drawable[]
                                         {
-                                            new Dimension(),
-                                            new Dimension(GridSizeMode.Absolute, 15),
-                                            new Dimension(),
-                                        },
-                                        Content = new[]
-                                        {
-                                            new[]
+                                            new GridContainer
                                             {
-                                                new FillFlowContainer
+                                                RelativeSizeAxes = Axes.X,
+                                                AutoSizeAxes = Axes.Y,
+                                                RowDimensions = new[] { new Dimension(GridSizeMode.AutoSize) },
+                                                ColumnDimensions = new[]
                                                 {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    AutoSizeAxes = Axes.Y,
-                                                    Direction = FillDirection.Vertical,
-                                                    Children = new[]
-                                                    {
-                                                        creator = new BeatmapContentWedgeStatistic("Creator"),
-                                                        source = new BeatmapContentWedgeStatistic("Source"),
-                                                        genre = new BeatmapContentWedgeStatistic("Genre"),
-                                                        Empty().With(e => e.Height = 15),
-                                                        language = new BeatmapContentWedgeStatistic("Language"),
-                                                        tag = new BeatmapContentWedgeStatistic("Tag", 40),
-                                                        Empty().With(e => e.Height = 15),
-                                                        submitted = new BeatmapContentWedgeStatistic("Submitted"),
-                                                        ranked = new BeatmapContentWedgeStatistic("Ranked"),
-                                                    },
+                                                    new Dimension(),
+                                                    new Dimension(),
+                                                    new Dimension(),
                                                 },
-                                                Empty(),
-                                                new FillFlowContainer
+                                                Content = new[]
                                                 {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    AutoSizeAxes = Axes.Y,
-                                                    Shear = shear,
-                                                    Direction = FillDirection.Vertical,
-                                                    Spacing = new Vector2(0f, 15f),
-                                                    Children = new Drawable[]
+                                                    new[]
                                                     {
-                                                        new Container
+                                                        new FillFlowContainer
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             AutoSizeAxes = Axes.Y,
-                                                            Padding = new MarginPadding { Left = -22 },
-                                                            Shear = -shear,
-                                                            Child = successRate = new BeatmapContentSuccessRateBar(),
+                                                            Direction = FillDirection.Vertical,
+                                                            Spacing = new Vector2(0f, 10f),
+                                                            Children = new[]
+                                                            {
+                                                                creator = new BeatmapContentWedgeStatistic("Mapper"),
+                                                                genre = new BeatmapContentWedgeStatistic("Genre"),
+                                                            },
                                                         },
-                                                        new Container
+                                                        new FillFlowContainer
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             AutoSizeAxes = Axes.Y,
-                                                            Padding = new MarginPadding { Left = -11 },
-                                                            Shear = -shear,
-                                                            Child = userRating = new BeatmapContentUserRatingBar(),
+                                                            Direction = FillDirection.Vertical,
+                                                            Spacing = new Vector2(0f, 10f),
+                                                            Children = new[]
+                                                            {
+                                                                source = new BeatmapContentWedgeStatistic("Source"),
+                                                                language = new BeatmapContentWedgeStatistic("Language"),
+                                                            },
                                                         },
-                                                        new Container
+                                                        new FillFlowContainer
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             AutoSizeAxes = Axes.Y,
-                                                            Shear = -shear,
-                                                            Child = ratingSpread = new BeatmapContentRatingSpreadGraph(),
+                                                            Direction = FillDirection.Vertical,
+                                                            Spacing = new Vector2(0f, 10f),
+                                                            Children = new[]
+                                                            {
+                                                                submitted = new BeatmapContentWedgeStatistic("Submitted"),
+                                                                ranked = new BeatmapContentWedgeStatistic("Ranked"),
+                                                            },
                                                         },
                                                     },
                                                 },
                                             },
+                                            tag = new BeatmapContentWedgeStatistic("Tags"),
                                         },
                                     },
                                 },
@@ -155,12 +149,54 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = colourProvider.Background5,
                             },
+                            new GridContainer
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Shear = -shear,
+                                RowDimensions = new[] { new Dimension(GridSizeMode.AutoSize) },
+                                ColumnDimensions = new[]
+                                {
+                                    new Dimension(),
+                                    new Dimension(GridSizeMode.Absolute, 10),
+                                    new Dimension(),
+                                    new Dimension(GridSizeMode.Absolute, 10),
+                                    new Dimension(),
+                                },
+                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 40, Right = 40f, Vertical = 16 },
+                                Content = new[]
+                                {
+                                    new Drawable[]
+                                    {
+                                        successRate = new BeatmapContentSuccessRateBar(),
+                                        Empty(),
+                                        userRating = new BeatmapContentUserRatingBar(),
+                                        Empty(),
+                                        ratingSpread = new BeatmapContentRatingSpreadGraph(),
+                                    },
+                                },
+                            },
+                        }
+                    },
+                    new Container
+                    {
+                        CornerRadius = 10,
+                        Masking = true,
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = colourProvider.Background5,
+                            },
                             new Container
                             {
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
-                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 53, Right = 40f, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 60, Right = 40f, Vertical = 16 },
                                 Child = failRetryGraph = new BeatmapContentFailRetryGraph(),
                             },
                         },

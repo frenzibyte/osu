@@ -48,7 +48,7 @@ namespace osu.Game.Screens.SelectV2
                             Origin = Anchor.CentreLeft,
                             Width = 200,
                             Height = 25,
-                            Margin = new MarginPadding { Top = 5f },
+                            Margin = new MarginPadding { Top = 2f },
                         },
                         leaderboardControls = new FillFlowContainer
                         {

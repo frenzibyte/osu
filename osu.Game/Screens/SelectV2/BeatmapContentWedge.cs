@@ -35,12 +35,12 @@ namespace osu.Game.Screens.SelectV2
                 header = new BeatmapContentWedgeHeader
                 {
                     RelativeSizeAxes = Axes.X,
-                    Height = 60,
+                    Height = 48,
                 },
                 contentContainer = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Top = 60 + 8 },
+                    Padding = new MarginPadding { Top = 48 + 8 },
                 },
             };
         }
