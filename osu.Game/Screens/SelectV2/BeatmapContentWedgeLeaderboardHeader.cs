@@ -34,7 +34,7 @@ namespace osu.Game.Screens.SelectV2
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 11 },
+                    Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 11 },
                     Shear = -shear,
                     Child = new BeatmapContentTabControl<BeatmapLeaderboardScope>(24f)
                     {

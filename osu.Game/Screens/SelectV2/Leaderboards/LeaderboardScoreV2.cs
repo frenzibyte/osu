@@ -788,12 +788,8 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
 
         public partial class MoreModsPopover : OsuPopover
         {
-            private readonly IReadOnlyList<Mod> mods;
-
             public MoreModsPopover(IReadOnlyList<Mod> mods)
             {
-                this.mods = mods;
-
                 AutoSizeAxes = Axes.Both;
                 AllowableAnchors = new[] { Anchor.CentreLeft, Anchor.CentreRight };
 

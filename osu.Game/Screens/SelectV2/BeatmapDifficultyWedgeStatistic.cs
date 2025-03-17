@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -15,12 +16,17 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapDifficultyWedgeStatistic : CompositeDrawable, IHasAccentColour
     {
-        public (LocalisableString text, float current, float maximum) Value
+        public LocalisableString Label
+        {
+            set => labelText.Text = value;
+        }
+
+        public (float value, float maximum) Value
         {
             set
             {
-                bar.Width = value.current / value.maximum;
-                valueText.Text = value.text;
+                bar.ResizeWidthTo(value.value / value.maximum, 300, Easing.OutQuint);
+                valueText.Text = value.value.ToLocalisableString("0.##");
             }
         }
 

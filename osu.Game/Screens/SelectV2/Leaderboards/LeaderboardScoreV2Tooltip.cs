@@ -239,30 +239,16 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
 
         private partial class ModsPanel : CompositeDrawable
         {
-            public Box ModsBackground = null!;
             public FillFlowContainer Mods = null!;
-
-            [Resolved]
-            private OsuColour colours { get; set; } = null!;
 
             public ScoreInfo Score
             {
-                set
+                set => Mods.ChildrenEnumerable = value.Mods.Select(m => new LeaderboardScoreV2.ColouredModSwitchTiny(m)
                 {
-                    double multiplier = 1.0;
-
-                    foreach (var mod in value.Mods)
-                        multiplier *= mod.ScoreMultiplier;
-
-                    Color4 colour = multiplier > 1 ? colours.Red1 : colours.Lime1;
-                    // ModsBackground.Colour = ColourInfo.GradientVertical(colour.Opacity(0f), colour.Opacity(0.25f));
-                    Mods.ChildrenEnumerable = value.Mods.Select(m => new LeaderboardScoreV2.ColouredModSwitchTiny(m)
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Scale = new Vector2(0.375f),
-                    });
-                }
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Scale = new Vector2(0.375f),
+                });
             }
 
             [BackgroundDependencyLoader]
@@ -287,7 +273,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         Colour = colourProvider.Background4,
                         RelativeSizeAxes = Axes.Both,
                     },
-                    ModsBackground = new Box
+                    new Box
                     {
                         RelativeSizeAxes = Axes.Both,
                         Colour = Color4.Transparent,

@@ -39,7 +39,7 @@ namespace osu.Game.Screens.SelectV2
                 {
                     RelativeSizeAxes = Axes.Both,
                     Shear = -shear,
-                    Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN, Right = 20f },
+                    Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 20f },
                     Children = new Drawable[]
                     {
                         tabControl = new BeatmapContentTabControl<ContentType>(24f)

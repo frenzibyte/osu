@@ -13,7 +13,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
 using osu.Game.Graphics;
-using osu.Game.Overlays;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osuTK;
@@ -41,16 +40,12 @@ namespace osu.Game.Screens.SelectV2
         private OsuColour colours { get; set; } = null!;
 
         [Resolved]
-        private OverlayColourProvider colourProvider { get; set; } = null!;
-
-        [Resolved]
         private BeatmapDifficultyCache difficultyCache { get; set; } = null!;
 
         protected Container? DisplayedContent { get; private set; }
 
         protected BeatmapMainWedgeContent? Content { get; private set; }
 
-        private BeatmapSetOnlineStatusPill statusPill = null!;
         private Container content = null!;
         private Box difficultyBorder = null!;
 
@@ -112,8 +107,8 @@ namespace osu.Game.Screens.SelectV2
             FinishTransforms(true);
 
             this.MoveToX(-150)
-                .MoveToX(0, SongSelectV2.ENTER_DURATION, Easing.OutQuint)
-                .FadeInFromZero(SongSelectV2.ENTER_DURATION / 3, Easing.In);
+                .MoveToX(0, SongSelect.ENTER_DURATION, Easing.OutQuint)
+                .FadeInFromZero(SongSelect.ENTER_DURATION / 3, Easing.In);
         }
 
         private Container? loadingInfo;
@@ -139,7 +134,7 @@ namespace osu.Game.Screens.SelectV2
                         Children = new Drawable[]
                         {
                             new BeatmapMainWedgeBackground(beatmap.Value) { Shear = -Shear },
-                            Content = new BeatmapMainWedgeContent(beatmap.Value) { Shear = -Shear }
+                            Content = new BeatmapMainWedgeContent(beatmap.Value, mods.Value) { Shear = -Shear }
                         }
                     }
                 }, d =>

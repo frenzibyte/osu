@@ -41,7 +41,7 @@ using osu.Game.Seasonal;
 using osuTK;
 using osuTK.Graphics;
 using osu.Game.Localisation;
-using osu.Game.Screens.SelectV2;
+using osu.Game.Screens.Select;
 
 namespace osu.Game.Screens.Menu
 {
@@ -234,7 +234,7 @@ namespace osu.Game.Screens.Menu
 
         public void ReturnToOsuLogo() => Buttons.State = ButtonSystemState.Initial;
 
-        private void loadSoloSongSelect() => this.Push(new SongSelectV2());
+        private void loadSoloSongSelect() => this.Push(new PlaySongSelect());
 
         public override void OnEntering(ScreenTransitionEvent e)
         {

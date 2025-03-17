@@ -15,11 +15,16 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Localisation;
+using osu.Game.Online;
+using osu.Game.Online.Chat;
 using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -49,11 +54,16 @@ namespace osu.Game.Screens.SelectV2
         private Box difficultyBorder = null!;
         private StarRatingDisplay starRatingDisplay = null!;
         private OsuSpriteText difficultyText = null!;
-        private OsuSpriteText mappedByText = null!;
         private OsuSpriteText mapperText = null!;
+        private MapperLinkContainer mapperLink = null!;
 
         private FillFlowContainer<BeatmapDifficultyWedgeStatistic> beatmapStatisticsFlow = null!;
         private FillFlowContainer<BeatmapDifficultyWedgeStatistic> difficultyStatisticsFlow = null!;
+
+        private BeatmapDifficultyWedgeStatistic firstDifficultyStatistic = null!;
+        private BeatmapDifficultyWedgeStatistic accuracyStatistic = null!;
+        private BeatmapDifficultyWedgeStatistic hpDrainStatistic = null!;
+        private BeatmapDifficultyWedgeStatistic approachRateStatistic = null!;
 
         private CancellationTokenSource? cancellationSource;
 
@@ -76,8 +86,6 @@ namespace osu.Game.Screens.SelectV2
             CornerRadius = 10;
             Shear = shear;
 
-            beatmap.Value.Beatmap.GetStatistics();
-
             InternalChildren = new Drawable[]
             {
                 difficultyBorder = new Box
@@ -90,7 +98,7 @@ namespace osu.Game.Screens.SelectV2
                     Height = 28f,
                     Direction = FillDirection.Horizontal,
                     Shear = -shear,
-                    Margin = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN },
+                    Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN },
                     Spacing = new Vector2(8f, 0f),
                     Children = new Drawable[]
                     {
@@ -105,33 +113,34 @@ namespace osu.Game.Screens.SelectV2
                             Origin = Anchor.CentreLeft,
                             AutoSizeAxes = Axes.Both,
                             Direction = FillDirection.Horizontal,
-                            Spacing = new Vector2(5f, 0f),
                             Margin = new MarginPadding { Bottom = 2f },
-                            Children = new[]
+                            Children = new Drawable[]
                             {
                                 difficultyText = new OsuSpriteText
                                 {
                                     Anchor = Anchor.BottomLeft,
                                     Origin = Anchor.BottomLeft,
-                                    Text = "Nasty Normal",
                                     Font = OsuFont.Torus.With(size: 19.2f, weight: FontWeight.SemiBold),
                                     Colour = Color4.Black.Opacity(0.75f),
                                 },
-                                mappedByText = new OsuSpriteText
+                                new OsuSpriteText
                                 {
                                     Anchor = Anchor.BottomLeft,
                                     Origin = Anchor.BottomLeft,
-                                    Text = "mapped by",
+                                    Text = " mapped by ",
                                     Font = OsuFont.Torus.With(size: 16.8f, weight: FontWeight.Regular),
                                     Colour = Color4.Black.Opacity(0.75f),
                                 },
-                                mapperText = new OsuSpriteText
+                                mapperLink = new MapperLinkContainer
                                 {
                                     Anchor = Anchor.BottomLeft,
                                     Origin = Anchor.BottomLeft,
-                                    Text = "mapper name",
-                                    Font = OsuFont.Torus.With(size: 16.8f, weight: FontWeight.SemiBold),
-                                    Colour = Color4.Black.Opacity(0.75f),
+                                    AutoSizeAxes = Axes.Both,
+                                    Child = mapperText = new OsuSpriteText
+                                    {
+                                        Font = OsuFont.Torus.With(size: 16.8f, weight: FontWeight.SemiBold),
+                                        Colour = Color4.Black.Opacity(0.75f),
+                                    },
                                 },
                             },
                         },
@@ -163,7 +172,7 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 AutoSizeAxes = Axes.Both,
                                 Spacing = new Vector2(16f, 0f),
-                                Margin = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 6, Top = 7.5f },
+                                Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 6, Top = 7.5f },
                                 Children = new Drawable[]
                                 {
                                     beatmapStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
@@ -179,10 +188,10 @@ namespace osu.Game.Screens.SelectV2
                                         Spacing = new Vector2(8f, 0f),
                                         Children = new[]
                                         {
-                                            new BeatmapDifficultyWedgeStatistic("Circle Size") { Value = ("2.7", 2.7f, 10f) },
-                                            new BeatmapDifficultyWedgeStatistic("Accuracy") { Value = ("3", 3f, 10f) },
-                                            new BeatmapDifficultyWedgeStatistic("HP Drain") { Value = ("2", 2f, 10f) },
-                                            new BeatmapDifficultyWedgeStatistic("Approach Rate") { Value = ("4", 4f, 10f) },
+                                            firstDifficultyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsCs),
+                                            accuracyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAccuracy),
+                                            hpDrainStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsDrain),
+                                            approachRateStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAr),
                                         },
                                     },
                                 }
@@ -203,7 +212,11 @@ namespace osu.Game.Screens.SelectV2
             updateDisplay();
 
             displayedStars.BindValueChanged(_ => updateStars(), true);
+            FinishTransforms(true);
         }
+
+        [Resolved]
+        private ILinkHandler? linkHandler { get; set; }
 
         private void updateDisplay()
         {
@@ -212,34 +225,62 @@ namespace osu.Game.Screens.SelectV2
 
             computeStarDifficulty(cancellationSource.Token);
 
-            // beatmapStatisticsFlow.Children = beatmap.Value.Beatmap.GetStatistics().Select(s => new BeatmapDifficultyWedgeStatistic(s.Name)
-            // {
-            //     Value = (s.Content, 1f, 1f),
-            // }).ToArray();
-            beatmapStatisticsFlow.Children = new[]
+            difficultyText.Text = beatmap.Value.BeatmapInfo.DifficultyName;
+            mapperText.Text = beatmap.Value.Metadata.Author.Username;
+            mapperLink.Action = () => linkHandler?.HandleLink(new LinkDetails(LinkAction.OpenUserProfile, beatmap.Value.Metadata.Author));
+
+            var playableBeatmap = beatmap.Value.GetPlayableBeatmap(ruleset.Value);
+            beatmapStatisticsFlow.Children = playableBeatmap.GetStatistics().Select(s => new BeatmapDifficultyWedgeStatistic(s.Name)
             {
-                new BeatmapStatistic
-                {
-                    Name = BeatmapsetsStrings.ShowStatsCountCircles,
-                    Content = "320",
-                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles),
-                },
-                new BeatmapStatistic
-                {
-                    Name = BeatmapsetsStrings.ShowStatsCountSliders,
-                    Content = "120",
-                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders),
-                },
-                new BeatmapStatistic
-                {
-                    Name = @"Spinner Count",
-                    Content = "4",
-                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners),
-                }
-            }.Select(s => new BeatmapDifficultyWedgeStatistic(s.Name)
-            {
-                Value = (s.Content, 1f, 1f),
+                Value = (int.Parse(s.Content), 1f),
             }).ToArray();
+
+            BeatmapDifficulty? baseDifficulty = beatmap.Value.BeatmapInfo.Difficulty;
+
+            if (baseDifficulty != null)
+            {
+                BeatmapDifficulty originalDifficulty = new BeatmapDifficulty(baseDifficulty);
+
+                foreach (var mod in mods.Value.OfType<IApplicableToDifficulty>())
+                    mod.ApplyToDifficulty(originalDifficulty);
+
+                var rateAdjustedDifficulty = originalDifficulty;
+
+                if (ruleset.Value != null)
+                {
+                    double rate = ModUtils.CalculateRateWithMods(mods.Value);
+
+                    rateAdjustedDifficulty = ruleset.Value.CreateInstance().GetRateAdjustedDisplayDifficulty(originalDifficulty, rate);
+
+                    // TooltipContent = new AdjustedAttributesTooltip.Data(originalDifficulty, adjustedDifficulty);
+                }
+
+                switch (ruleset.Value?.OnlineID)
+                {
+                    case 3:
+                        // Account for mania differences locally for now.
+                        // Eventually this should be handled in a more modular way, allowing rulesets to return arbitrary difficulty attributes.
+                        ILegacyRuleset legacyRuleset = (ILegacyRuleset)ruleset.Value.CreateInstance();
+
+                        // For the time being, the key count is static no matter what, because:
+                        // a) The method doesn't have knowledge of the active keymods. Doing so may require considerations for filtering.
+                        // b) Using the difficulty adjustment mod to adjust OD doesn't have an effect on conversion.
+                        int keyCount = legacyRuleset.GetKeyCount(beatmap.Value.BeatmapInfo, mods.Value);
+
+                        firstDifficultyStatistic.Label = BeatmapsetsStrings.ShowStatsCsMania;
+                        firstDifficultyStatistic.Value = (keyCount, 10);
+                        break;
+
+                    default:
+                        firstDifficultyStatistic.Label = BeatmapsetsStrings.ShowStatsCs;
+                        firstDifficultyStatistic.Value = (rateAdjustedDifficulty.CircleSize, 10f);
+                        break;
+                }
+
+                accuracyStatistic.Value = (rateAdjustedDifficulty.OverallDifficulty, 10f);
+                hpDrainStatistic.Value = (rateAdjustedDifficulty.DrainRate, 10f);
+                approachRateStatistic.Value = (rateAdjustedDifficulty.ApproachRate, 10f);
+            }
         }
 
         private void updateStars()
@@ -265,6 +306,16 @@ namespace osu.Game.Screens.SelectV2
                                    this.TransformBindableTo(displayedStars, result.Stars, StarRatingDisplay.TRANSITION_DURATION, StarRatingDisplay.TRANSITION_EASING);
                                });
                            }, cancellationToken);
+        }
+
+        private partial class MapperLinkContainer : OsuHoverContainer
+        {
+            [BackgroundDependencyLoader]
+            private void load(OverlayColourProvider? overlayColourProvider, OsuColour colours)
+            {
+                TooltipText = ContextMenuStrings.ViewProfile;
+                IdleColour = overlayColourProvider?.Light2 ?? colours.Blue;
+            }
         }
     }
 }

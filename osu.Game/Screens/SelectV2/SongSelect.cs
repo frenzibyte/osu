@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -17,6 +18,7 @@ using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Screens.Footer;
 using osu.Game.Screens.Menu;
+using osu.Game.Screens.Play;
 using osu.Game.Screens.Select;
 using osu.Game.Screens.SelectV2.Footer;
 using osuTK.Graphics;
@@ -27,7 +29,7 @@ namespace osu.Game.Screens.SelectV2
     /// This screen is intended to house all components introduced in the new song select design to add transitions and examine the overall look.
     /// This will be gradually built upon and ultimately replace <see cref="Select.SongSelect"/> once everything is in place.
     /// </summary>
-    public abstract partial class SongSelect : OsuScreen
+    public abstract partial class SongSelect : ScreenWithBeatmapBackground
     {
         private const float logo_scale = 0.4f;
 
@@ -44,6 +46,9 @@ namespace osu.Game.Screens.SelectV2
         private BeatmapCarousel carousel = null!;
 
         public override bool ShowFooter => true;
+
+        [Resolved]
+        private BeatmapManager beatmaps { get; set; } = null!;
 
         [Resolved]
         private OsuLogo? logo { get; set; }
@@ -81,51 +86,47 @@ namespace osu.Game.Screens.SelectV2
                     Padding = new MarginPadding { Bottom = ScreenFooter.HEIGHT + 10f },
                     Children = new Drawable[]
                     {
-                        new BeatmapMainWedge(),
-                        new BeatmapDifficultyWedge(),
-                        new BeatmapContentWedge(),
+                        new GridContainer // used for max width implementation
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            ColumnDimensions = new[]
+                            {
+                                new Dimension(),
+                                new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
+                            },
+                            Content = new[]
+                            {
+                                new[]
+                                {
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Children = new Drawable[]
+                                        {
+                                            new BeatmapMainWedge(),
+                                            new BeatmapDifficultyWedge(),
+                                            new BeatmapContentWedge(),
+                                        },
+                                    },
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Child = carousel = new BeatmapCarousel
+                                        {
+                                            RequestSelectBeatmap = b => Beatmap.Value = beatmaps.GetWorkingBeatmap(b),
+                                            RequestPresentBeatmap = _ => OnStart(),
+                                            RelativeSizeAxes = Axes.Both
+                                        },
+                                    },
+                                }
+                            }
+                        },
                     }
                 },
                 modSelectOverlay,
             });
         }
 
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            AddRangeInternal(new Drawable[]
-            {
-                new GridContainer // used for max width implementation
-                {
-                    Anchor = Anchor.TopRight,
-                    Origin = Anchor.TopRight,
-                    RelativeSizeAxes = Axes.Both,
-                    ColumnDimensions = new[]
-                    {
-                        new Dimension(),
-                        new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
-                    },
-                    Content = new[]
-                    {
-                        new[]
-                        {
-                            Empty(),
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Padding = new MarginPadding { Bottom = ScreenFooter.HEIGHT },
-                                Child = carousel = new BeatmapCarousel
-                                {
-                                    RequestPresentBeatmap = _ => OnStart(),
-                                    RelativeSizeAxes = Axes.Both
-                                },
-                            },
-                        }
-                    }
-                },
-                modSelectOverlay,
-            });
-        }
         public override void OnEntering(ScreenTransitionEvent e)
         {
             base.OnEntering(e);
@@ -146,7 +147,7 @@ namespace osu.Game.Screens.SelectV2
         {
             base.OnResuming(e);
 
-            this.FadeIn();
+            this.FadeIn(fade_duration, Easing.OutQuint);
 
             carousel.VisuallyFocusSelected = false;
 
@@ -159,7 +160,7 @@ namespace osu.Game.Screens.SelectV2
 
         public override void OnSuspending(ScreenTransitionEvent e)
         {
-            this.FadeOut(400, Easing.OutQuint);
+            this.FadeOut(fade_duration, Easing.OutQuint);
 
             modSelectOverlay.SelectedMods.UnbindFrom(Mods);
 
@@ -170,7 +171,7 @@ namespace osu.Game.Screens.SelectV2
 
         public override bool OnExiting(ScreenExitEvent e)
         {
-            this.FadeOut(400, Easing.OutQuint);
+            this.FadeOut(fade_duration, Easing.OutQuint);
             return base.OnExiting(e);
         }
 

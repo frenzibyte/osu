@@ -19,7 +19,22 @@ namespace osu.Game.Screens.SelectV2
     public partial class BeatmapMainWedgeStatistic : CompositeDrawable, IHasTooltip
     {
         private readonly IconUsage icon;
-        private readonly LocalisableString value;
+
+        private OsuSpriteText valueText = null!;
+
+        private LocalisableString value;
+
+        public LocalisableString Value
+        {
+            get => value;
+            set
+            {
+                this.value = value;
+
+                if (IsLoaded)
+                    valueText.Text = value;
+            }
+        }
 
         public LocalisableString TooltipText { get; }
 
@@ -63,7 +78,7 @@ namespace osu.Game.Screens.SelectV2
                             Size = new Vector2(20f),
                             Colour = colourProvider.Content2,
                         },
-                        new OsuSpriteText
+                        valueText = new OsuSpriteText
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,

@@ -1,17 +1,24 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
+using System.Collections.Generic;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions;
+using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
+using osu.Game.Database;
+using osu.Game.Extensions;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Resources.Localisation.Web;
-using osu.Game.Screens.Select;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Utils;
 using osuTK;
 
 namespace osu.Game.Screens.SelectV2
@@ -22,12 +29,17 @@ namespace osu.Game.Screens.SelectV2
         public OsuSpriteText ArtistLabel { get; private set; } = null!;
 
         private readonly WorkingBeatmap working;
+        private readonly IReadOnlyList<Mod> mods;
 
-        private const float content_margin = SongSelectV2.WEDGE_CONTENT_MARGIN;
+        private BeatmapMainWedgeStatistic playsStatistic = null!;
+        private BeatmapMainWedgeStatistic favouritesStatistic = null!;
 
-        public BeatmapMainWedgeContent(WorkingBeatmap working)
+        private const float content_margin = SongSelect.WEDGE_CONTENT_MARGIN;
+
+        public BeatmapMainWedgeContent(WorkingBeatmap working, IReadOnlyList<Mod> mods)
         {
             this.working = working;
+            this.mods = mods;
 
             RelativeSizeAxes = Axes.Both;
         }
@@ -41,9 +53,14 @@ namespace osu.Game.Screens.SelectV2
             var artistText = new RomanisableString(metadata.ArtistUnicode, metadata.Artist);
             var status = working.BeatmapInfo.Status;
 
-            titleText = new RomanisableString("Exit This Earth's Atomosphere", "Exit This Earth's Atomosphere");
-            artistText = new RomanisableString("Camellia", "Camellia");
-            status = BeatmapOnlineStatus.Ranked;
+            double rate = ModUtils.CalculateRateWithMods(mods);
+
+            int bpmMax = FormatUtils.RoundBPM(working.Beatmap.ControlPointInfo.BPMMaximum, rate);
+            int bpmMin = FormatUtils.RoundBPM(working.Beatmap.ControlPointInfo.BPMMinimum, rate);
+            int mostCommonBPM = FormatUtils.RoundBPM(60000 / working.Beatmap.GetMostCommonBeatLength(), rate);
+
+            double drainLength = Math.Round(working.Beatmap.CalculateDrainLength() / rate);
+            double hitLength = Math.Round(working.Beatmap.BeatmapInfo.Length / rate);
 
             InternalChildren = new[]
             {
@@ -81,11 +98,11 @@ namespace osu.Game.Screens.SelectV2
                         {
                             AutoSizeAxes = Axes.Both,
                             Action = () => songSelect?.Search(titleText.GetPreferred(localisation.CurrentParameters.Value.PreferOriginalScript)),
+                            Margin = new MarginPadding { Bottom = -10f },
                             Child = TitleLabel = new TruncatingSpriteText
                             {
                                 Shadow = true,
                                 Text = titleText,
-                                UseFullGlyphHeight = false,
                                 Font = OsuFont.TorusAlternate.With(size: 48, weight: FontWeight.SemiBold),
                             },
                         },
@@ -98,7 +115,6 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 Shadow = true,
                                 Text = artistText,
-                                UseFullGlyphHeight = false,
                                 Font = OsuFont.Torus.With(size: 28.8f, weight: FontWeight.SemiBold),
                             },
                         },
@@ -107,18 +123,40 @@ namespace osu.Game.Screens.SelectV2
                             AutoSizeAxes = Axes.Both,
                             Direction = FillDirection.Horizontal,
                             Spacing = new Vector2(4f, 0f),
-                            Margin = new MarginPadding { Top = 6f },
                             Children = new Drawable[]
                             {
-                                new BeatmapMainWedgeStatistic(OsuIcon.Play, "3,456,317", BeatmapsetsStrings.ShowStatsPlaycount),
-                                new BeatmapMainWedgeStatistic(OsuIcon.Heart, "4,231", BeatmapsStrings.StatusFavourites),
-                                new BeatmapMainWedgeStatistic(OsuIcon.Beatmap, "3:45", BeatmapsetsStrings.ShowStatsTotalLength("01:44")),
-                                new BeatmapMainWedgeStatistic(OsuIcon.ModDoubleTime, "124", BeatmapsetsStrings.ShowStatsBpm),
+                                playsStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Play, string.Empty, BeatmapsetsStrings.ShowStatsPlaycount),
+                                favouritesStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Heart, string.Empty, BeatmapsStrings.StatusFavourites),
+                                new BeatmapMainWedgeStatistic(OsuIcon.Clock,
+                                    hitLength.ToFormattedDuration(),
+                                    BeatmapsetsStrings.ShowStatsTotalLength(drainLength.ToFormattedDuration())),
+                                new BeatmapMainWedgeStatistic(OsuIcon.BPM,
+                                    bpmMin == bpmMax ? $"{bpmMin}" : $"{bpmMin}-{bpmMax} (mostly {mostCommonBPM})",
+                                    BeatmapsetsStrings.ShowStatsBpm),
                             },
                         },
                     }
                 }
             };
+        }
+
+        [Resolved]
+        private BeatmapLookupCache beatmapCache { get; set; } = null!;
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            beatmapCache.GetBeatmapAsync(working.BeatmapInfo.OnlineID).ContinueWith(t => Schedule(() =>
+            {
+                var beatmap = t.GetResultSafely();
+
+                if (beatmap != null)
+                {
+                    playsStatistic.Value = beatmap.BeatmapSet!.PlayCount.ToLocalisableString(@"N0");
+                    favouritesStatistic.Value = beatmap.BeatmapSet!.FavouriteCount.ToLocalisableString(@"N0");
+                }
+            }));
         }
 
         protected override void UpdateAfterChildren()

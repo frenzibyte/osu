@@ -17,7 +17,6 @@ namespace osu.Game.Screens.SelectV2
     public partial class BeatmapContentTabControl<T> : TabControl<T>
         where T : struct, Enum
     {
-        private readonly float spacing;
         private Circle strip = null!;
 
         protected override Dropdown<T>? CreateDropdown() => null;
@@ -61,9 +60,6 @@ namespace osu.Game.Screens.SelectV2
 
         private void updateDisplay()
         {
-            if (SelectedTab == null)
-                return;
-
             strip.MoveToX(SelectedTab.Text.ToSpaceOfOtherDrawable(Vector2.Zero, this).X, 300, Easing.OutQuint);
             strip.ResizeWidthTo(SelectedTab.Text.Width, 0, Easing.OutQuint);
         }

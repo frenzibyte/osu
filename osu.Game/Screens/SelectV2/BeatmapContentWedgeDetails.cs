@@ -64,7 +64,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
-                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 14, Right = 35, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 14, Right = 35, Vertical = 16 },
                                 Children = new Drawable[]
                                 {
                                     new FillFlowContainer
@@ -163,10 +163,10 @@ namespace osu.Game.Screens.SelectV2
                                     new Dimension(GridSizeMode.Absolute, 10),
                                     new Dimension(),
                                 },
-                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 40, Right = 40f, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 40, Right = 40f, Vertical = 16 },
                                 Content = new[]
                                 {
-                                    new Drawable[]
+                                    new[]
                                     {
                                         successRate = new BeatmapContentSuccessRateBar(),
                                         Empty(),
@@ -196,7 +196,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
-                                Padding = new MarginPadding { Left = SongSelectV2.WEDGE_CONTENT_MARGIN + 60, Right = 40f, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 60, Right = 40f, Vertical = 16 },
                                 Child = failRetryGraph = new BeatmapContentFailRetryGraph(),
                             },
                         },
