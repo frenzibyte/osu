@@ -2,12 +2,18 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Utils;
+using osu.Game.Beatmaps;
+using osu.Game.Database;
+using osu.Game.Online.API;
+using osu.Game.Online.API.Requests;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Online.Chat;
 using osu.Game.Overlays;
 using osuTK;
@@ -31,6 +37,9 @@ namespace osu.Game.Screens.SelectV2
         private BeatmapContentRatingSpreadGraph ratingSpread = null!;
 
         private BeatmapContentFailRetryGraph failRetryGraph = null!;
+
+        [Resolved]
+        private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
 
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
@@ -98,7 +107,7 @@ namespace osu.Game.Screens.SelectV2
                                                             Spacing = new Vector2(0f, 10f),
                                                             Children = new[]
                                                             {
-                                                                creator = new BeatmapContentWedgeStatistic("Mapper"),
+                                                                creator = new BeatmapContentWedgeStatistic("Creator"),
                                                                 genre = new BeatmapContentWedgeStatistic("Genre"),
                                                             },
                                                         },
@@ -208,27 +217,114 @@ namespace osu.Game.Screens.SelectV2
         protected override void LoadComplete()
         {
             base.LoadComplete();
+            beatmap.BindValueChanged(_ => updateDisplay(), true);
+        }
 
-            creator.Value = ("Sotarks", new LinkDetails(LinkAction.OpenUserProfile, "Sotarks"));
-            source.Value = ("REFLEC BEAT limelight", new LinkDetails(LinkAction.SearchBeatmapSet, "REFLEC BEAT limelight"));
-            genre.Value = ("Video Game (Instrumental)", new LinkDetails(LinkAction.SearchBeatmapSet, "Video Game (Instrumental)"));
-            language.Value = ("Instrumental", new LinkDetails(LinkAction.SearchBeatmapSet, "Instrumental"));
-            tag.Tags = new[]
+        [Resolved]
+        private BeatmapLookupCache beatmapCache { get; set; } = null!;
+
+        [Resolved]
+        private IAPIProvider api { get; set; } = null!;
+
+        private void updateDisplay()
+        {
+            var metadata = beatmap.Value.Metadata;
+            var beatmapInfo = beatmap.Value.BeatmapInfo;
+            var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
+
+            creator.Value = (metadata.Author.Username, new LinkDetails(LinkAction.OpenUserProfile, metadata.Author.Username));
+
+            if (!string.IsNullOrEmpty(metadata.Source))
+                source.Value = (metadata.Source, new LinkDetails(LinkAction.SearchBeatmapSet, metadata.Source));
+            else
+                source.Value = ("-", null);
+
+            tag.Tags = metadata.Tags.Split(' ');
+            submitted.Date = beatmapSetInfo.DateSubmitted ?? DateTimeOffset.Now;
+            ranked.Date = beatmapSetInfo.DateRanked ?? DateTimeOffset.Now;
+
+            updateOnlineDisplay();
+
+            if (beatmapInfo.OnlineID >= 1)
             {
-                "risk", "junk", "beatmania", "iidx", "19", "lincle", "jubeat", "saucer", "jukebeat", "konami", "music", "pack", "test", "something", "like", "your", "yeah", "andddd", "then", "it",
-                "goes"
-                // "risk junk beatmania iidx 19 lincle jubeat saucer jukebeat konami music pack test something like your yeah and then it goes"
-            };
-            submitted.Date = new DateTime(2018, 11, 4);
-            ranked.Date = new DateTime(2019, 1, 6);
+            }
+            else
+            {
+                genre.Value = ("-", null);
+                language.Value = ("-", null);
+            }
+        }
 
-            successRate.Value = 0.9453f;
-            userRating.Ratings = new[] { 1, 2, 50, 340, 29, 3, 9, 200, 503, 932, 32 };
-            ratingSpread.Ratings = new[] { 1, 2, 50, 340, 29, 3, 9, 200, 503, 932, 32 };
+        private APIBeatmapSet? currentOnlineBeatmapSet;
+        private GetBeatmapSetRequest? currentRequest;
 
-            int[] retries = Enumerable.Range(0, 150).Select(_ => RNG.Next(50, 100)).ToArray();
-            int[] fails = Enumerable.Range(0, 150).Select(_ => RNG.Next(50, 100)).ToArray();
-            failRetryGraph.Data = (retries, fails);
+        private void updateOnlineDisplay()
+        {
+            var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
+
+            currentRequest?.Cancel();
+            currentRequest = null;
+
+            if (beatmapSetInfo.OnlineID < 1)
+            {
+                genre.Value = ("-", null);
+                language.Value = ("-", null);
+                userRating.Ratings = Array.Empty<int>();
+                ratingSpread.Ratings = Array.Empty<int>();
+                successRate.Value = 0;
+                failRetryGraph.Data = (Array.Empty<int>(), Array.Empty<int>());
+            }
+            else if (currentOnlineBeatmapSet == null || currentOnlineBeatmapSet.OnlineID != beatmapSetInfo.OnlineID)
+            {
+                genre.Value = null;
+                language.Value = null;
+                userRating.Ratings = Array.Empty<int>();
+                ratingSpread.Ratings = Array.Empty<int>();
+                successRate.Value = 0;
+                failRetryGraph.Data = (Array.Empty<int>(), Array.Empty<int>());
+
+                currentRequest = new GetBeatmapSetRequest(beatmapSetInfo.OnlineID);
+                currentRequest.Success += s =>
+                {
+                    currentOnlineBeatmapSet = s;
+
+                    if (!string.IsNullOrEmpty(s.Genre.Name))
+                        genre.Value = (s.Genre.Name, new LinkDetails(LinkAction.SearchBeatmapSet, s.Genre.Name));
+                    else
+                        genre.Value = ("-", null);
+
+                    if (!string.IsNullOrEmpty(s.Language.Name))
+                        language.Value = (s.Language.Name, new LinkDetails(LinkAction.SearchBeatmapSet, s.Language.Name));
+                    else
+                        language.Value = ("-", null);
+
+                    userRating.Ratings = s.Ratings;
+                    ratingSpread.Ratings = s.Ratings;
+
+                    updateOnlineBeatmap();
+                };
+
+                api.Queue(currentRequest);
+            }
+            else
+                updateOnlineBeatmap();
+        }
+
+        private void updateOnlineBeatmap()
+        {
+            var beatmapInfo = beatmap.Value.BeatmapInfo;
+
+            Debug.Assert(currentOnlineBeatmapSet != null);
+            var onlineBeatmap = currentOnlineBeatmapSet.Beatmaps.SingleOrDefault(b => b.OnlineID == beatmapInfo.OnlineID);
+
+            if (onlineBeatmap != null)
+            {
+                successRate.Value = (float)onlineBeatmap.PassCount / onlineBeatmap.PlayCount;
+
+                failRetryGraph.Data = (
+                    onlineBeatmap.FailTimes?.Retries ?? Array.Empty<int>(),
+                    onlineBeatmap.FailTimes?.Fails ?? Array.Empty<int>());
+            }
         }
     }
 }

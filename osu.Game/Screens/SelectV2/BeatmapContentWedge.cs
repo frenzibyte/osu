@@ -17,9 +17,9 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapContentWedge()
         {
-            Width = 700;
+            Width = 708;
             Height = 600;
-            Y = 260;
+            Y = 245;
         }
 
         [BackgroundDependencyLoader]
@@ -40,7 +40,7 @@ namespace osu.Game.Screens.SelectV2
                 contentContainer = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Top = 48 + 8 },
+                    Padding = new MarginPadding { Top = 48 + 4 },
                 },
             };
         }

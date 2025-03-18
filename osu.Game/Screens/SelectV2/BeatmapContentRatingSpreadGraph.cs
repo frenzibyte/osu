@@ -31,7 +31,7 @@ namespace osu.Game.Screens.SelectV2
                 if (!value.Any())
                 {
                     foreach (var bar in graph)
-                        bar.Height = min_height;
+                        bar.ResizeHeightTo(min_height, 300, Easing.OutQuint);
                 }
                 else
                 {
@@ -39,7 +39,7 @@ namespace osu.Game.Screens.SelectV2
                     int maxRating = usableRange.Max();
 
                     for (int i = 0; i < graph.Length; i++)
-                        graph[i].Height = min_height + (max_height - min_height) * usableRange.ElementAt(i) / maxRating;
+                        graph[i].ResizeHeightTo(min_height + (max_height - min_height) * (maxRating == 0 ? 0 : usableRange.ElementAt(i) / (float)maxRating), 300, Easing.OutQuint);
                 }
             }
         }

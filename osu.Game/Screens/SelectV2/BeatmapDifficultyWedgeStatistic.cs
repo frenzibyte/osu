@@ -18,14 +18,20 @@ namespace osu.Game.Screens.SelectV2
     {
         public LocalisableString Label
         {
+            get => labelText.Text;
             set => labelText.Text = value;
         }
 
+        private (float value, float maximum) value;
+
         public (float value, float maximum) Value
         {
+            get => value;
             set
             {
-                bar.ResizeWidthTo(value.value / value.maximum, 300, Easing.OutQuint);
+                this.value = value;
+
+                bar.ResizeWidthTo(value.maximum == 0 ? 0 : value.value / value.maximum, 300, Easing.OutQuint);
                 valueText.Text = value.value.ToLocalisableString("0.##");
             }
         }
@@ -42,7 +48,7 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapDifficultyWedgeStatistic(LocalisableString label)
         {
-            Width = 65;
+            Width = 75;
             AutoSizeAxes = Axes.Y;
 
             InternalChild = new FillFlowContainer
@@ -80,12 +86,12 @@ namespace osu.Game.Screens.SelectV2
                     {
                         Margin = new MarginPadding { Top = 2f },
                         Text = label,
-                        Font = OsuFont.Torus.With(size: 12f, weight: FontWeight.SemiBold),
+                        Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
                     },
                     valueText = new OsuSpriteText
                     {
                         Margin = new MarginPadding { Top = 0f },
-                        Font = OsuFont.Torus.With(size: 20f, weight: FontWeight.Regular),
+                        Font = OsuFont.Torus.With(size: 24f, weight: FontWeight.Regular),
                     },
                 },
             };

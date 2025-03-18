@@ -229,8 +229,8 @@ namespace osu.Game.Screens.SelectV2
             ApplyToBackground(backgroundModeBeatmap =>
             {
                 backgroundModeBeatmap.Beatmap = Beatmap.Value;
-                backgroundModeBeatmap.BlurAmount.Value = configBackgroundBlur.Value ? BACKGROUND_BLUR : 0f;
-                backgroundModeBeatmap.DimWhenUserSettingsIgnored.Value = configBackgroundBlur.Value ? 0 : 0.4f;
+                backgroundModeBeatmap.BlurAmount.Value = configBackgroundBlur.Value ? 0f : 0f;
+                backgroundModeBeatmap.DimWhenUserSettingsIgnored.Value = configBackgroundBlur.Value ? 0.25f : 0.4f;
                 backgroundModeBeatmap.IgnoreUserSettings.Value = true;
                 backgroundModeBeatmap.FadeColour(Color4.White, 250);
             });

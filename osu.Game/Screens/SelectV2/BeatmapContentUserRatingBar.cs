@@ -32,7 +32,7 @@ namespace osu.Game.Screens.SelectV2
                 {
                     negativeText.Text = 0.ToLocalisableString(@"N0");
                     positiveText.Text = 0.ToLocalisableString(@"N0");
-                    positiveBar.Width = 0;
+                    positiveBar.ResizeWidthTo(0, 300, Easing.OutQuint);
                 }
                 else
                 {
@@ -43,7 +43,7 @@ namespace osu.Game.Screens.SelectV2
 
                     negativeText.Text = (totalCount - positiveCount).ToLocalisableString(@"N0");
                     positiveText.Text = positiveCount.ToLocalisableString(@"N0");
-                    positiveBar.Width = totalCount == 0 ? 0 : (float)positiveCount / totalCount;
+                    positiveBar.ResizeWidthTo(totalCount == 0 ? 0 : (float)positiveCount / totalCount, 300, Easing.OutQuint);
                 }
             }
         }

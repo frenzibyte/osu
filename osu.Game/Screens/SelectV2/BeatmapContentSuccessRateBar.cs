@@ -25,7 +25,7 @@ namespace osu.Game.Screens.SelectV2
             set
             {
                 valueText.Text = value.ToLocalisableString(@"0.##%");
-                valueBar.Width = value;
+                valueBar.ResizeWidthTo(value, 300, Easing.OutQuint);
             }
         }
 

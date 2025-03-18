@@ -2,7 +2,6 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -29,10 +28,10 @@ namespace osu.Game.Screens.SelectV2
             set
             {
                 int[] total = value.retries.Zip(value.fails).Select(p => p.First + p.Second).ToArray();
-                int maximum = total.Max();
+                int maximum = total.DefaultIfEmpty(0).Max();
 
-                retriesGraph.Data = total.Select(r => (float)r / maximum).ToArray();
-                failsGraph.Data = value.fails.Select(r => (float)r / maximum).ToArray();
+                retriesGraph.Data = total.Select(r => maximum == 0 ? 0 : (float)r / maximum).ToArray();
+                failsGraph.Data = value.fails.Select(r => maximum == 0 ? 0 : (float)r / maximum).ToArray();
             }
         }
 
@@ -84,7 +83,17 @@ namespace osu.Game.Screens.SelectV2
 
         private partial class GraphDrawable : Drawable
         {
-            public float[] Data = new float[10];
+            private float[] data;
+
+            public float[] Data
+            {
+                get => data;
+                set
+                {
+                    data = value;
+                    Invalidate(Invalidation.DrawNode);
+                }
+            }
 
             protected override DrawNode CreateDrawNode() => new GraphDrawNode(this);
 
@@ -113,13 +122,15 @@ namespace osu.Game.Screens.SelectV2
                 {
                     base.Draw(renderer);
 
+                    if (data.Length <= 1)
+                        return;
+
                     // todo: try moving this into BarGraph
                     const float spacing_constant = 1.5f;
 
                     float position = 0;
                     float barWidth = drawSize.X / data.Length / spacing_constant;
 
-                    Debug.Assert(data.Length > 1);
                     float totalSpacing = drawSize.X - barWidth * data.Length;
                     float spacing = totalSpacing / (data.Length - 1);
 

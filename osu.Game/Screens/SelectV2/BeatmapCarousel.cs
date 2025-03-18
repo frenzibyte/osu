@@ -95,7 +95,14 @@ namespace osu.Game.Screens.SelectV2
 
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException();
+                    foreach (var set in beatmapSetInfos!)
+                    {
+                        foreach (var beatmap in set.Beatmaps)
+                            Items.RemoveAll(i => i is BeatmapInfo bi && beatmap.Equals(bi));
+                    }
+
+                    Items.AddRange(newBeatmapSets!.SelectMany(s => s.Beatmaps));
+                    break;
 
                 case NotifyCollectionChangedAction.Reset:
                     Items.Clear();

@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osuTK;
 using osuTK.Graphics;
@@ -18,40 +19,50 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapMainWedgeStatistic : CompositeDrawable, IHasTooltip
     {
+        private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
+
         private readonly IconUsage icon;
+        private readonly bool background;
+        private readonly float leftPadding;
 
         private OsuSpriteText valueText = null!;
+        private LoadingSpinner loading = null!;
 
-        private LocalisableString value;
+        private LocalisableString? value;
 
-        public LocalisableString Value
+        public LocalisableString? Value
         {
             get => value;
             set
             {
                 this.value = value;
 
-                if (IsLoaded)
-                    valueText.Text = value;
+                Schedule(() =>
+                {
+                    loading.State.Value = value != null ? Visibility.Hidden : Visibility.Visible;
+                    valueText.Text = value ?? string.Empty;
+                });
             }
         }
 
-        public LocalisableString TooltipText { get; }
+        public LocalisableString TooltipText { get; set; }
 
-        public BeatmapMainWedgeStatistic(IconUsage icon, LocalisableString value, LocalisableString tooltip)
+        public BeatmapMainWedgeStatistic(IconUsage icon, bool background = false, float leftPadding = 10f)
         {
             this.icon = icon;
-            this.value = value;
+            this.background = background;
+            this.leftPadding = leftPadding;
 
-            TooltipText = tooltip;
+            AutoSizeAxes = Axes.X;
+            Height = 30f;
         }
 
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
             Masking = true;
-            CornerRadius = 8; // todo: ?
-            Size = new Vector2(120, 30);
+            CornerRadius = 5;
+            Shear = shear;
 
             InternalChildren = new Drawable[]
             {
@@ -59,33 +70,52 @@ namespace osu.Game.Screens.SelectV2
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
-                    Alpha = 0.25f,
+                    Alpha = background ? 0.2f : 0f,
                 },
                 new FillFlowContainer
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreLeft,
                     AutoSizeAxes = Axes.Both,
                     Direction = FillDirection.Horizontal,
+                    Margin = new MarginPadding { Left = leftPadding, Right = 10f },
                     Spacing = new Vector2(4f, 0f),
+                    Shear = -shear,
+                    AutoSizeDuration = 300,
+                    AutoSizeEasing = Easing.OutQuint,
                     Children = new Drawable[]
                     {
                         new SpriteIcon
                         {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
                             Icon = icon,
                             Size = new Vector2(20f),
                             Colour = colourProvider.Content2,
                         },
-                        valueText = new OsuSpriteText
+                        new Container
                         {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Text = value,
-                            Font = OsuFont.Torus.With(size: 19.2f, weight: FontWeight.SemiBold),
-                            Colour = colourProvider.Content2,
-                            UseFullGlyphHeight = false,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            AutoSizeAxes = Axes.Both,
+                            Children = new Drawable[]
+                            {
+                                loading = new LoadingSpinner
+                                {
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Size = new Vector2(16f),
+                                    State = { Value = Visibility.Visible },
+                                },
+                                valueText = new OsuSpriteText
+                                {
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Font = OsuFont.Torus.With(size: 19.2f, weight: FontWeight.SemiBold),
+                                    Colour = colourProvider.Content2,
+                                    Margin = new MarginPadding { Bottom = 2f },
+                                },
+                            },
                         },
                     },
                 }

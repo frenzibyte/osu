@@ -1,20 +1,31 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
+using osu.Game.Database;
+using osu.Game.Extensions;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
+using osu.Game.Graphics.Sprites;
+using osu.Game.Overlays;
+using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Utils;
 using osuTK;
 
 namespace osu.Game.Screens.SelectV2
@@ -49,21 +60,41 @@ namespace osu.Game.Screens.SelectV2
         private Container content = null!;
         private Box difficultyBorder = null!;
 
+        private BeatmapMainWedgeStatistic playsStatistic = null!;
+        private BeatmapMainWedgeStatistic favouritesStatistic = null!;
+        private BeatmapMainWedgeStatistic lengthStatistic = null!;
+        private BeatmapMainWedgeStatistic bpmStatistic = null!;
+
         private CancellationTokenSource? cancellationSource;
 
         public IBindable<double> DisplayedStars => displayedStars;
 
         private readonly Bindable<double> displayedStars = new BindableDouble();
 
+        private BeatmapSetOnlineStatusPill statusPill = null!;
+        private OsuHoverContainer titleLink = null!;
+        private OsuSpriteText titleLabel = null!;
+        private OsuHoverContainer artistLink = null!;
+        private OsuSpriteText artistLabel = null!;
+
+        [Resolved]
+        private SongSelect? songSelect { get; set; }
+
+        [Resolved]
+        private LocalisationManager localisation { get; set; } = null!;
+
+        [Resolved]
+        private BeatmapLookupCache beatmapCache { get; set; } = null!;
+
         public BeatmapMainWedge()
         {
             Width = 760f;
-            Height = 210;
+            Height = 190;
             Y = -20;
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(OverlayColourProvider colourProvider)
         {
             Shear = shear;
             Masking = true;
@@ -78,15 +109,98 @@ namespace osu.Game.Screens.SelectV2
 
             InternalChildren = new Drawable[]
             {
-                difficultyBorder = new Box
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
+                    Colour = colourProvider.Background3.Opacity(0.5f),
                 },
-                content = new Container
+                new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Right = border_weight, Vertical = border_weight },
-                }
+                    Shear = -shear,
+                    Children = new[]
+                    {
+                        new FillFlowContainer
+                        {
+                            Anchor = Anchor.TopLeft,
+                            Origin = Anchor.TopLeft,
+                            Direction = FillDirection.Horizontal,
+                            Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Top = 20 },
+                            AutoSizeAxes = Axes.Both,
+                            Children = new[]
+                            {
+                                statusPill = new BeatmapSetOnlineStatusPill
+                                {
+                                    AutoSizeAxes = Axes.Both,
+                                    Margin = new MarginPadding { Right = 20f, Top = 10f },
+                                    TextSize = 11,
+                                    TextPadding = new MarginPadding { Horizontal = 8, Vertical = 2 },
+                                    // Status = status,
+                                },
+                            }
+                        },
+                        new FillFlowContainer
+                        {
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Direction = FillDirection.Vertical,
+                            Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Bottom = 24 },
+                            AutoSizeAxes = Axes.Y,
+                            RelativeSizeAxes = Axes.X,
+                            Spacing = new Vector2(0f, 10f),
+                            Children = new Drawable[]
+                            {
+                                titleLink = new OsuHoverContainer
+                                {
+                                    AutoSizeAxes = Axes.Both,
+                                    Margin = new MarginPadding { Bottom = -10f },
+                                    Child = titleLabel = new TruncatingSpriteText
+                                    {
+                                        Shadow = true,
+                                        Font = OsuFont.TorusAlternate.With(size: 48, weight: FontWeight.SemiBold),
+                                    },
+                                },
+                                artistLink = new OsuHoverContainer
+                                {
+                                    AutoSizeAxes = Axes.Both,
+                                    Margin = new MarginPadding { Left = 1f },
+                                    Child = artistLabel = new TruncatingSpriteText
+                                    {
+                                        Shadow = true,
+                                        Font = OsuFont.Torus.With(size: 28.8f, weight: FontWeight.SemiBold),
+                                    },
+                                },
+                                new FillFlowContainer
+                                {
+                                    AutoSizeAxes = Axes.Both,
+                                    Direction = FillDirection.Horizontal,
+                                    Spacing = new Vector2(2f, 0f),
+                                    Children = new Drawable[]
+                                    {
+                                        playsStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Play, background: true, leftPadding: SongSelect.WEDGE_CONTENT_MARGIN)
+                                        {
+                                            TooltipText = BeatmapsetsStrings.ShowStatsPlaycount,
+                                            Margin = new MarginPadding { Left = -SongSelect.WEDGE_CONTENT_MARGIN },
+                                        },
+                                        favouritesStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Heart, background: true)
+                                        {
+                                            TooltipText = BeatmapsStrings.StatusFavourites,
+                                        },
+                                        lengthStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Clock)
+                                        {
+                                            Margin = new MarginPadding { Left = -5f },
+                                        },
+                                        bpmStatistic = new BeatmapMainWedgeStatistic(OsuIcon.BPM)
+                                        {
+                                            TooltipText = BeatmapsetsStrings.ShowStatsBpm,
+                                            Margin = new MarginPadding { Left = -20 },
+                                        },
+                                    },
+                                },
+                            }
+                        }
+                    },
+                },
             };
         }
 
@@ -94,10 +208,10 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
-            displayedStars.BindValueChanged(s =>
-            {
-                difficultyBorder.Colour = colours.ForStarDifficulty(s.NewValue);
-            }, true);
+            // displayedStars.BindValueChanged(s =>
+            // {
+            //     difficultyBorder.Colour = colours.ForStarDifficulty(s.NewValue);
+            // }, true);
 
             beatmap.BindValueChanged(_ => updateDisplay());
             ruleset.BindValueChanged(_ => updateDisplay());
@@ -111,70 +225,63 @@ namespace osu.Game.Screens.SelectV2
                 .FadeInFromZero(SongSelect.ENTER_DURATION / 3, Easing.In);
         }
 
-        private Container? loadingInfo;
+        private int? currentBeatmapSetID;
 
         private void updateDisplay()
         {
-            cancellationSource?.Cancel();
-            cancellationSource = new CancellationTokenSource();
+            var metadata = beatmap.Value.Metadata;
+            var beatmapInfo = beatmap.Value.BeatmapInfo;
+            var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
 
-            computeStarDifficulty(cancellationSource.Token);
+            statusPill.Status = beatmapInfo.Status;
 
-            Schedule(() =>
+            var titleText = new RomanisableString(metadata.TitleUnicode, metadata.Title);
+            titleLabel.Text = titleText;
+            titleLink.Action = () => songSelect?.Search(titleText.GetPreferred(localisation.CurrentParameters.Value.PreferOriginalScript));
+
+            var artistText = new RomanisableString(metadata.ArtistUnicode, metadata.Artist);
+            artistLabel.Text = artistText;
+            artistLink.Action = () => songSelect?.Search(artistText.GetPreferred(localisation.CurrentParameters.Value.PreferOriginalScript));
+
+            double rate = ModUtils.CalculateRateWithMods(mods.Value);
+
+            int bpmMax = FormatUtils.RoundBPM(beatmap.Value.Beatmap.ControlPointInfo.BPMMaximum, rate);
+            int bpmMin = FormatUtils.RoundBPM(beatmap.Value.Beatmap.ControlPointInfo.BPMMinimum, rate);
+            int mostCommonBPM = FormatUtils.RoundBPM(60000 / beatmap.Value.Beatmap.GetMostCommonBeatLength(), rate);
+
+            double drainLength = Math.Round(beatmap.Value.Beatmap.CalculateDrainLength() / rate);
+            double hitLength = Math.Round(beatmapInfo.Length / rate);
+
+            lengthStatistic.Value = hitLength.ToFormattedDuration();
+            lengthStatistic.TooltipText = BeatmapsetsStrings.ShowStatsTotalLength(drainLength.ToFormattedDuration());
+
+            bpmStatistic.Value = bpmMin == bpmMax
+                ? $"{bpmMin}"
+                : $"{bpmMin}-{bpmMax} (mostly {mostCommonBPM})";
+
+            if (currentBeatmapSetID == null || currentBeatmapSetID != beatmapSetInfo.OnlineID)
             {
-                LoadComponentAsync(loadingInfo = new Container
+                playsStatistic.Value = null;
+                favouritesStatistic.Value = null;
+
+                if (beatmapInfo.OnlineID >= 1)
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Depth = DisplayedContent?.Depth + 1 ?? 0,
-                    Child = new Container
+                    currentBeatmapSetID = beatmapSetInfo.OnlineID;
+
+                    beatmapCache.GetBeatmapAsync(beatmapInfo.OnlineID).ContinueWith(t => Schedule(() =>
                     {
-                        Masking = true,
-                        CornerRadius = corner_radius - border_weight,
-                        RelativeSizeAxes = Axes.Both,
-                        Children = new Drawable[]
+                        var apiBeatmap = t.GetResultSafely();
+
+                        if (apiBeatmap != null)
                         {
-                            new BeatmapMainWedgeBackground(beatmap.Value) { Shear = -Shear },
-                            Content = new BeatmapMainWedgeContent(beatmap.Value, mods.Value) { Shear = -Shear }
+                            playsStatistic.Value = apiBeatmap.BeatmapSet!.PlayCount.ToLocalisableString(@"N0");
+                            favouritesStatistic.Value = apiBeatmap.BeatmapSet!.FavouriteCount.ToLocalisableString(@"N0");
                         }
-                    }
-                }, d =>
-                {
-                    // Ensure we are the most recent loaded wedge.
-                    if (d != loadingInfo) return;
-
-                    removeOldInfo();
-                    content.Add(DisplayedContent = d);
-                });
-            });
-
-            void removeOldInfo()
-            {
-                DisplayedContent?.FadeOut(transition_duration);
-                DisplayedContent?.Expire();
-                DisplayedContent = null;
+                    }));
+                }
+                else
+                    currentBeatmapSetID = null;
             }
-        }
-
-        private void computeStarDifficulty(CancellationToken cancellationToken)
-        {
-            difficultyCache.GetDifficultyAsync(beatmap.Value.BeatmapInfo, ruleset.Value, mods.Value, cancellationToken)
-                           .ContinueWith(task =>
-                           {
-                               Schedule(() =>
-                               {
-                                   if (cancellationToken.IsCancellationRequested)
-                                       return;
-
-                                   var result = task.GetResultSafely() ?? default;
-                                   this.TransformBindableTo(displayedStars, result.Stars, StarRatingDisplay.TRANSITION_DURATION, StarRatingDisplay.TRANSITION_EASING);
-                               });
-                           }, cancellationToken);
-        }
-
-        protected override void Dispose(bool isDisposing)
-        {
-            base.Dispose(isDisposing);
-            cancellationSource?.Cancel();
         }
     }
 }

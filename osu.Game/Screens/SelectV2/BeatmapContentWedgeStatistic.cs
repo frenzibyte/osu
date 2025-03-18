@@ -10,19 +10,44 @@ using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Online.Chat;
 using osu.Game.Overlays;
+using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapContentWedgeStatistic : FillFlowContainer
     {
-        public (LocalisableString value, LinkDetails link) Value
+        private (LocalisableString value, LinkDetails? link)? value;
+
+        public (LocalisableString value, LinkDetails? link)? Value
         {
+            get => value;
             set
             {
+                this.value = value;
+
                 valueText.Clear();
-                valueText.AddLink(value.value, value.link.Action, value.link.Argument);
+
+                if (value.HasValue)
+                {
+                    string valueString = value.Value.value.ToString();
+
+                    if (value.Value.link != null)
+                        valueText.AddLink(valueString.Truncate(24), value.Value.link.Action, value.Value.link.Argument);
+                    else
+                        valueText.AddText(valueString.Truncate(24));
+                }
+                else
+                {
+                    valueText.AddArbitraryDrawable(new LoadingSpinner
+                    {
+                        Size = new Vector2(16),
+                        State = { Value = Visibility.Visible },
+                        Margin = new MarginPadding { Top = 4f },
+                    });
+                }
             }
         }
 
@@ -81,8 +106,7 @@ namespace osu.Game.Screens.SelectV2
                 valueText = new LinkFlowContainer(t => t.Font = t.Font.With(size: 14.4f, weight: FontWeight.Regular))
                 {
                     RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    // Padding = new MarginPadding { Left = 80f },
+                    Height = 14.4f,
                 }
             };
         }
