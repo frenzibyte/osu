@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Utils;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays;
@@ -83,7 +84,9 @@ namespace osu.Game.Screens.SelectV2
 
         private partial class GraphDrawable : Drawable
         {
-            private float[] data;
+            private readonly float[] displayedData = new float[100];
+
+            private float[] data = new float[100];
 
             public float[] Data
             {
@@ -95,6 +98,24 @@ namespace osu.Game.Screens.SelectV2
                 }
             }
 
+            protected override void Update()
+            {
+                base.Update();
+
+                bool changed = false;
+
+                for (int i = 0; i < displayedData.Length; i++)
+                {
+                    float before = displayedData[i];
+                    float value = data.ElementAtOrDefault(i);
+                    displayedData[i] = (float)Interpolation.Lerp(displayedData[i], value, Math.Min(1, Time.Elapsed / 50));
+                    changed |= displayedData[i] != before;
+                }
+
+                if (changed)
+                    Invalidate(Invalidation.DrawNode);
+            }
+
             protected override DrawNode CreateDrawNode() => new GraphDrawNode(this);
 
             private class GraphDrawNode : DrawNode
@@ -102,7 +123,7 @@ namespace osu.Game.Screens.SelectV2
                 private readonly GraphDrawable source;
 
                 private Vector2 drawSize;
-                private float[] data = null!;
+                private float[] displayedData = null!;
 
                 public GraphDrawNode(GraphDrawable source)
                     : base(source)
@@ -115,28 +136,25 @@ namespace osu.Game.Screens.SelectV2
                     base.ApplyState();
 
                     drawSize = source.DrawSize;
-                    data = source.Data;
+                    displayedData = source.displayedData;
                 }
 
                 protected override void Draw(IRenderer renderer)
                 {
                     base.Draw(renderer);
 
-                    if (data.Length <= 1)
-                        return;
-
                     // todo: try moving this into BarGraph
                     const float spacing_constant = 1.5f;
 
                     float position = 0;
-                    float barWidth = drawSize.X / data.Length / spacing_constant;
+                    float barWidth = drawSize.X / displayedData.Length / spacing_constant;
 
-                    float totalSpacing = drawSize.X - barWidth * data.Length;
-                    float spacing = totalSpacing / (data.Length - 1);
+                    float totalSpacing = drawSize.X - barWidth * displayedData.Length;
+                    float spacing = totalSpacing / (displayedData.Length - 1);
 
-                    for (int i = 0; i < data.Length; i++)
+                    for (int i = 0; i < displayedData.Length; i++)
                     {
-                        float barHeight = MathF.Max(drawSize.Y * data[i], barWidth);
+                        float barHeight = MathF.Max(drawSize.Y * displayedData[i], barWidth);
 
                         drawBar(renderer, position, barWidth, barHeight);
 
