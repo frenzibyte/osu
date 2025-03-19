@@ -84,7 +84,7 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapMainWedge()
         {
-            Width = 760f;
+            Width = 740f;
             Height = 190;
             Y = -20;
         }
@@ -153,7 +153,7 @@ namespace osu.Game.Screens.SelectV2
                                     Child = titleLabel = new TruncatingSpriteText
                                     {
                                         Shadow = true,
-                                        Font = OsuFont.TorusAlternate.With(size: 48, weight: FontWeight.SemiBold),
+                                        Font = OsuFont.TorusAlternate.With(size: 43.2f, weight: FontWeight.SemiBold),
                                     },
                                 },
                                 artistLink = new OsuHoverContainer

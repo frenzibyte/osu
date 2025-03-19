@@ -35,7 +35,7 @@ namespace osu.Game.Screens.SelectV2
 
         protected const float BACKGROUND_BLUR = 20;
 
-        public const float WEDGE_CONTENT_MARGIN = 80f;
+        public const float WEDGE_CONTENT_MARGIN = 60f;
         public const double ENTER_DURATION = 600;
 
         private readonly ModSelectOverlay modSelectOverlay = new SoloModSelectOverlay();

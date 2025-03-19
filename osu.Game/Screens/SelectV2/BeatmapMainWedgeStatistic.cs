@@ -40,7 +40,14 @@ namespace osu.Game.Screens.SelectV2
                 Schedule(() =>
                 {
                     loading.State.Value = value != null ? Visibility.Hidden : Visibility.Visible;
-                    valueText.Text = value ?? string.Empty;
+
+                    if (value != null)
+                    {
+                        valueText.Text = value.Value;
+                        valueText.FadeIn(120, Easing.OutQuint);
+                    }
+                    else
+                        valueText.FadeOut(120, Easing.OutQuint);
                 });
             }
         }
@@ -81,8 +88,6 @@ namespace osu.Game.Screens.SelectV2
                     Margin = new MarginPadding { Left = background ? leftPadding : 0, Right = background ? 10f : 0f },
                     Spacing = new Vector2(4f, 0f),
                     Shear = -shear,
-                    AutoSizeDuration = 300,
-                    AutoSizeEasing = Easing.OutQuint,
                     Children = new Drawable[]
                     {
                         new SpriteIcon
@@ -102,8 +107,8 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 loading = new LoadingSpinner
                                 {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
                                     Size = new Vector2(16f),
                                     State = { Value = Visibility.Visible },
                                 },
@@ -114,6 +119,7 @@ namespace osu.Game.Screens.SelectV2
                                     Font = OsuFont.Torus.With(size: 19.2f, weight: FontWeight.SemiBold),
                                     Colour = colourProvider.Content2,
                                     Margin = new MarginPadding { Bottom = 2f },
+                                    AlwaysPresent = true,
                                 },
                             },
                         },

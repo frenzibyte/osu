@@ -70,7 +70,7 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapDifficultyWedge()
         {
-            Width = 725f;
+            Width = 705f;
             Height = 90;
             X = -18;
             Y = 150;

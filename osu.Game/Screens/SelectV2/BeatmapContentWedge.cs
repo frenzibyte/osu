@@ -17,7 +17,7 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapContentWedge()
         {
-            Width = 708;
+            Width = 688;
             Height = 600;
             Y = 245;
         }

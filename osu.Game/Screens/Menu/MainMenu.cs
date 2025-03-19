@@ -41,7 +41,6 @@ using osu.Game.Seasonal;
 using osuTK;
 using osuTK.Graphics;
 using osu.Game.Localisation;
-using osu.Game.Screens.Select;
 using osu.Game.Screens.SelectV2;
 
 namespace osu.Game.Screens.Menu

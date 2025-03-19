@@ -44,6 +44,7 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
+            Width = 0.88f;
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
 
