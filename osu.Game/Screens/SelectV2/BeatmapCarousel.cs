@@ -21,6 +21,7 @@ namespace osu.Game.Screens.SelectV2
     [Cached]
     public partial class BeatmapCarousel : Carousel<BeatmapInfo>
     {
+        public Action<BeatmapInfo>? RequestSelectBeatmap { private get; init; }
         public Action<BeatmapInfo>? RequestPresentBeatmap { private get; init; }
 
         public const float SPACING = 5f;
@@ -94,7 +95,14 @@ namespace osu.Game.Screens.SelectV2
 
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException();
+                    foreach (var set in beatmapSetInfos!)
+                    {
+                        foreach (var beatmap in set.Beatmaps)
+                            Items.RemoveAll(i => i is BeatmapInfo bi && beatmap.Equals(bi));
+                    }
+
+                    Items.AddRange(newBeatmapSets!.SelectMany(s => s.Beatmaps));
+                    break;
 
                 case NotifyCollectionChangedAction.Reset:
                     Items.Clear();
@@ -159,6 +167,8 @@ namespace osu.Game.Screens.SelectV2
                     if (containingGroup != null)
                         setExpandedGroup(containingGroup);
                     setExpandedSet(beatmapInfo);
+
+                    RequestSelectBeatmap?.Invoke(beatmapInfo);
                     break;
             }
         }

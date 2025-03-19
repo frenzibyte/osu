@@ -110,11 +110,13 @@ namespace osu.Game.Graphics
 
         public static IconUsage Audio => get(OsuIconMapping.Audio);
         public static IconUsage Beatmap => get(OsuIconMapping.Beatmap);
+        public static IconUsage BPM => get(OsuIconMapping.BPM);
         public static IconUsage Calendar => get(OsuIconMapping.Calendar);
         public static IconUsage ChangelogA => get(OsuIconMapping.ChangelogA);
         public static IconUsage ChangelogB => get(OsuIconMapping.ChangelogB);
         public static IconUsage Chat => get(OsuIconMapping.Chat);
         public static IconUsage CheckCircle => get(OsuIconMapping.CheckCircle);
+        public static IconUsage Clock => get(OsuIconMapping.Clock);
         public static IconUsage CollapseA => get(OsuIconMapping.CollapseA);
         public static IconUsage Collections => get(OsuIconMapping.Collections);
         public static IconUsage Cross => get(OsuIconMapping.Cross);
@@ -189,6 +191,9 @@ namespace osu.Game.Graphics
             [Description(@"beatmap")]
             Beatmap,
 
+            [Description(@"bpm")]
+            BPM,
+
             [Description(@"calendar")]
             Calendar,
 
@@ -203,6 +208,9 @@ namespace osu.Game.Graphics
 
             [Description(@"check-circle")]
             CheckCircle,
+
+            [Description(@"clock")]
+            Clock,
 
             [Description(@"collapse-a")]
             CollapseA,

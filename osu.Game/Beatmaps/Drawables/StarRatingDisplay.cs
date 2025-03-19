@@ -24,7 +24,11 @@ namespace osu.Game.Beatmaps.Drawables
     /// </summary>
     public partial class StarRatingDisplay : CompositeDrawable, IHasCurrentValue<StarDifficulty>
     {
+        public const double TRANSITION_DURATION = 750;
+        public const Easing TRANSITION_EASING = Easing.OutQuint;
+
         private readonly bool animated;
+        private readonly bool darkBackground;
         private readonly Box background;
         private readonly SpriteIcon starIcon;
         private readonly OsuSpriteText starsText;
@@ -59,9 +63,10 @@ namespace osu.Game.Beatmaps.Drawables
         /// <param name="starDifficulty">The already computed <see cref="StarDifficulty"/> to display.</param>
         /// <param name="size">The size of the star rating display.</param>
         /// <param name="animated">Whether the star rating display will perform transforms on change rather than updating instantaneously.</param>
-        public StarRatingDisplay(StarDifficulty starDifficulty, StarRatingDisplaySize size = StarRatingDisplaySize.Regular, bool animated = false)
+        public StarRatingDisplay(StarDifficulty starDifficulty, StarRatingDisplaySize size = StarRatingDisplaySize.Regular, bool animated = false, bool darkBackground = false)
         {
             this.animated = animated;
+            this.darkBackground = darkBackground;
 
             Current.Value = starDifficulty;
 
@@ -147,7 +152,7 @@ namespace osu.Game.Beatmaps.Drawables
             Current.BindValueChanged(c =>
             {
                 if (animated)
-                    this.TransformBindableTo(displayedStars, c.NewValue.Stars, 750, Easing.OutQuint);
+                    this.TransformBindableTo(displayedStars, c.NewValue.Stars, TRANSITION_DURATION, TRANSITION_EASING);
                 else
                     displayedStars.Value = c.NewValue.Stars;
             });
@@ -158,10 +163,20 @@ namespace osu.Game.Beatmaps.Drawables
             {
                 starsText.Text = s.NewValue < 0 ? "-" : s.NewValue.FormatStarRating();
 
-                background.Colour = colours.ForStarDifficulty(s.NewValue);
+                if (darkBackground)
+                {
+                    starIcon.Colour = colours.ForStarDifficulty(s.NewValue);
+                    starsText.Colour = colours.ForStarDifficulty(s.NewValue);
 
-                starIcon.Colour = s.NewValue >= 6.5 ? colours.Orange1 : colourProvider?.Background5 ?? Color4Extensions.FromHex("303d47");
-                starsText.Colour = s.NewValue >= 6.5 ? colours.Orange1 : colourProvider?.Background5 ?? Color4.Black.Opacity(0.75f);
+                    background.Colour = Color4.Black.Opacity(0.75f);
+                }
+                else
+                {
+                    background.Colour = colours.ForStarDifficulty(s.NewValue);
+
+                    starIcon.Colour = s.NewValue >= 6.5 ? colours.Orange1 : colourProvider?.Background5 ?? Color4Extensions.FromHex("303d47");
+                    starsText.Colour = s.NewValue >= 6.5 ? colours.Orange1 : colourProvider?.Background5 ?? Color4.Black.Opacity(0.75f);
+                }
 
                 // In order to avoid autosize throwing the width of these displays all over the place,
                 // let's lock in some sane defaults for the text width based on how many digits we're

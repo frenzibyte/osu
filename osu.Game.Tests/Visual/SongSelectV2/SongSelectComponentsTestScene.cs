@@ -20,7 +20,6 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         {
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
-            Padding = new MarginPadding(10),
         };
 
         private Container? resizeContainer;
@@ -33,14 +32,13 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Padding = new MarginPadding(10),
                 Width = relativeWidth,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = ColourProvider.Background5,
+                        Colour = ColourProvider.Background6,
                     },
                     Content
                 }
