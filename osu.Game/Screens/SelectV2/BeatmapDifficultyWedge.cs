@@ -16,7 +16,6 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Localisation;
-using osu.Game.Online;
 using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
@@ -48,7 +47,6 @@ namespace osu.Game.Screens.SelectV2
         [Resolved]
         private OsuColour colours { get; set; } = null!;
 
-        private Box difficultyBorder = null!;
         private StarRatingDisplay starRatingDisplay = null!;
         private OsuSpriteText difficultyText = null!;
         private OsuSpriteText mappedByText = null!;
@@ -70,10 +68,8 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapDifficultyWedge()
         {
-            Width = 705f;
-            Height = 90;
-            X = -18;
-            Y = 150;
+            RelativeSizeAxes = Axes.X;
+            AutoSizeAxes = Axes.Y;
         }
 
         [BackgroundDependencyLoader]
@@ -85,7 +81,7 @@ namespace osu.Game.Screens.SelectV2
 
             InternalChildren = new Drawable[]
             {
-                difficultyBorder = new Box
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = colourProvider.Background4,
@@ -139,11 +135,13 @@ namespace osu.Game.Screens.SelectV2
                 },
                 new Container
                 {
-                    RelativeSizeAxes = Axes.Both,
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
                     Padding = new MarginPadding { Top = 28f, Bottom = border_weight, Right = border_weight },
                     Child = new Container
                     {
-                        RelativeSizeAxes = Axes.Both,
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
                         Masking = true,
                         CornerRadius = 10 - border_weight,
                         Children = new Drawable[]
@@ -157,7 +155,7 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 AutoSizeAxes = Axes.Both,
                                 Spacing = new Vector2(25f, 0f),
-                                Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 6, Top = 7.5f },
+                                Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 6, Top = 7.5f, Bottom = 5f },
                                 Children = new Drawable[]
                                 {
                                     beatmapStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
@@ -199,9 +197,6 @@ namespace osu.Game.Screens.SelectV2
             displayedStars.BindValueChanged(_ => updateStars(), true);
             FinishTransforms(true);
         }
-
-        [Resolved]
-        private ILinkHandler? linkHandler { get; set; }
 
         private void updateDisplay()
         {

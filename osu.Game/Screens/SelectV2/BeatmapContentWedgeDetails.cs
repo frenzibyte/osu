@@ -2,7 +2,6 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -11,6 +10,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Database;
+using osu.Game.Graphics.Containers;
 using osu.Game.Online.API;
 using osu.Game.Online.API.Requests;
 using osu.Game.Online.API.Requests.Responses;
@@ -38,6 +38,9 @@ namespace osu.Game.Screens.SelectV2
 
         private BeatmapContentFailRetryGraph failRetryGraph = null!;
 
+        private Container onlineRatingsWedge = null!;
+        private Container failRetryWedge = null!;
+
         [Resolved]
         private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
 
@@ -48,13 +51,13 @@ namespace osu.Game.Screens.SelectV2
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
 
-            InternalChild = new FillFlowContainer
+            InternalChild = new ShearAlignedFlowContainer(shear)
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
                 Spacing = new Vector2(0f, 4f),
-                Children = new[]
+                Children = new Drawable[]
                 {
                     new Container
                     {
@@ -62,6 +65,7 @@ namespace osu.Game.Screens.SelectV2
                         Masking = true,
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
+                        Shear = shear,
                         Children = new Drawable[]
                         {
                             new Box
@@ -74,7 +78,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
-                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 14, Right = 35, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 35, Vertical = 16 },
                                 Children = new Drawable[]
                                 {
                                     new FillFlowContainer
@@ -146,12 +150,13 @@ namespace osu.Game.Screens.SelectV2
                             },
                         },
                     },
-                    new Container
+                    onlineRatingsWedge = new Container
                     {
                         CornerRadius = 10,
                         Masking = true,
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
+                        Shear = shear,
                         Children = new Drawable[]
                         {
                             new Box
@@ -173,7 +178,7 @@ namespace osu.Game.Screens.SelectV2
                                     new Dimension(GridSizeMode.Absolute, 10),
                                     new Dimension(),
                                 },
-                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 40, Right = 40f, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 40f, Vertical = 16 },
                                 Content = new[]
                                 {
                                     new[]
@@ -188,12 +193,13 @@ namespace osu.Game.Screens.SelectV2
                             },
                         }
                     },
-                    new Container
+                    failRetryWedge = new Container
                     {
                         CornerRadius = 10,
                         Masking = true,
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
+                        Shear = shear,
                         Children = new Drawable[]
                         {
                             new Box
@@ -206,7 +212,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Shear = -shear,
-                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 60, Right = 40f, Vertical = 16 },
+                                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 40f, Vertical = 16 },
                                 Child = failRetryGraph = new BeatmapContentFailRetryGraph(),
                             },
                         },
@@ -230,101 +236,92 @@ namespace osu.Game.Screens.SelectV2
         private void updateDisplay()
         {
             var metadata = beatmap.Value.Metadata;
-            var beatmapInfo = beatmap.Value.BeatmapInfo;
             var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
 
-            creator.Value = (metadata.Author.Username, new LinkDetails(LinkAction.OpenUserProfile, metadata.Author.Username));
+            creator.Data = (metadata.Author.Username, new LinkDetails(LinkAction.OpenUserProfile, metadata.Author.Username));
 
             if (!string.IsNullOrEmpty(metadata.Source))
-                source.Value = (metadata.Source, new LinkDetails(LinkAction.SearchBeatmapSet, metadata.Source));
+                source.Data = (metadata.Source, new LinkDetails(LinkAction.SearchBeatmapSet, metadata.Source));
             else
-                source.Value = ("-", null);
+                source.Data = ("-", null);
 
             tag.Tags = metadata.Tags.Split(' ');
             submitted.Date = beatmapSetInfo.DateSubmitted ?? DateTimeOffset.Now;
             ranked.Date = beatmapSetInfo.DateRanked ?? DateTimeOffset.Now;
 
-            updateOnlineDisplay();
+            if (currentOnlineBeatmapSet == null || currentOnlineBeatmapSet.OnlineID != beatmapSetInfo.OnlineID)
+                refetchBeatmapSet();
 
-            if (beatmapInfo.OnlineID >= 1)
-            {
-            }
-            else
-            {
-                genre.Value = ("-", null);
-                language.Value = ("-", null);
-            }
+            updateOnlineDisplay();
         }
 
         private APIBeatmapSet? currentOnlineBeatmapSet;
         private GetBeatmapSetRequest? currentRequest;
 
-        private void updateOnlineDisplay()
+        private void refetchBeatmapSet()
         {
             var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
 
             currentRequest?.Cancel();
             currentRequest = null;
+            currentOnlineBeatmapSet = null;
 
-            if (beatmapSetInfo.OnlineID < 1)
+            if (beatmapSetInfo.OnlineID >= 1)
             {
-                genre.Value = ("-", null);
-                language.Value = ("-", null);
-                userRating.Ratings = Array.Empty<int>();
-                ratingSpread.Ratings = Array.Empty<int>();
-                successRate.Value = 0;
-                failRetryGraph.Data = (Array.Empty<int>(), Array.Empty<int>());
-            }
-            else if (currentOnlineBeatmapSet == null || currentOnlineBeatmapSet.OnlineID != beatmapSetInfo.OnlineID)
-            {
-                genre.Value = null;
-                language.Value = null;
-                userRating.Ratings = Array.Empty<int>();
-                ratingSpread.Ratings = Array.Empty<int>();
-                successRate.Value = 0;
-                failRetryGraph.Data = (Array.Empty<int>(), Array.Empty<int>());
-
                 currentRequest = new GetBeatmapSetRequest(beatmapSetInfo.OnlineID);
                 currentRequest.Success += s =>
                 {
                     currentOnlineBeatmapSet = s;
-
-                    if (!string.IsNullOrEmpty(s.Genre.Name))
-                        genre.Value = (s.Genre.Name, new LinkDetails(LinkAction.SearchBeatmapSet, s.Genre.Name));
-                    else
-                        genre.Value = ("-", null);
-
-                    if (!string.IsNullOrEmpty(s.Language.Name))
-                        language.Value = (s.Language.Name, new LinkDetails(LinkAction.SearchBeatmapSet, s.Language.Name));
-                    else
-                        language.Value = ("-", null);
-
-                    userRating.Ratings = s.Ratings;
-                    ratingSpread.Ratings = s.Ratings;
-
-                    updateOnlineBeatmap();
+                    updateOnlineDisplay();
                 };
 
                 api.Queue(currentRequest);
             }
-            else
-                updateOnlineBeatmap();
         }
 
-        private void updateOnlineBeatmap()
+        private void updateOnlineDisplay()
         {
-            var beatmapInfo = beatmap.Value.BeatmapInfo;
-
-            Debug.Assert(currentOnlineBeatmapSet != null);
-            var onlineBeatmap = currentOnlineBeatmapSet.Beatmaps.SingleOrDefault(b => b.OnlineID == beatmapInfo.OnlineID);
-
-            if (onlineBeatmap != null)
+            if (currentRequest?.CompletionState == APIRequestCompletionState.Waiting)
             {
-                successRate.Value = (float)onlineBeatmap.PassCount / onlineBeatmap.PlayCount;
+                genre.Data = null;
+                language.Data = null;
+            }
+            else if (currentOnlineBeatmapSet == null)
+            {
+                genre.Data = ("-", null);
+                language.Data = ("-", null);
+                successRate.Data = (0, 0);
+                userRating.Data = Array.Empty<int>();
+                ratingSpread.Data = Array.Empty<int>();
+                failRetryGraph.Data = new APIFailTimes();
 
-                failRetryGraph.Data = (
-                    onlineBeatmap.FailTimes?.Retries ?? Array.Empty<int>(),
-                    onlineBeatmap.FailTimes?.Fails ?? Array.Empty<int>());
+                onlineRatingsWedge.FadeOut(300, Easing.OutQuint);
+                onlineRatingsWedge.MoveToX(-50, 300, Easing.OutQuint);
+                failRetryWedge.FadeOut(300, Easing.OutQuint);
+                failRetryWedge.MoveToX(-50, 300, Easing.OutQuint);
+            }
+            else
+            {
+                var beatmapInfo = beatmap.Value.BeatmapInfo;
+
+                var onlineBeatmapSet = currentOnlineBeatmapSet;
+                var onlineBeatmap = onlineBeatmapSet.Beatmaps.SingleOrDefault(b => b.OnlineID == beatmapInfo.OnlineID);
+
+                genre.Data = (onlineBeatmapSet.Genre.Name, new LinkDetails(LinkAction.SearchBeatmapSet, onlineBeatmapSet.Genre.Name));
+                language.Data = (onlineBeatmapSet.Language.Name, new LinkDetails(LinkAction.SearchBeatmapSet, onlineBeatmapSet.Language.Name));
+                userRating.Data = onlineBeatmapSet.Ratings;
+                ratingSpread.Data = onlineBeatmapSet.Ratings;
+
+                if (onlineBeatmap != null)
+                {
+                    successRate.Data = (onlineBeatmap.PassCount, onlineBeatmap.PlayCount);
+                    failRetryGraph.Data = onlineBeatmap.FailTimes ?? new APIFailTimes();
+                }
+
+                onlineRatingsWedge.FadeIn(300, Easing.OutQuint);
+                onlineRatingsWedge.MoveToX(0, 300, Easing.OutQuint);
+                failRetryWedge.FadeIn(300, Easing.OutQuint);
+                failRetryWedge.MoveToX(0, 300, Easing.OutQuint);
             }
         }
     }

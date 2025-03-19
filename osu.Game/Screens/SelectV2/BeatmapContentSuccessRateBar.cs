@@ -1,11 +1,14 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays;
@@ -14,20 +17,30 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentSuccessRateBar : CompositeDrawable
+    public partial class BeatmapContentSuccessRateBar : CompositeDrawable, IHasTooltip
     {
         private readonly OsuSpriteText valueText;
         private readonly Circle backgroundBar;
         private readonly Circle valueBar;
 
-        public float Value
+        private (int pass, int play) data;
+
+        public (int pass, int play) Data
         {
+            get => data;
             set
             {
-                valueText.Text = value.ToLocalisableString(@"0.##%");
-                valueBar.ResizeWidthTo(value, 300, Easing.OutQuint);
+                this.data = value;
+
+                float ratio = value.play == 0 ? 0 : (float)value.pass / value.play;
+
+                valueText.Text = ratio.ToLocalisableString(@"0.##%");
+                valueText.MoveToX(Math.Clamp(ratio, 0.05f, 0.95f), 300, Easing.OutQuint);
+                valueBar.ResizeWidthTo(ratio, 300, Easing.OutQuint);
             }
         }
+
+        public LocalisableString TooltipText => $"{data.pass:N0} / {data.play:N0}";
 
         public BeatmapContentSuccessRateBar()
         {
@@ -47,15 +60,20 @@ namespace osu.Game.Screens.SelectV2
                         new OsuSpriteText
                         {
                             Text = BeatmapsetsStrings.ShowInfoSuccessRate,
-                            Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Bold),
+                            Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
                         },
-                        valueText = new OsuSpriteText
+                        new Container
                         {
-                            Anchor = Anchor.TopRight,
-                            Origin = Anchor.TopRight,
-                            Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Regular),
-                            Text = "0.00%",
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
                             Margin = new MarginPadding { Top = 10f },
+                            Child = valueText = new OsuSpriteText
+                            {
+                                Origin = Anchor.TopCentre,
+                                RelativePositionAxes = Axes.X,
+                                Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Regular),
+                                Text = "0.00%",
+                            }
                         },
                         new Container
                         {

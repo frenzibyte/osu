@@ -20,6 +20,8 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapContentWedgeLeaderboard : CompositeDrawable
     {
+        private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
+
         private Container scores = null!;
 
         [Resolved]
@@ -28,6 +30,7 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load()
         {
+            Shear = shear;
             RelativeSizeAxes = Axes.X;
             Height = 400;
 

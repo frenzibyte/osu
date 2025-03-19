@@ -25,6 +25,7 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
+            Shear = shear;
             CornerRadius = 10;
             Masking = true;
 

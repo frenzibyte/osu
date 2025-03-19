@@ -8,11 +8,10 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
+using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osuTK;
 
@@ -22,17 +21,19 @@ namespace osu.Game.Screens.SelectV2
     {
         private readonly GraphDrawable retriesGraph;
         private readonly GraphDrawable failsGraph;
-        private readonly Circle bottomBar;
 
-        public (int[] retries, int[] fails) Data
+        public APIFailTimes Data
         {
             set
             {
-                int[] total = value.retries.Zip(value.fails).Select(p => p.First + p.Second).ToArray();
+                int[] retries = value.Retries ?? Array.Empty<int>();
+                int[] fails = value.Fails ?? Array.Empty<int>();
+                int[] total = retries.Zip(fails, (r, f) => r + f).ToArray();
+
                 int maximum = total.DefaultIfEmpty(0).Max();
 
                 retriesGraph.Data = total.Select(r => maximum == 0 ? 0 : (float)r / maximum).ToArray();
-                failsGraph.Data = value.fails.Select(r => maximum == 0 ? 0 : (float)r / maximum).ToArray();
+                failsGraph.Data = fails.Select(r => maximum == 0 ? 0 : (float)r / maximum).ToArray();
             }
         }
 
@@ -52,7 +53,7 @@ namespace osu.Game.Screens.SelectV2
                     new OsuSpriteText
                     {
                         Text = BeatmapsetsStrings.ShowInfoPointsOfFailure,
-                        Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Bold),
+                        Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
                         Margin = new MarginPadding { Bottom = 4f },
                     },
                     new Container
@@ -65,21 +66,15 @@ namespace osu.Game.Screens.SelectV2
                             failsGraph = new GraphDrawable { RelativeSizeAxes = Axes.Both },
                         },
                     },
-                    bottomBar = new Circle
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 3f,
-                    }
                 },
             };
         }
 
         [BackgroundDependencyLoader]
-        private void load(OverlayColourProvider colourProvider, OsuColour colours)
+        private void load(OsuColour colours)
         {
             retriesGraph.Colour = colours.Orange1;
             failsGraph.Colour = colours.DarkOrange2;
-            bottomBar.Colour = colourProvider.Background6;
         }
 
         private partial class GraphDrawable : Drawable

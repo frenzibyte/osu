@@ -14,6 +14,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Graphics.Containers;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Screens.Footer;
@@ -21,6 +22,7 @@ using osu.Game.Screens.Menu;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Select;
 using osu.Game.Screens.SelectV2.Footer;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
@@ -37,6 +39,8 @@ namespace osu.Game.Screens.SelectV2
 
         public const float WEDGE_CONTENT_MARGIN = 60f;
         public const double ENTER_DURATION = 600;
+
+        private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
 
         private readonly ModSelectOverlay modSelectOverlay = new SoloModSelectOverlay();
 
@@ -91,6 +95,7 @@ namespace osu.Game.Screens.SelectV2
                             RelativeSizeAxes = Axes.Both,
                             ColumnDimensions = new[]
                             {
+                                new Dimension(GridSizeMode.Absolute, 720f),
                                 new Dimension(),
                                 new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
                             },
@@ -98,16 +103,18 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 new[]
                                 {
-                                    new Container
+                                    new ShearAlignedFlowContainer(shear)
                                     {
                                         RelativeSizeAxes = Axes.Both,
+                                        Spacing = new Vector2(0f, 4f),
+                                        Margin = new MarginPadding { Left = -20 },
                                         Children = new Drawable[]
                                         {
                                             new BeatmapMainWedge(),
-                                            new BeatmapDifficultyWedge(),
                                             new BeatmapContentWedge(),
                                         },
                                     },
+                                    Empty(),
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,

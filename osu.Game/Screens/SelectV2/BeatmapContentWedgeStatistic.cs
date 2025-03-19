@@ -19,14 +19,14 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapContentWedgeStatistic : FillFlowContainer
     {
-        private (LocalisableString value, LinkDetails? link)? value;
+        private (LocalisableString value, LinkDetails? link)? data;
 
-        public (LocalisableString value, LinkDetails? link)? Value
+        public (LocalisableString value, LinkDetails? link)? Data
         {
-            get => value;
+            get => data;
             set
             {
-                this.value = value;
+                data = value;
 
                 valueText.Clear();
 

@@ -22,7 +22,7 @@ namespace osu.Game.Screens.SelectV2
         private readonly Circle backgroundBar;
         private readonly Circle positiveBar;
 
-        public int[] Ratings
+        public int[] Data
         {
             set
             {
@@ -66,7 +66,7 @@ namespace osu.Game.Screens.SelectV2
                         new OsuSpriteText
                         {
                             Text = BeatmapsetsStrings.ShowStatsUserRating,
-                            Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Bold),
+                            Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.SemiBold),
                         },
                         new Container
                         {

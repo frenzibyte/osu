@@ -4,6 +4,7 @@
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Graphics.Containers;
 using osuTK;
 
 namespace osu.Game.Screens.SelectV2
@@ -17,31 +18,32 @@ namespace osu.Game.Screens.SelectV2
 
         public BeatmapContentWedge()
         {
-            Width = 688;
+            RelativeSizeAxes = Axes.X;
             Height = 600;
-            Y = 245;
         }
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            Shear = shear;
             CornerRadius = 10;
             Masking = true;
-            Margin = new MarginPadding { Left = -20 };
 
-            InternalChildren = new Drawable[]
+            InternalChild = new ShearAlignedFlowContainer(shear)
             {
-                header = new BeatmapContentWedgeHeader
+                RelativeSizeAxes = Axes.Both,
+                Spacing = new Vector2(0f, 4f),
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.X,
-                    Height = 48,
-                },
-                contentContainer = new Container
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Top = 48 + 4 },
-                },
+                    header = new BeatmapContentWedgeHeader
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 48,
+                    },
+                    contentContainer = new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                    },
+                }
             };
         }
 
