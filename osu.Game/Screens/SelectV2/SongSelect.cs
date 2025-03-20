@@ -14,7 +14,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
-using osu.Game.Graphics.Containers;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Screens.Footer;
@@ -48,6 +47,9 @@ namespace osu.Game.Screens.SelectV2
         private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
 
         private BeatmapCarousel carousel = null!;
+
+        private BeatmapMainWedge mainWedge = null!;
+        private BeatmapContentWedge contentWedge = null!;
 
         public override bool ShowFooter => true;
 
@@ -87,7 +89,7 @@ namespace osu.Game.Screens.SelectV2
                 new PopoverContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Bottom = ScreenFooter.HEIGHT + 10f },
+                    Padding = new MarginPadding { Bottom = ScreenFooter.HEIGHT },
                     Children = new Drawable[]
                     {
                         new GridContainer // used for max width implementation
@@ -103,15 +105,15 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 new[]
                                 {
-                                    new ShearAlignedFlowContainer(shear)
+                                    new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Spacing = new Vector2(0f, 4f),
                                         Margin = new MarginPadding { Left = -20 },
+                                        Padding = new MarginPadding { Bottom = 20f },
                                         Children = new Drawable[]
                                         {
-                                            new BeatmapMainWedge(),
-                                            new BeatmapContentWedge(),
+                                            mainWedge = new BeatmapMainWedge(),
+                                            contentWedge = new BeatmapContentWedge(),
                                         },
                                     },
                                     Empty(),
@@ -125,7 +127,7 @@ namespace osu.Game.Screens.SelectV2
                                             RelativeSizeAxes = Axes.Both
                                         },
                                     },
-                                }
+                                },
                             }
                         },
                     }
@@ -262,6 +264,12 @@ namespace osu.Game.Screens.SelectV2
                 // TODO: this should only set the text of the current criteria, not use a completely new criteria.
                 SearchText = query,
             });
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            contentWedge.Padding = new MarginPadding { Top = mainWedge.LayoutSize.Y + 4f };
         }
 
         private partial class SoloModSelectOverlay : UserModSelectOverlay

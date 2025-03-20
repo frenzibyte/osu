@@ -128,32 +128,32 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
         private void setRuleset(RulesetInfo rulesetInfo)
         {
-            Container? containerBefore = null;
+            // Container? containerBefore = null;
 
             AddStep("set ruleset", () =>
             {
                 // wedge content is only refreshed if the ruleset changes, so only wait for load in that case.
-                if (!rulesetInfo.Equals(Ruleset.Value))
-                    containerBefore = mainWedge.DisplayedContent;
+                // if (!rulesetInfo.Equals(Ruleset.Value))
+                //     containerBefore = mainWedge.DisplayedContent;
 
                 Ruleset.Value = rulesetInfo;
             });
 
-            AddUntilStep("wait for async load", () => mainWedge.DisplayedContent != containerBefore);
+            // AddUntilStep("wait for async load", () => mainWedge.DisplayedContent != containerBefore);
         }
 
         private void selectBeatmap(IBeatmap? b)
         {
-            Container? containerBefore = null;
+            // Container? containerBefore = null;
 
             AddStep($"select {b?.Metadata.Title ?? "null"} beatmap", () =>
             {
-                containerBefore = mainWedge.DisplayedContent;
+                // containerBefore = mainWedge.DisplayedContent;
                 Beatmap.Value = b == null ? Beatmap.Default : CreateWorkingBeatmap(b);
                 mainWedge.Show();
             });
 
-            AddUntilStep("wait for async load", () => mainWedge.DisplayedContent != containerBefore);
+            // AddUntilStep("wait for async load", () => mainWedge.DisplayedContent != containerBefore);
         }
 
         private IBeatmap createTestBeatmap(RulesetInfo ruleset)
@@ -203,7 +203,6 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
         private partial class TestBeatmapMainWedge : BeatmapMainWedge
         {
-            public new Container? DisplayedContent => base.DisplayedContent;
         }
 
         private class TestHitObject : ConvertHitObject;

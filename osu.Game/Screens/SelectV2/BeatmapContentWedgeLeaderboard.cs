@@ -31,8 +31,7 @@ namespace osu.Game.Screens.SelectV2
         private void load()
         {
             Shear = shear;
-            RelativeSizeAxes = Axes.X;
-            Height = 400;
+            RelativeSizeAxes = Axes.Both;
 
             InternalChildren = new Drawable[]
             {
@@ -48,6 +47,7 @@ namespace osu.Game.Screens.SelectV2
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
+                            Margin = new MarginPadding { Top = 4f },
                         },
                     }
                 },
@@ -116,13 +116,13 @@ namespace osu.Game.Screens.SelectV2
                 accumulation *= 2;
             }
 
-            scores.Add(new Container
-            {
-                RelativeSizeAxes = Axes.X,
-                Height = 200f,
-                AlwaysPresent = true,
-                Y = (LeaderboardScoreV2.HEIGHT + 4f) * 50,
-            });
+            // scores.Add(new Container
+            // {
+            //     RelativeSizeAxes = Axes.X,
+            //     Height = 200f,
+            //     AlwaysPresent = true,
+            //     Y = (LeaderboardScoreV2.HEIGHT + 4f) * 50,
+            // });
         }
     }
 }

@@ -33,9 +33,7 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapMainWedge : CompositeDrawable
     {
-        private const float transition_duration = 250;
         private const float corner_radius = 10;
-        private const float border_weight = 2;
 
         private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
 
@@ -48,13 +46,11 @@ namespace osu.Game.Screens.SelectV2
         [Resolved]
         private IBindable<IReadOnlyList<Mod>> mods { get; set; } = null!;
 
-        [Resolved]
-        private OsuColour colours { get; set; } = null!;
-
-        [Resolved]
-        private BeatmapDifficultyCache difficultyCache { get; set; } = null!;
-
-        protected Container? DisplayedContent { get; private set; }
+        private BeatmapSetOnlineStatusPill statusPill = null!;
+        private OsuHoverContainer titleLink = null!;
+        private OsuSpriteText titleLabel = null!;
+        private OsuHoverContainer artistLink = null!;
+        private OsuSpriteText artistLabel = null!;
 
         private BeatmapMainWedgeStatistic playsStatistic = null!;
         private BeatmapMainWedgeStatistic favouritesStatistic = null!;
@@ -66,12 +62,6 @@ namespace osu.Game.Screens.SelectV2
         public IBindable<double> DisplayedStars => displayedStars;
 
         private readonly Bindable<double> displayedStars = new BindableDouble();
-
-        private BeatmapSetOnlineStatusPill statusPill = null!;
-        private OsuHoverContainer titleLink = null!;
-        private OsuSpriteText titleLabel = null!;
-        private OsuHoverContainer artistLink = null!;
-        private OsuSpriteText artistLabel = null!;
 
         [Resolved]
         private SongSelect? songSelect { get; set; }
@@ -132,24 +122,28 @@ namespace osu.Game.Screens.SelectV2
                     },
                     titleLink = new OsuHoverContainer
                     {
-                        AutoSizeAxes = Axes.X,
+                        RelativeSizeAxes = Axes.X,
                         Height = 43.2f,
                         Margin = new MarginPadding { Bottom = -5f },
                         Child = titleLabel = new TruncatingSpriteText
                         {
                             Shadow = true,
                             Font = OsuFont.TorusAlternate.With(size: 43.2f, weight: FontWeight.SemiBold),
+                            RelativeSizeAxes = Axes.X,
+                            Padding = new MarginPadding { Right = 20f },
                         },
                     },
                     artistLink = new OsuHoverContainer
                     {
-                        AutoSizeAxes = Axes.X,
+                        RelativeSizeAxes = Axes.X,
                         Height = 28.8f,
                         Margin = new MarginPadding { Left = 1f },
                         Child = artistLabel = new TruncatingSpriteText
                         {
                             Shadow = true,
                             Font = OsuFont.Torus.With(size: 28.8f, weight: FontWeight.SemiBold),
+                            RelativeSizeAxes = Axes.X,
+                            Padding = new MarginPadding { Right = 20f },
                         },
                     },
                     new FillFlowContainer
@@ -195,11 +189,6 @@ namespace osu.Game.Screens.SelectV2
         protected override void LoadComplete()
         {
             base.LoadComplete();
-
-            // displayedStars.BindValueChanged(s =>
-            // {
-            //     difficultyBorder.Colour = colours.ForStarDifficulty(s.NewValue);
-            // }, true);
 
             beatmap.BindValueChanged(_ => updateDisplay());
             ruleset.BindValueChanged(_ => updateDisplay());

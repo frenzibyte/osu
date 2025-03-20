@@ -16,10 +16,15 @@ namespace osu.Game.Screens.SelectV2
         private BeatmapContentWedgeHeader header = null!;
         private Container contentContainer = null!;
 
+        public new MarginPadding Padding
+        {
+            get => base.Padding;
+            set => base.Padding = value;
+        }
+
         public BeatmapContentWedge()
         {
-            RelativeSizeAxes = Axes.X;
-            Height = 600;
+            RelativeSizeAxes = Axes.Both;
         }
 
         [BackgroundDependencyLoader]
@@ -28,19 +33,21 @@ namespace osu.Game.Screens.SelectV2
             CornerRadius = 10;
             Masking = true;
 
+            const float header_height = 48f;
+
             InternalChild = new ShearAlignedFlowContainer(shear)
             {
                 RelativeSizeAxes = Axes.Both,
-                Spacing = new Vector2(0f, 4f),
                 Children = new Drawable[]
                 {
                     header = new BeatmapContentWedgeHeader
                     {
                         RelativeSizeAxes = Axes.X,
-                        Height = 48,
+                        Height = header_height,
                     },
                     contentContainer = new Container
                     {
+                        // Padding = new MarginPadding { Top = header_height },
                         RelativeSizeAxes = Axes.Both,
                     },
                 }

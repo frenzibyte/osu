@@ -16,6 +16,8 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Localisation;
+using osu.Game.Online;
+using osu.Game.Online.Chat;
 using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
@@ -50,6 +52,7 @@ namespace osu.Game.Screens.SelectV2
         private StarRatingDisplay starRatingDisplay = null!;
         private OsuSpriteText difficultyText = null!;
         private OsuSpriteText mappedByText = null!;
+        private OsuHoverContainer mapperLink = null!;
         private OsuSpriteText mapperText = null!;
 
         private FillFlowContainer<BeatmapDifficultyWedgeStatistic> beatmapStatisticsFlow = null!;
@@ -86,99 +89,113 @@ namespace osu.Game.Screens.SelectV2
                     RelativeSizeAxes = Axes.Both,
                     Colour = colourProvider.Background4,
                 },
-                new FillFlowContainer
-                {
-                    AutoSizeAxes = Axes.X,
-                    Height = 28f,
-                    Direction = FillDirection.Horizontal,
-                    Shear = -shear,
-                    Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN },
-                    Spacing = new Vector2(8f, 0f),
-                    Children = new Drawable[]
-                    {
-                        starRatingDisplay = new StarRatingDisplay(default, animated: true)
-                        {
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                        },
-                        new FillFlowContainer
-                        {
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                            AutoSizeAxes = Axes.Both,
-                            Direction = FillDirection.Horizontal,
-                            Margin = new MarginPadding { Bottom = 2f },
-                            Children = new Drawable[]
-                            {
-                                difficultyText = new OsuSpriteText
-                                {
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft,
-                                    Font = OsuFont.Torus.With(size: 19.2f, weight: FontWeight.SemiBold),
-                                },
-                                mappedByText = new OsuSpriteText
-                                {
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft,
-                                    Text = " mapped by ",
-                                    Font = OsuFont.Torus.With(size: 16.8f, weight: FontWeight.Regular),
-                                },
-                                mapperText = new OsuSpriteText
-                                {
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft,
-                                    Font = OsuFont.Torus.With(size: 16.8f, weight: FontWeight.SemiBold),
-                                },
-                            },
-                        },
-                    },
-                },
-                new Container
+                new ShearAlignedFlowContainer(shear)
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    Padding = new MarginPadding { Top = 28f, Bottom = border_weight, Right = border_weight },
-                    Child = new Container
+                    Direction = FillDirection.Vertical,
+                    Shear = -shear,
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Masking = true,
-                        CornerRadius = 10 - border_weight,
-                        Children = new Drawable[]
+                        new FillFlowContainer
                         {
-                            new Box
+                            AutoSizeAxes = Axes.X,
+                            Height = 28f,
+                            Direction = FillDirection.Horizontal,
+                            Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN },
+                            Spacing = new Vector2(8f, 0f),
+                            Children = new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = colourProvider.Background5,
-                            },
-                            new FillFlowContainer
-                            {
-                                AutoSizeAxes = Axes.Both,
-                                Spacing = new Vector2(25f, 0f),
-                                Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN + 6, Top = 7.5f, Bottom = 5f },
-                                Children = new Drawable[]
+                                starRatingDisplay = new StarRatingDisplay(default, animated: true)
                                 {
-                                    beatmapStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                },
+                                new FillFlowContainer
+                                {
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    AutoSizeAxes = Axes.Both,
+                                    Direction = FillDirection.Horizontal,
+                                    Margin = new MarginPadding { Bottom = 2f },
+                                    Children = new Drawable[]
                                     {
-                                        AutoSizeAxes = Axes.Both,
-                                        Shear = -shear,
-                                        Spacing = new Vector2(8f, 0f),
-                                    },
-                                    difficultyStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
-                                    {
-                                        AutoSizeAxes = Axes.Both,
-                                        Shear = -shear,
-                                        Spacing = new Vector2(8f, 0f),
-                                        Children = new[]
+                                        difficultyText = new OsuSpriteText
                                         {
-                                            firstDifficultyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsCs),
-                                            accuracyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAccuracy),
-                                            hpDrainStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsDrain),
-                                            approachRateStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAr),
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft,
+                                            Font = OsuFont.Torus.With(size: 19.2f, weight: FontWeight.SemiBold),
+                                        },
+                                        mappedByText = new OsuSpriteText
+                                        {
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft,
+                                            Text = " mapped by ",
+                                            Font = OsuFont.Torus.With(size: 16.8f, weight: FontWeight.Regular),
+                                        },
+                                        mapperLink = new MapperLinkContainer
+                                        {
+                                            AutoSizeAxes = Axes.Both,
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft,
+                                            Child = mapperText = new TruncatingSpriteText
+                                            {
+                                                Shadow = true,
+                                                Font = OsuFont.Torus.With(size: 16.8f, weight: FontWeight.SemiBold),
+                                            },
                                         },
                                     },
-                                }
+                                },
                             },
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
+                            Padding = new MarginPadding { Bottom = border_weight, Right = border_weight },
+                            Child = new Container
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Masking = true,
+                                CornerRadius = 10 - border_weight,
+                                Shear = shear,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = colourProvider.Background5,
+                                    },
+                                    new FillFlowContainer
+                                    {
+                                        AutoSizeAxes = Axes.Both,
+                                        Spacing = new Vector2(25f, 0f),
+                                        Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Top = 7.5f, Bottom = 5f },
+                                        Shear = -shear,
+                                        Children = new Drawable[]
+                                        {
+                                            beatmapStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
+                                            {
+                                                AutoSizeAxes = Axes.Both,
+                                                Spacing = new Vector2(8f, 0f),
+                                            },
+                                            difficultyStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
+                                            {
+                                                AutoSizeAxes = Axes.Both,
+                                                Spacing = new Vector2(8f, 0f),
+                                                Children = new[]
+                                                {
+                                                    firstDifficultyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsCs),
+                                                    accuracyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAccuracy),
+                                                    hpDrainStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsDrain),
+                                                    approachRateStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAr),
+                                                },
+                                            },
+                                        }
+                                    },
+                                },
+                            }
                         },
                     }
                 },
@@ -198,6 +215,9 @@ namespace osu.Game.Screens.SelectV2
             FinishTransforms(true);
         }
 
+        [Resolved]
+        private ILinkHandler? linkHandler { get; set; }
+
         private void updateDisplay()
         {
             cancellationSource?.Cancel();
@@ -206,6 +226,7 @@ namespace osu.Game.Screens.SelectV2
             computeStarDifficulty(cancellationSource.Token);
 
             difficultyText.Text = beatmap.Value.BeatmapInfo.DifficultyName;
+            mapperLink.Action = () => linkHandler?.HandleLink(new LinkDetails(LinkAction.OpenUserProfile, beatmap.Value.Metadata.Author));
             mapperText.Text = beatmap.Value.Metadata.Author.Username;
 
             var playableBeatmap = beatmap.Value.GetPlayableBeatmap(ruleset.Value);
@@ -279,7 +300,6 @@ namespace osu.Game.Screens.SelectV2
             Color4 colour = displayedStars.Value >= 6.5f ? colours.Orange1 : colours.ForStarDifficulty(displayedStars.Value);
             difficultyText.FadeColour(colour, 300, Easing.OutQuint);
             mappedByText.FadeColour(colour, 300, Easing.OutQuint);
-            mapperText.FadeColour(colour, 300, Easing.OutQuint);
 
             foreach (var statistic in beatmapStatisticsFlow.Concat(difficultyStatisticsFlow))
                 statistic.TransformTo(nameof(statistic.AccentColour), colour, 300, Easing.OutQuint);

@@ -65,8 +65,9 @@ namespace osu.Game.Graphics.Containers
 
             public ShearAlignedDrawable(Drawable d)
             {
-                RelativeSizeAxes = Axes.X;
-                AutoSizeAxes = Axes.Y;
+                RelativeSizeAxes = d.RelativeSizeAxes;
+                AutoSizeAxes = Axes.Y & ~d.RelativeSizeAxes;
+
                 InternalChild = d;
 
                 AddLayout(layout);
