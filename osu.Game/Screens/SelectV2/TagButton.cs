@@ -6,6 +6,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
@@ -13,11 +14,12 @@ using osu.Game.Overlays;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class TagButton : CompositeDrawable
+    public partial class TagButton : CompositeDrawable, IHasLineBaseHeight
     {
         private readonly string tag;
 
         private Box box = null!;
+        private OsuSpriteText text = null!;
 
         [Resolved]
         private OverlayColourProvider colourProvider { get; set; } = null!;
@@ -43,7 +45,7 @@ namespace osu.Game.Screens.SelectV2
                     Colour = colourProvider.Light1,
                     RelativeSizeAxes = Axes.Both,
                 },
-                new OsuSpriteText
+                text = new OsuSpriteText
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -73,5 +75,7 @@ namespace osu.Game.Screens.SelectV2
             Action?.Invoke();
             return true;
         }
+
+        public float LineBaseHeight => text.LineBaseHeight;
     }
 }

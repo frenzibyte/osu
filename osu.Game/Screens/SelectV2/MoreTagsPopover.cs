@@ -26,7 +26,7 @@ namespace osu.Game.Screens.SelectV2
 
             Child = textFlow = new LinkFlowContainer(t =>
             {
-                t.Font = t.Font.With(size: 14.4f, weight: FontWeight.Bold);
+                t.Font = t.Font.With(size: 14.4f, weight: FontWeight.Regular);
             })
             {
                 Width = 200,

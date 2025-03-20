@@ -151,6 +151,9 @@ namespace osu.Game.Screens.SelectV2
 
             Beatmap.BindValueChanged(onBeatmapChanged, true);
 
+            mainWedge.Show();
+            wedgesArea.Show();
+
             modSelectOverlay.State.BindValueChanged(onModSelectStateChanged, true);
             modSelectOverlay.SelectedMods.BindTo(Mods);
 
@@ -167,6 +170,9 @@ namespace osu.Game.Screens.SelectV2
 
             carousel.VisuallyFocusSelected = false;
 
+            mainWedge.Show();
+            wedgesArea.Show();
+
             // required due to https://github.com/ppy/osu-framework/issues/3218
             modSelectOverlay.SelectedMods.Disabled = false;
             modSelectOverlay.SelectedMods.BindTo(Mods);
@@ -180,6 +186,9 @@ namespace osu.Game.Screens.SelectV2
 
             modSelectOverlay.SelectedMods.UnbindFrom(Mods);
 
+            mainWedge.Hide();
+            wedgesArea.Hide();
+
             carousel.VisuallyFocusSelected = true;
 
             base.OnSuspending(e);
@@ -188,6 +197,10 @@ namespace osu.Game.Screens.SelectV2
         public override bool OnExiting(ScreenExitEvent e)
         {
             this.FadeOut(fade_duration, Easing.OutQuint);
+
+            mainWedge.Hide();
+            wedgesArea.Hide();
+
             return base.OnExiting(e);
         }
 

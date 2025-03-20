@@ -34,6 +34,7 @@ namespace osu.Game.Screens.SelectV2
                 {
                     string valueString = value.Value.value.ToString();
 
+                    // todo: this logic is not perfect but we don't have a way to truncate text in TextFlowContainer yet.
                     if (value.Value.link != null)
                         valueText.AddLink(valueString.Truncate(24), value.Value.link.Action, value.Value.link.Argument);
                     else
@@ -73,15 +74,11 @@ namespace osu.Game.Screens.SelectV2
 
                 foreach (string tag in value)
                 {
-                    int lastLength = total;
                     total += tag.Length + 1;
 
+                    // todo: this logic is not perfect but we don't have a way to truncate text in TextFlowContainer yet.
                     if (total > 80)
                     {
-                        string displayTag = tag.Truncate(80 - lastLength);
-
-                        valueText.AddLink(displayTag, LinkAction.SearchBeatmapSet, tag, displayTag != tag ? tag : null);
-                        valueText.AddText(" ");
                         valueText.AddArbitraryDrawable(new MoreTagsButton(value));
                         break;
                     }
