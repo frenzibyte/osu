@@ -170,23 +170,27 @@ namespace osu.Game.Screens.SelectV2
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = colourProvider.Background5,
                                     },
-                                    new FillFlowContainer
+                                    new Container
                                     {
-                                        AutoSizeAxes = Axes.Both,
-                                        Spacing = new Vector2(25f, 0f),
-                                        Margin = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Top = 7.5f, Bottom = 5f },
+                                        RelativeSizeAxes = Axes.X,
+                                        AutoSizeAxes = Axes.Y,
+                                        Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 20f, Top = 7.5f, Bottom = 5f },
                                         Shear = -shear,
                                         Children = new Drawable[]
                                         {
                                             beatmapStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
                                             {
+                                                Anchor = Anchor.TopLeft,
+                                                Origin = Anchor.TopLeft,
                                                 AutoSizeAxes = Axes.Both,
-                                                Spacing = new Vector2(8f, 0f),
+                                                Spacing = new Vector2(12f, 0f),
                                             },
                                             difficultyStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
                                             {
+                                                Anchor = Anchor.TopRight,
+                                                Origin = Anchor.TopRight,
                                                 AutoSizeAxes = Axes.Both,
-                                                Spacing = new Vector2(8f, 0f),
+                                                Spacing = new Vector2(12f, 0f),
                                                 Children = new[]
                                                 {
                                                     firstDifficultyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsCs),
