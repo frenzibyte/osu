@@ -12,7 +12,7 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays;
 using osuTK;
 
-namespace osu.Game.Screens.SelectV2
+namespace osu.Game.Screens.SelectV2.Wedges
 {
     public partial class BeatmapWedgesTabControl<T> : TabControl<T>
         where T : struct, Enum

@@ -16,6 +16,7 @@ using osu.Game.Online.API.Requests;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Online.Chat;
 using osu.Game.Overlays;
+using osu.Game.Screens.SelectV2.Wedges;
 using osuTK;
 
 namespace osu.Game.Screens.SelectV2

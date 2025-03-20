@@ -22,6 +22,7 @@ using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Screens.SelectV2.Wedges;
 using osu.Game.Utils;
 using osuTK;
 using osuTK.Graphics;

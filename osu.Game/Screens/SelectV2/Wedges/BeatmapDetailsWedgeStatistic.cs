@@ -15,7 +15,7 @@ using osu.Game.Online.Chat;
 using osu.Game.Overlays;
 using osuTK;
 
-namespace osu.Game.Screens.SelectV2
+namespace osu.Game.Screens.SelectV2.Wedges
 {
     public partial class BeatmapDetailsWedgeStatistic : FillFlowContainer
     {

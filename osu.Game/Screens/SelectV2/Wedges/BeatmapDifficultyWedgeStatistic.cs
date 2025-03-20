@@ -12,7 +12,7 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays;
 using osuTK.Graphics;
 
-namespace osu.Game.Screens.SelectV2
+namespace osu.Game.Screens.SelectV2.Wedges
 {
     public partial class BeatmapDifficultyWedgeStatistic : CompositeDrawable, IHasAccentColour
     {

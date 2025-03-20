@@ -15,7 +15,7 @@ using osu.Game.Overlays;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Screens.SelectV2
+namespace osu.Game.Screens.SelectV2.Wedges
 {
     public partial class BeatmapMainWedgeStatistic : CompositeDrawable, IHasTooltip
     {

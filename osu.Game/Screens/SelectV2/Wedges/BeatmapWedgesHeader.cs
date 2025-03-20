@@ -11,7 +11,7 @@ using osu.Game.Overlays;
 using osu.Game.Screens.Select.Leaderboards;
 using osuTK;
 
-namespace osu.Game.Screens.SelectV2
+namespace osu.Game.Screens.SelectV2.Wedges
 {
     public partial class BeatmapWedgesHeader : CompositeDrawable
     {

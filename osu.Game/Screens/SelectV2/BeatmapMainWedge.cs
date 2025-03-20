@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -24,6 +25,7 @@ using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Screens.SelectV2.Wedges;
 using osu.Game.Utils;
 using osuTK;
 
@@ -50,7 +52,7 @@ namespace osu.Game.Screens.SelectV2
         private OsuHoverContainer artistLink = null!;
         private OsuSpriteText artistLabel = null!;
 
-        private BeatmapMainWedgeStatistic playsStatistic = null!;
+        private BeatmapPlayCountStatistic playsStatistic = null!;
         private BeatmapMainWedgeStatistic favouritesStatistic = null!;
         private BeatmapMainWedgeStatistic lengthStatistic = null!;
         private BeatmapMainWedgeStatistic bpmStatistic = null!;
@@ -145,9 +147,8 @@ namespace osu.Game.Screens.SelectV2
                             AutoSizeEasing = Easing.OutQuint,
                             Children = new Drawable[]
                             {
-                                playsStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Play, background: true, leftPadding: SongSelect.WEDGE_CONTENT_MARGIN)
+                                playsStatistic = new BeatmapPlayCountStatistic(background: true, leftPadding: SongSelect.WEDGE_CONTENT_MARGIN)
                                 {
-                                    TooltipText = BeatmapsetsStrings.ShowStatsPlaycount,
                                     Margin = new MarginPadding { Left = -SongSelect.WEDGE_CONTENT_MARGIN },
                                 },
                                 favouritesStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Heart, background: true)
@@ -280,9 +281,18 @@ namespace osu.Game.Screens.SelectV2
             else
             {
                 var onlineBeatmapSet = currentOnlineBeatmapSet;
+                var onlineBeatmap = currentOnlineBeatmapSet.Beatmaps.SingleOrDefault(b => b.OnlineID == beatmap.Value.BeatmapInfo.OnlineID);
 
-                playsStatistic.FadeIn(300, Easing.OutQuint);
-                playsStatistic.Value = onlineBeatmapSet.PlayCount.ToLocalisableString(@"N0");
+                if (onlineBeatmap != null)
+                {
+                    playsStatistic.FadeIn(300, Easing.OutQuint);
+                    playsStatistic.Value = new BeatmapPlayCountStatistic.Data(onlineBeatmap.PlayCount, onlineBeatmap.UserPlayCount);
+                }
+                else
+                {
+                    playsStatistic.FadeOut(300, Easing.OutQuint);
+                    playsStatistic.Value = null;
+                }
 
                 favouritesStatistic.FadeIn(300, Easing.OutQuint);
                 favouritesStatistic.Value = onlineBeatmapSet.FavouriteCount.ToLocalisableString(@"N0");
