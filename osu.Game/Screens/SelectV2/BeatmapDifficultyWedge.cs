@@ -7,7 +7,9 @@ using System.Threading;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
@@ -178,26 +180,51 @@ namespace osu.Game.Screens.SelectV2
                                         Shear = -shear,
                                         Children = new Drawable[]
                                         {
-                                            beatmapStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
+                                            new Container
                                             {
-                                                Anchor = Anchor.TopLeft,
-                                                Origin = Anchor.TopLeft,
                                                 AutoSizeAxes = Axes.Both,
-                                                Spacing = new Vector2(12f, 0f),
+                                                Children = new Drawable[]
+                                                {
+                                                    beatmapStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
+                                                    {
+                                                        AutoSizeAxes = Axes.Both,
+                                                        Spacing = new Vector2(12f, 0f),
+                                                    },
+                                                }
                                             },
-                                            difficultyStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
+                                            new Container
                                             {
                                                 Anchor = Anchor.TopRight,
                                                 Origin = Anchor.TopRight,
                                                 AutoSizeAxes = Axes.Both,
-                                                Spacing = new Vector2(12f, 0f),
-                                                Children = new[]
+                                                Children = new Drawable[]
                                                 {
-                                                    firstDifficultyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsCs),
-                                                    accuracyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAccuracy),
-                                                    hpDrainStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsDrain),
-                                                    approachRateStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAr),
-                                                },
+                                                    new Box
+                                                    {
+                                                        Colour = ColourInfo.GradientHorizontal(colourProvider.Background5.Opacity(0), colourProvider.Background5),
+                                                        Width = 50,
+                                                        RelativeSizeAxes = Axes.Y,
+                                                        Origin = Anchor.TopRight,
+                                                    },
+                                                    new Box
+                                                    {
+                                                        Colour = colourProvider.Background5,
+                                                        RelativeSizeAxes = Axes.Both,
+                                                    },
+                                                    difficultyStatisticsFlow = new FillFlowContainer<BeatmapDifficultyWedgeStatistic>
+                                                    {
+                                                        AutoSizeAxes = Axes.Both,
+                                                        Spacing = new Vector2(12f, 0f),
+                                                        Padding = new MarginPadding { Left = 10f },
+                                                        Children = new[]
+                                                        {
+                                                            firstDifficultyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsCs),
+                                                            accuracyStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAccuracy),
+                                                            hpDrainStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsDrain),
+                                                            approachRateStatistic = new BeatmapDifficultyWedgeStatistic(BeatmapsetsStrings.ShowStatsAr),
+                                                        },
+                                                    }
+                                                }
                                             },
                                         }
                                     },
