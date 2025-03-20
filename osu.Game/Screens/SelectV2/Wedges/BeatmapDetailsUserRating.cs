@@ -15,7 +15,7 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentUserRatingBar : CompositeDrawable
+    public partial class BeatmapDetailsUserRating : CompositeDrawable
     {
         private readonly OsuSpriteText negativeText;
         private readonly OsuSpriteText positiveText;
@@ -48,7 +48,7 @@ namespace osu.Game.Screens.SelectV2
             }
         }
 
-        public BeatmapContentUserRatingBar()
+        public BeatmapDetailsUserRating()
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

@@ -9,22 +9,16 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentWedge : CompositeDrawable
+    public partial class BeatmapWedgesArea : VisibilityContainer
     {
         private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
 
-        private BeatmapContentWedgeHeader header = null!;
+        private BeatmapWedgesHeader header = null!;
         private Container contentContainer = null!;
 
-        public new MarginPadding Padding
+        public BeatmapWedgesArea()
         {
-            get => base.Padding;
-            set => base.Padding = value;
-        }
-
-        public BeatmapContentWedge()
-        {
-            RelativeSizeAxes = Axes.Both;
+            RelativeSizeAxes = Axes.X;
         }
 
         [BackgroundDependencyLoader]
@@ -35,29 +29,43 @@ namespace osu.Game.Screens.SelectV2
 
             const float header_height = 48f;
 
-            InternalChild = new ShearAlignedFlowContainer(shear)
+            InternalChildren = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]
+                new ShearAlignedDrawable(shear, header = new BeatmapWedgesHeader
                 {
-                    header = new BeatmapContentWedgeHeader
+                    RelativeSizeAxes = Axes.X,
+                    Height = header_height,
+                }),
+                new Container
+                {
+                    Depth = 1f,
+                    Padding = new MarginPadding { Top = header_height },
+                    RelativeSizeAxes = Axes.Both,
+                    Child = new ShearAlignedDrawable(shear, contentContainer = new Container
                     {
-                        RelativeSizeAxes = Axes.X,
-                        Height = header_height,
-                    },
-                    contentContainer = new Container
-                    {
-                        // Padding = new MarginPadding { Top = header_height },
                         RelativeSizeAxes = Axes.Both,
-                    },
-                }
+                    }),
+                },
             };
         }
 
         protected override void LoadComplete()
         {
             base.LoadComplete();
+
             header.Type.BindValueChanged(_ => updateDisplay(), true);
+        }
+
+        protected override void PopIn()
+        {
+            this.MoveToX(0, SongSelect.ENTER_DURATION, Easing.OutQuint)
+                .FadeIn(SongSelect.ENTER_DURATION / 3, Easing.In);
+        }
+
+        protected override void PopOut()
+        {
+            this.MoveToX(-150, SongSelect.ENTER_DURATION, Easing.OutQuint)
+                .FadeOut(SongSelect.ENTER_DURATION / 3, Easing.In);
         }
 
         private Drawable? currentContent;
@@ -74,12 +82,12 @@ namespace osu.Game.Screens.SelectV2
             switch (header.Type.Value)
             {
                 default:
-                case BeatmapContentWedgeHeader.ContentType.Details:
-                    currentContent = new BeatmapContentWedgeDetails();
+                case BeatmapWedgesHeader.Selection.Details:
+                    currentContent = new BeatmapDetailsWedge();
                     break;
 
-                case BeatmapContentWedgeHeader.ContentType.Ranking:
-                    currentContent = new BeatmapContentWedgeLeaderboard();
+                case BeatmapWedgesHeader.Selection.Ranking:
+                    currentContent = new BeatmapRankingsWedge();
                     break;
             }
 

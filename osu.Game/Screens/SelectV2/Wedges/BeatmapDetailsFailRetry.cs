@@ -17,7 +17,7 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentFailRetryGraph : CompositeDrawable
+    public partial class BeatmapDetailsFailRetry : CompositeDrawable
     {
         private readonly GraphDrawable retriesGraph;
         private readonly GraphDrawable failsGraph;
@@ -37,7 +37,7 @@ namespace osu.Game.Screens.SelectV2
             }
         }
 
-        public BeatmapContentFailRetryGraph()
+        public BeatmapDetailsFailRetry()
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

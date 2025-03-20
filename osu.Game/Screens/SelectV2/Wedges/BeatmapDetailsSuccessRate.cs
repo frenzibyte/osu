@@ -17,7 +17,7 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentSuccessRateBar : CompositeDrawable, IHasTooltip
+    public partial class BeatmapDetailsSuccessRate : CompositeDrawable, IHasTooltip
     {
         private readonly OsuSpriteText valueText;
         private readonly Circle backgroundBar;
@@ -42,7 +42,7 @@ namespace osu.Game.Screens.SelectV2
 
         public LocalisableString TooltipText => $"{data.pass:N0} / {data.play:N0}";
 
-        public BeatmapContentSuccessRateBar()
+        public BeatmapDetailsSuccessRate()
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

@@ -15,7 +15,7 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentRatingSpreadGraph : CompositeDrawable
+    public partial class BeatmapDetailsRatingSpread : CompositeDrawable
     {
         private const float min_height = 4f;
         private const float max_height = 32f;
@@ -44,7 +44,7 @@ namespace osu.Game.Screens.SelectV2
             }
         }
 
-        public BeatmapContentRatingSpreadGraph()
+        public BeatmapDetailsRatingSpread()
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

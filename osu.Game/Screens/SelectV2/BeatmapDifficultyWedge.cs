@@ -55,6 +55,7 @@ namespace osu.Game.Screens.SelectV2
         private OsuHoverContainer mapperLink = null!;
         private OsuSpriteText mapperText = null!;
 
+        private FillFlowContainer ratingAndNameFlow = null!;
         private FillFlowContainer<BeatmapDifficultyWedgeStatistic> beatmapStatisticsFlow = null!;
         private FillFlowContainer<BeatmapDifficultyWedgeStatistic> difficultyStatisticsFlow = null!;
 
@@ -89,7 +90,7 @@ namespace osu.Game.Screens.SelectV2
                     RelativeSizeAxes = Axes.Both,
                     Colour = colourProvider.Background4,
                 },
-                new ShearAlignedFlowContainer(shear)
+                new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
@@ -97,8 +98,9 @@ namespace osu.Game.Screens.SelectV2
                     Shear = -shear,
                     Children = new Drawable[]
                     {
-                        new FillFlowContainer
+                        new ShearAlignedDrawable(shear, ratingAndNameFlow = new FillFlowContainer
                         {
+                            AlwaysPresent = true,
                             AutoSizeAxes = Axes.X,
                             Height = 28f,
                             Direction = FillDirection.Horizontal,
@@ -147,8 +149,8 @@ namespace osu.Game.Screens.SelectV2
                                     },
                                 },
                             },
-                        },
-                        new Container
+                        }),
+                        new ShearAlignedDrawable(shear, new Container
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
@@ -196,7 +198,7 @@ namespace osu.Game.Screens.SelectV2
                                     },
                                 },
                             }
-                        },
+                        }),
                     }
                 },
             };
@@ -225,9 +227,15 @@ namespace osu.Game.Screens.SelectV2
 
             computeStarDifficulty(cancellationSource.Token);
 
-            difficultyText.Text = beatmap.Value.BeatmapInfo.DifficultyName;
-            mapperLink.Action = () => linkHandler?.HandleLink(new LinkDetails(LinkAction.OpenUserProfile, beatmap.Value.Metadata.Author));
-            mapperText.Text = beatmap.Value.Metadata.Author.Username;
+            if (beatmap.IsDefault)
+                ratingAndNameFlow.FadeOut(300, Easing.OutQuint);
+            else
+            {
+                ratingAndNameFlow.FadeIn(300, Easing.OutQuint);
+                difficultyText.Text = beatmap.Value.BeatmapInfo.DifficultyName;
+                mapperLink.Action = () => linkHandler?.HandleLink(new LinkDetails(LinkAction.OpenUserProfile, beatmap.Value.Metadata.Author));
+                mapperText.Text = beatmap.Value.Metadata.Author.Username;
+            }
 
             var playableBeatmap = beatmap.Value.GetPlayableBeatmap(ruleset.Value);
             var newStatistics = playableBeatmap.GetStatistics().Select(s => new BeatmapDifficultyWedgeStatistic(s.Name)

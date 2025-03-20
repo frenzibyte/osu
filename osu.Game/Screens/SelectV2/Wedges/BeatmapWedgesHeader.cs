@@ -13,14 +13,14 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentWedgeHeader : CompositeDrawable
+    public partial class BeatmapWedgesHeader : CompositeDrawable
     {
         private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
 
-        private BeatmapContentTabControl<ContentType> tabControl = null!;
+        private BeatmapWedgesTabControl<Selection> tabControl = null!;
         private FillFlowContainer leaderboardControls = null!;
 
-        public IBindable<ContentType> Type => tabControl.Current;
+        public IBindable<Selection> Type => tabControl.Current;
 
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
@@ -43,7 +43,7 @@ namespace osu.Game.Screens.SelectV2
                     Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 20f },
                     Children = new Drawable[]
                     {
-                        tabControl = new BeatmapContentTabControl<ContentType>(24f)
+                        tabControl = new BeatmapWedgesTabControl<Selection>(24f)
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
@@ -71,7 +71,7 @@ namespace osu.Game.Screens.SelectV2
                                         Height = 30f,
                                     },
                                 },
-                                new BeatmapContentTabControl<BeatmapLeaderboardScope>(24f)
+                                new BeatmapWedgesTabControl<BeatmapLeaderboardScope>(24f)
                                 {
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
@@ -92,11 +92,11 @@ namespace osu.Game.Screens.SelectV2
 
             tabControl.Current.BindValueChanged(v =>
             {
-                leaderboardControls.FadeTo(v.NewValue == ContentType.Ranking ? 1 : 0, 300, Easing.OutQuint);
+                leaderboardControls.FadeTo(v.NewValue == Selection.Ranking ? 1 : 0, 300, Easing.OutQuint);
             }, true);
         }
 
-        public enum ContentType
+        public enum Selection
         {
             Details,
             Ranking,

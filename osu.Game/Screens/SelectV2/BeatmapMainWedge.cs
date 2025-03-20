@@ -3,25 +3,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
-using osu.Game.Database;
 using osu.Game.Extensions;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Online.API;
+using osu.Game.Online.API.Requests;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays;
 using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
@@ -31,7 +29,7 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapMainWedge : CompositeDrawable
+    public partial class BeatmapMainWedge : VisibilityContainer
     {
         private const float corner_radius = 10;
 
@@ -57,12 +55,6 @@ namespace osu.Game.Screens.SelectV2
         private BeatmapMainWedgeStatistic lengthStatistic = null!;
         private BeatmapMainWedgeStatistic bpmStatistic = null!;
 
-        private CancellationTokenSource? cancellationSource;
-
-        public IBindable<double> DisplayedStars => displayedStars;
-
-        private readonly Bindable<double> displayedStars = new BindableDouble();
-
         [Resolved]
         private SongSelect? songSelect { get; set; }
 
@@ -70,7 +62,10 @@ namespace osu.Game.Screens.SelectV2
         private LocalisationManager localisation { get; set; } = null!;
 
         [Resolved]
-        private BeatmapLookupCache beatmapCache { get; set; } = null!;
+        private IAPIProvider api { get; set; } = null!;
+
+        private APIBeatmapSet? currentOnlineBeatmapSet;
+        private GetBeatmapSetRequest? currentRequest;
 
         public BeatmapMainWedge()
         {
@@ -83,107 +78,103 @@ namespace osu.Game.Screens.SelectV2
         {
             Shear = shear;
             Masking = true;
-            EdgeEffect = new EdgeEffectParameters
-            {
-                Colour = Colour4.Black.Opacity(0.2f),
-                Type = EdgeEffectType.Shadow,
-                Radius = 3,
-            };
             CornerRadius = corner_radius;
             Margin = new MarginPadding { Top = -10f };
 
-            AddInternal(new Box
+            InternalChildren = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = colourProvider.Background3.Opacity(0.9f),
-            });
-
-            AddInternal(new ShearAlignedFlowContainer(shear)
-            {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
-                Direction = FillDirection.Vertical,
-                Shear = -shear,
-                Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN },
-                Spacing = new Vector2(0f, 4f),
-                Children = new Drawable[]
+                new Box
                 {
-                    new Container
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = colourProvider.Background3.Opacity(0.9f),
+                },
+                new FillFlowContainer
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Vertical,
+                    Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN },
+                    Spacing = new Vector2(0f, 4f),
+                    Shear = -shear,
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 30,
-                        Child = statusPill = new BeatmapSetOnlineStatusPill
+                        new ShearAlignedDrawable(shear, new Container
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            Height = 30,
+                            Child = statusPill = new BeatmapSetOnlineStatusPill
+                            {
+                                AutoSizeAxes = Axes.Both,
+                                Margin = new MarginPadding { Right = 20f, Top = 20f },
+                                TextSize = 11,
+                                TextPadding = new MarginPadding { Horizontal = 8, Vertical = 2 },
+                            }
+                        }),
+                        new ShearAlignedDrawable(shear, titleLink = new OsuHoverContainer
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            Height = 43.2f,
+                            Margin = new MarginPadding { Bottom = -5f },
+                            Child = titleLabel = new TruncatingSpriteText
+                            {
+                                Shadow = true,
+                                Font = OsuFont.TorusAlternate.With(size: 43.2f, weight: FontWeight.SemiBold),
+                                RelativeSizeAxes = Axes.X,
+                                Padding = new MarginPadding { Right = 20f },
+                            },
+                        }),
+                        new ShearAlignedDrawable(shear, artistLink = new OsuHoverContainer
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            Height = 28.8f,
+                            Margin = new MarginPadding { Left = 1f },
+                            Child = artistLabel = new TruncatingSpriteText
+                            {
+                                Shadow = true,
+                                Font = OsuFont.Torus.With(size: 28.8f, weight: FontWeight.SemiBold),
+                                RelativeSizeAxes = Axes.X,
+                                Padding = new MarginPadding { Right = 20f },
+                            },
+                        }),
+                        new ShearAlignedDrawable(shear, new FillFlowContainer
                         {
                             AutoSizeAxes = Axes.Both,
-                            Margin = new MarginPadding { Right = 20f, Top = 20f },
-                            TextSize = 11,
-                            TextPadding = new MarginPadding { Horizontal = 8, Vertical = 2 },
-                        }
-                    },
-                    titleLink = new OsuHoverContainer
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 43.2f,
-                        Margin = new MarginPadding { Bottom = -5f },
-                        Child = titleLabel = new TruncatingSpriteText
+                            Direction = FillDirection.Horizontal,
+                            Spacing = new Vector2(2f, 0f),
+                            AutoSizeDuration = 100,
+                            AutoSizeEasing = Easing.OutQuint,
+                            Children = new Drawable[]
+                            {
+                                playsStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Play, background: true, leftPadding: SongSelect.WEDGE_CONTENT_MARGIN)
+                                {
+                                    TooltipText = BeatmapsetsStrings.ShowStatsPlaycount,
+                                    Margin = new MarginPadding { Left = -SongSelect.WEDGE_CONTENT_MARGIN },
+                                },
+                                favouritesStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Heart, background: true)
+                                {
+                                    TooltipText = BeatmapsStrings.StatusFavourites,
+                                },
+                                lengthStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Clock),
+                                bpmStatistic = new BeatmapMainWedgeStatistic(OsuIcon.BPM)
+                                {
+                                    TooltipText = BeatmapsetsStrings.ShowStatsBpm,
+                                    Margin = new MarginPadding { Left = 4f },
+                                },
+                            },
+                        }),
+                        new ShearAlignedDrawable(shear, new Container
                         {
-                            Shadow = true,
-                            Font = OsuFont.TorusAlternate.With(size: 43.2f, weight: FontWeight.SemiBold),
                             RelativeSizeAxes = Axes.X,
-                            Padding = new MarginPadding { Right = 20f },
-                        },
+                            AutoSizeAxes = Axes.Y,
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Margin = new MarginPadding { Left = -SongSelect.WEDGE_CONTENT_MARGIN },
+                            Padding = new MarginPadding { Right = -SongSelect.WEDGE_CONTENT_MARGIN },
+                            Child = new BeatmapDifficultyWedge(),
+                        }),
                     },
-                    artistLink = new OsuHoverContainer
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 28.8f,
-                        Margin = new MarginPadding { Left = 1f },
-                        Child = artistLabel = new TruncatingSpriteText
-                        {
-                            Shadow = true,
-                            Font = OsuFont.Torus.With(size: 28.8f, weight: FontWeight.SemiBold),
-                            RelativeSizeAxes = Axes.X,
-                            Padding = new MarginPadding { Right = 20f },
-                        },
-                    },
-                    new FillFlowContainer
-                    {
-                        AutoSizeAxes = Axes.Both,
-                        Direction = FillDirection.Horizontal,
-                        Spacing = new Vector2(2f, 0f),
-                        AutoSizeDuration = 100,
-                        AutoSizeEasing = Easing.OutQuint,
-                        Children = new Drawable[]
-                        {
-                            playsStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Play, background: true, leftPadding: SongSelect.WEDGE_CONTENT_MARGIN)
-                            {
-                                TooltipText = BeatmapsetsStrings.ShowStatsPlaycount,
-                                Margin = new MarginPadding { Left = -SongSelect.WEDGE_CONTENT_MARGIN },
-                            },
-                            favouritesStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Heart, background: true)
-                            {
-                                TooltipText = BeatmapsStrings.StatusFavourites,
-                            },
-                            lengthStatistic = new BeatmapMainWedgeStatistic(OsuIcon.Clock),
-                            bpmStatistic = new BeatmapMainWedgeStatistic(OsuIcon.BPM)
-                            {
-                                TooltipText = BeatmapsetsStrings.ShowStatsBpm,
-                                Margin = new MarginPadding { Left = 4f },
-                            },
-                        },
-                    },
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
-                        Margin = new MarginPadding { Left = -SongSelect.WEDGE_CONTENT_MARGIN },
-                        Padding = new MarginPadding { Right = -SongSelect.WEDGE_CONTENT_MARGIN },
-                        Child = new BeatmapDifficultyWedge(),
-                    },
-                },
-            });
+                }
+            };
         }
 
         protected override void LoadComplete()
@@ -196,16 +187,25 @@ namespace osu.Game.Screens.SelectV2
             updateDisplay();
 
             FinishTransforms(true);
+        }
 
-            this.MoveToX(-150)
-                .MoveToX(0, SongSelect.ENTER_DURATION, Easing.OutQuint)
-                .FadeInFromZero(SongSelect.ENTER_DURATION / 3, Easing.In);
+        protected override void PopIn()
+        {
+            this.MoveToX(0, SongSelect.ENTER_DURATION, Easing.OutQuint)
+                .FadeIn(SongSelect.ENTER_DURATION / 3, Easing.In);
+        }
+
+        protected override void PopOut()
+        {
+            this.MoveToX(-150, SongSelect.ENTER_DURATION, Easing.OutQuint)
+                .FadeOut(SongSelect.ENTER_DURATION / 3, Easing.In);
         }
 
         private void updateDisplay()
         {
             var metadata = beatmap.Value.Metadata;
             var beatmapInfo = beatmap.Value.BeatmapInfo;
+            var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
 
             statusPill.Status = beatmapInfo.Status;
 
@@ -233,45 +233,59 @@ namespace osu.Game.Screens.SelectV2
                 ? $"{bpmMin}"
                 : $"{bpmMin}-{bpmMax} (mostly {mostCommonBPM})";
 
+            if (currentOnlineBeatmapSet == null || currentOnlineBeatmapSet.OnlineID != beatmapSetInfo.OnlineID)
+                refetchBeatmapSet();
+
             updateOnlineDisplay();
+        }
+
+        private void refetchBeatmapSet()
+        {
+            var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
+
+            currentRequest?.Cancel();
+            currentRequest = null;
+            currentOnlineBeatmapSet = null;
+
+            if (beatmapSetInfo.OnlineID >= 1)
+            {
+                // todo: replace with BeatmapSetLookupCache
+                currentRequest = new GetBeatmapSetRequest(beatmapSetInfo.OnlineID);
+                currentRequest.Failure += _ => updateOnlineDisplay();
+                currentRequest.Success += s =>
+                {
+                    currentOnlineBeatmapSet = s;
+                    updateOnlineDisplay();
+                };
+
+                api.Queue(currentRequest);
+            }
         }
 
         private void updateOnlineDisplay()
         {
-            cancellationSource?.Cancel();
-            cancellationSource = new CancellationTokenSource();
-
-            var beatmapSetInfo = beatmap.Value.BeatmapSetInfo;
-            int? firstOnlineID = beatmapSetInfo.Beatmaps.FirstOrDefault(b => b.OnlineID >= 1)?.OnlineID;
-
-            if (firstOnlineID != null)
+            if (currentRequest?.CompletionState == APIRequestCompletionState.Waiting)
             {
                 playsStatistic.FadeIn(300, Easing.OutQuint);
                 playsStatistic.Value = null;
 
                 favouritesStatistic.FadeIn(300, Easing.OutQuint);
                 favouritesStatistic.Value = null;
-
-                var token = cancellationSource.Token;
-
-                beatmapCache.GetBeatmapAsync(firstOnlineID.Value, token).ContinueWith(t => Schedule(() =>
-                {
-                    if (token.IsCancellationRequested)
-                        return;
-
-                    var apiBeatmap = t.GetResultSafely();
-
-                    if (apiBeatmap != null)
-                    {
-                        playsStatistic.Value = apiBeatmap.BeatmapSet!.PlayCount.ToLocalisableString(@"N0");
-                        favouritesStatistic.Value = apiBeatmap.BeatmapSet!.FavouriteCount.ToLocalisableString(@"N0");
-                    }
-                }), token);
             }
-            else
+            else if (currentOnlineBeatmapSet == null)
             {
                 playsStatistic.FadeOut(300, Easing.OutQuint);
                 favouritesStatistic.FadeOut(300, Easing.OutQuint);
+            }
+            else
+            {
+                var onlineBeatmapSet = currentOnlineBeatmapSet;
+
+                playsStatistic.FadeIn(300, Easing.OutQuint);
+                playsStatistic.Value = onlineBeatmapSet.PlayCount.ToLocalisableString(@"N0");
+
+                favouritesStatistic.FadeIn(300, Easing.OutQuint);
+                favouritesStatistic.Value = onlineBeatmapSet.FavouriteCount.ToLocalisableString(@"N0");
             }
         }
     }

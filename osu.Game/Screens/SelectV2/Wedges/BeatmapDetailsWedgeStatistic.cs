@@ -17,7 +17,7 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentWedgeStatistic : FillFlowContainer
+    public partial class BeatmapDetailsWedgeStatistic : FillFlowContainer
     {
         private (LocalisableString value, LinkDetails? link)? data;
 
@@ -51,12 +51,16 @@ namespace osu.Game.Screens.SelectV2
             }
         }
 
-        public DateTimeOffset Date
+        public DateTimeOffset? Date
         {
             set
             {
                 valueText.Clear();
-                valueText.AddArbitraryDrawable(new DrawableDate(value, textSize: 14.4f, italic: false, weight: FontWeight.Regular));
+
+                if (value != null)
+                    valueText.AddArbitraryDrawable(new DrawableDate(value.Value, textSize: 14.4f, italic: false, weight: FontWeight.Regular));
+                else
+                    valueText.AddText("-");
             }
         }
 
@@ -91,7 +95,7 @@ namespace osu.Game.Screens.SelectV2
         private readonly OsuSpriteText labelText;
         private readonly LinkFlowContainer valueText;
 
-        public BeatmapContentWedgeStatistic(LocalisableString label)
+        public BeatmapDetailsWedgeStatistic(LocalisableString label)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;

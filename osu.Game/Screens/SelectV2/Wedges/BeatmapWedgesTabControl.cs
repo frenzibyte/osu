@@ -14,7 +14,7 @@ using osuTK;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public partial class BeatmapContentTabControl<T> : TabControl<T>
+    public partial class BeatmapWedgesTabControl<T> : TabControl<T>
         where T : struct, Enum
     {
         private Circle strip = null!;
@@ -25,7 +25,7 @@ namespace osu.Game.Screens.SelectV2
 
         protected new TabItem SelectedTab => (TabItem)base.SelectedTab;
 
-        public BeatmapContentTabControl(float spacing)
+        public BeatmapWedgesTabControl(float spacing)
         {
             TabContainer.Spacing = new Vector2(spacing, 0f);
         }

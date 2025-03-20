@@ -14,6 +14,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Graphics.Containers;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Screens.Footer;
@@ -41,7 +42,7 @@ namespace osu.Game.Screens.SelectV2
 
         private static readonly Vector2 shear = new Vector2(OsuGame.SHEAR, 0);
 
-        private readonly ModSelectOverlay modSelectOverlay = new SoloModSelectOverlay();
+        private readonly ModSelectOverlay modSelectOverlay = new UserModSelectOverlay();
 
         [Cached]
         private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
@@ -49,7 +50,8 @@ namespace osu.Game.Screens.SelectV2
         private BeatmapCarousel carousel = null!;
 
         private BeatmapMainWedge mainWedge = null!;
-        private BeatmapContentWedge contentWedge = null!;
+        private BeatmapWedgesArea wedgesArea = null!;
+        private FillFlowContainer wedgesContainer = null!;
 
         public override bool ShowFooter => true;
 
@@ -86,51 +88,56 @@ namespace osu.Game.Screens.SelectV2
                     Colour = ColourInfo.GradientVertical(Color4.Black, Color4.Black.Opacity(0f)),
                     Height = (float)Math.Sqrt(0.5f),
                 },
-                new PopoverContainer
+                new Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding { Bottom = ScreenFooter.HEIGHT },
-                    Children = new Drawable[]
+                    Child = new PopoverContainer
                     {
-                        new GridContainer // used for max width implementation
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            ColumnDimensions = new[]
+                            new GridContainer // used for max width implementation
                             {
-                                new Dimension(GridSizeMode.Absolute, 720f),
-                                new Dimension(),
-                                new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
-                            },
-                            Content = new[]
-                            {
-                                new[]
+                                RelativeSizeAxes = Axes.Both,
+                                ColumnDimensions = new[]
                                 {
-                                    new Container
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Margin = new MarginPadding { Left = -20 },
-                                        Padding = new MarginPadding { Bottom = 20f },
-                                        Children = new Drawable[]
-                                        {
-                                            mainWedge = new BeatmapMainWedge(),
-                                            contentWedge = new BeatmapContentWedge(),
-                                        },
-                                    },
-                                    Empty(),
-                                    new Container
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Child = carousel = new BeatmapCarousel
-                                        {
-                                            RequestSelectBeatmap = b => Beatmap.Value = beatmaps.GetWorkingBeatmap(b),
-                                            RequestPresentBeatmap = _ => OnStart(),
-                                            RelativeSizeAxes = Axes.Both
-                                        },
-                                    },
+                                    new Dimension(GridSizeMode.Absolute, 720f),
+                                    new Dimension(),
+                                    new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
                                 },
-                            }
-                        },
-                    }
+                                Content = new[]
+                                {
+                                    new[]
+                                    {
+                                        wedgesContainer = new FillFlowContainer
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Margin = new MarginPadding { Left = -20 },
+                                            Spacing = new Vector2(0f, 4f),
+                                            Direction = FillDirection.Vertical,
+                                            Children = new Drawable[]
+                                            {
+                                                new ShearAlignedDrawable(shear, mainWedge = new BeatmapMainWedge()),
+                                                new ShearAlignedDrawable(shear, wedgesArea = new BeatmapWedgesArea()),
+                                            },
+                                        },
+                                        Empty(),
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Child = carousel = new BeatmapCarousel
+                                            {
+                                                RequestSelectBeatmap = b => Beatmap.Value = beatmaps.GetWorkingBeatmap(b),
+                                                RequestPresentBeatmap = _ => OnStart(),
+                                                RelativeSizeAxes = Axes.Both
+                                            },
+                                        },
+                                    },
+                                }
+                            },
+                        }
+                    },
                 },
                 modSelectOverlay,
             });
@@ -269,11 +276,7 @@ namespace osu.Game.Screens.SelectV2
         protected override void Update()
         {
             base.Update();
-            contentWedge.Padding = new MarginPadding { Top = mainWedge.LayoutSize.Y + 4f };
-        }
-
-        private partial class SoloModSelectOverlay : UserModSelectOverlay
-        {
+            wedgesArea.Height = wedgesContainer.DrawHeight - mainWedge.LayoutSize.Y - 4;
         }
     }
 }
