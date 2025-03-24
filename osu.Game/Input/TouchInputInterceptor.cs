@@ -38,11 +38,23 @@ namespace osu.Game.Input
             switch (e)
             {
                 case MouseEvent:
-                    if (e.CurrentState.Mouse.LastSource is not ISourcedFromTouch)
+                    if (e.CurrentState.Mouse.LastSource is not ISourcedFromTouch && e.CurrentState.Mouse.LastSource is not ISourcedFromPen)
                     {
                         if (touchInputWasActive)
                             Logger.Log($@"Touch input deactivated due to received {e.GetType().ReadableName()}", LoggingTarget.Input);
                         touchInputActive.Value = false;
+                    }
+                    else
+                    {
+                        if (!touchInputWasActive)
+                        {
+                            if (e.CurrentState.Mouse.LastSource is ISourcedFromTouch)
+                                Logger.Log($@"Touch input activated due to received {e.GetType().ReadableName()} sourced from touch", LoggingTarget.Input);
+                            else if (e.CurrentState.Mouse.LastSource is ISourcedFromPen)
+                                Logger.Log($@"Touch input activated due to received {e.GetType().ReadableName()} sourced from pen", LoggingTarget.Input);
+                        }
+
+                        touchInputActive.Value = true;
                     }
 
                     break;
