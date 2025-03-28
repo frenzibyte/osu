@@ -120,7 +120,7 @@ namespace osu.Game.Screens.SelectV2
                                     {
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
-                                        Scale = new Vector2(1f),
+                                        Scale = new Vector2(0.97f),
                                     },
                                     Empty(),
                                     nameLine = new FillFlowContainer
@@ -137,24 +137,26 @@ namespace osu.Game.Screens.SelectV2
                                             {
                                                 Anchor = Anchor.BottomLeft,
                                                 Origin = Anchor.BottomLeft,
-                                                Font = OsuFont.Torus.With(size: 16f, weight: FontWeight.SemiBold),
+                                                Font = OsuFont.Torus.With(size: 14f, weight: FontWeight.SemiBold),
                                             },
                                             mappedByText = new OsuSpriteText
                                             {
                                                 Anchor = Anchor.BottomLeft,
                                                 Origin = Anchor.BottomLeft,
                                                 Text = " mapped by ",
-                                                Font = OsuFont.Torus.With(size: 14f, weight: FontWeight.Regular),
+                                                Font = OsuFont.Torus.With(size: 11f, weight: FontWeight.SemiBold),
+                                                Margin = new MarginPadding { Left = 0.5f, Bottom = 0.5f },
                                             },
                                             mapperLink = new MapperLinkContainer
                                             {
                                                 AutoSizeAxes = Axes.Both,
                                                 Anchor = Anchor.BottomLeft,
                                                 Origin = Anchor.BottomLeft,
+                                                Margin = new MarginPadding { Bottom = 0.5f },
                                                 Child = mapperText = new TruncatingSpriteText
                                                 {
                                                     Shadow = true,
-                                                    Font = OsuFont.Torus.With(size: 14f, weight: FontWeight.SemiBold),
+                                                    Font = OsuFont.Torus.With(size: 11f, weight: FontWeight.SemiBold),
                                                 },
                                             },
                                         },

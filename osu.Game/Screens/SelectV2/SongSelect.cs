@@ -95,7 +95,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.Both,
                                 ColumnDimensions = new[]
                                 {
-                                    new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 700),
+                                    new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 650),
                                     new Dimension(),
                                     new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
                                 },
@@ -131,7 +131,7 @@ namespace osu.Game.Screens.SelectV2
                                                 {
                                                     Anchor = Anchor.TopRight,
                                                     Origin = Anchor.TopRight,
-                                                    Width = 700f,
+                                                    RelativeSizeAxes = Axes.X,
                                                 },
                                             }
                                         },
