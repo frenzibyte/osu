@@ -48,8 +48,8 @@ namespace osu.Game.Screens.SelectV2
         private Container<Placeholder> placeholderContainer = null!;
         private Placeholder? placeholder;
 
-        // [Resolved]
-        // private LeaderboardManager leaderboards { get; set; } = null!;
+        [Resolved]
+        private LeaderboardManager leaderboards { get; set; } = null!;
 
         [Resolved]
         private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
@@ -72,7 +72,7 @@ namespace osu.Game.Screens.SelectV2
 
         public IBindable<bool> FilterBySelectedMods { get; } = new BindableBool();
 
-        // private IBindable<LeaderboardScores?> fetchedScores = null!;
+        private IBindable<LeaderboardScores?> fetchedScores = null!;
 
         private CancellationTokenSource? cancellationTokenSource;
 
@@ -167,7 +167,7 @@ namespace osu.Game.Screens.SelectV2
             ruleset.BindValueChanged(_ => refetchScores());
             mods.BindValueChanged(_ => refetchScoresFromMods());
 
-            // fetchedScores = leaderboards.Scores.GetBoundCopy();
+            fetchedScores = leaderboards.Scores.GetBoundCopy();
 
             refetchScores();
         }
@@ -229,24 +229,24 @@ namespace osu.Game.Screens.SelectV2
             if (Scope.Value == BeatmapLeaderboardScope.Team && api.LocalUser.Value.Team == null)
             {
                 SetState(LeaderboardState.NoTeam);
-                // return;
+                return;
             }
 
-            // var criteria = new LeaderboardCriteria(fetchBeatmapInfo, fetchRuleset, Scope.Value, FilterBySelectedMods.Value ? mods.Value.ToArray() : null);
-            //
-            // leaderboards.FetchWithCriteriaAsync(criteria)
-            //             .ContinueWith(t =>
-            //             {
-            //                 if (t.Exception != null && !t.IsCanceled)
-            //                     Schedule(() => SetState(LeaderboardState.NetworkFailure));
-            //             });
-            //
-            // fetchedScores.UnbindEvents();
-            // fetchedScores.BindValueChanged(_ =>
-            // {
-            //     if (fetchedScores.Value != null)
-            //         Schedule(() => SetScores(fetchedScores.Value.TopScores, fetchedScores.Value.UserScore));
-            // }, true);
+            var criteria = new LeaderboardCriteria(fetchBeatmapInfo, fetchRuleset, Scope.Value, FilterBySelectedMods.Value ? mods.Value.ToArray() : null);
+
+            leaderboards.FetchWithCriteriaAsync(criteria)
+                        .ContinueWith(t =>
+                        {
+                            if (t.Exception != null && !t.IsCanceled)
+                                Schedule(() => SetState(LeaderboardState.NetworkFailure));
+                        });
+
+            fetchedScores.UnbindEvents();
+            fetchedScores.BindValueChanged(_ =>
+            {
+                if (fetchedScores.Value != null)
+                    Schedule(() => SetScores(fetchedScores.Value.TopScores, fetchedScores.Value.UserScore));
+            }, true);
         }
 
         protected void SetScores(IEnumerable<ScoreInfo> scores, ScoreInfo? userScore)
