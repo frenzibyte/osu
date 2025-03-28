@@ -55,7 +55,7 @@ namespace osu.Game.Screens.SelectV2
 
         public UpdateBeatmapSetButton()
         {
-            Size = new Vector2(75f, 22f);
+            Size = new Vector2(70, 20f);
         }
 
         private Bindable<bool> preferNoVideo = null!;
@@ -63,7 +63,7 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load(OsuConfigManager config)
         {
-            const float icon_size = 14;
+            const float icon_size = 12;
 
             preferNoVideo = config.GetBindable<bool>(OsuSetting.PreferNoVideo);
 
@@ -110,7 +110,7 @@ namespace osu.Game.Screens.SelectV2
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Font = OsuFont.Default.With(weight: FontWeight.Bold),
+                            Font = OsuFont.Default.With(size: 14, weight: FontWeight.SemiBold),
                             Text = "Update",
                         }
                     }

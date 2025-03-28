@@ -23,7 +23,7 @@ namespace osu.Game.Screens.SelectV2
     {
         private const float corner_radius = 10;
 
-        private const float active_x_offset = 50f;
+        private const float active_x_offset = 40f;
 
         protected const float DURATION = 400;
 

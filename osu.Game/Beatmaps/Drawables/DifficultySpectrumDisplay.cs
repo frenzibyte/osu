@@ -132,7 +132,7 @@ namespace osu.Game.Beatmaps.Drawables
                 var icon = rulesets.GetRuleset(RulesetId)?.CreateInstance().CreateIcon() ?? new SpriteIcon { Icon = FontAwesome.Regular.QuestionCircle };
                 Add(icon.With(i =>
                 {
-                    i.Size = new Vector2(14);
+                    i.Size = new Vector2(12);
                     i.Anchor = i.Origin = Anchor.Centre;
                 }));
 
@@ -141,7 +141,7 @@ namespace osu.Game.Beatmaps.Drawables
 
                 Add(countText = new OsuSpriteText
                 {
-                    Font = OsuFont.Default.With(size: 12),
+                    Font = OsuFont.Default.With(size: 11),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Padding = new MarginPadding { Bottom = 1 }
@@ -197,7 +197,7 @@ namespace osu.Game.Beatmaps.Drawables
             [BackgroundDependencyLoader]
             private void load()
             {
-                Size = new Vector2(5, 10);
+                Size = new Vector2(4, 8);
                 Anchor = Origin = Anchor.Centre;
 
                 updateColour();

@@ -19,7 +19,7 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class PanelBeatmapSet : PanelBase
     {
-        public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT * 1.6f;
+        public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT * 1.7f;
 
         private BeatmapSetPanelBackground background = null!;
 
@@ -54,7 +54,7 @@ namespace osu.Game.Screens.SelectV2
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Icon = FontAwesome.Solid.ChevronRight,
-                    Size = new Vector2(12),
+                    Size = new Vector2(8),
                     X = 1f,
                     Colour = colourProvider.Background5,
                 },
@@ -76,17 +76,17 @@ namespace osu.Game.Screens.SelectV2
                     {
                         titleText = new OsuSpriteText
                         {
-                            Font = OsuFont.GetFont(weight: FontWeight.Bold, size: 22, italics: true),
+                            Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 18, italics: true),
                         },
                         artistText = new OsuSpriteText
                         {
-                            Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 17, italics: true),
+                            Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 14, italics: true),
                         },
                         new FillFlowContainer
                         {
                             Direction = FillDirection.Horizontal,
                             AutoSizeAxes = Axes.Both,
-                            Margin = new MarginPadding { Top = 5f },
+                            Margin = new MarginPadding { Top = 4f },
                             Children = new Drawable[]
                             {
                                 updateButton = new UpdateBeatmapSetButton
@@ -101,7 +101,6 @@ namespace osu.Game.Screens.SelectV2
                                     Origin = Anchor.CentreLeft,
                                     Anchor = Anchor.CentreLeft,
                                     TextSize = 11,
-                                    TextPadding = new MarginPadding { Horizontal = 8, Vertical = 2 },
                                     Margin = new MarginPadding { Right = 5f },
                                 },
                                 difficultiesDisplay = new DifficultySpectrumDisplay

@@ -25,7 +25,7 @@ namespace osu.Game.Screens.SelectV2
 {
     public partial class PanelBeatmapStandalone : PanelBase
     {
-        public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT * 1.6f;
+        public const float HEIGHT = CarouselItem.DEFAULT_HEIGHT * 1.7f;
 
         [Resolved]
         private IBindable<RulesetInfo> ruleset { get; set; } = null!;
@@ -75,7 +75,7 @@ namespace osu.Game.Screens.SelectV2
 
             Icon = difficultyIcon = new ConstrainedIconContainer
             {
-                Size = new Vector2(20),
+                Size = new Vector2(16),
                 Margin = new MarginPadding { Horizontal = 5f },
                 Colour = colourProvider.Background5,
             };
@@ -94,12 +94,12 @@ namespace osu.Game.Screens.SelectV2
                 {
                     titleText = new OsuSpriteText
                     {
-                        Font = OsuFont.GetFont(weight: FontWeight.Bold, size: 22, italics: true),
+                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 18, italics: true),
                         Shadow = true,
                     },
                     artistText = new OsuSpriteText
                     {
-                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 17, italics: true),
+                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 14, italics: true),
                         Shadow = true,
                     },
                     new FillFlowContainer
