@@ -4,6 +4,7 @@
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -44,7 +45,7 @@ namespace osu.Game.Screens.SelectV2
                     RelativeSizeAxes = Axes.Both,
                     CornerRadius = 10,
                     Masking = true,
-                    Colour = colourProvider.Background4,
+                    Colour = colourProvider.Background4.Opacity(0.8f),
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -78,7 +79,7 @@ namespace osu.Game.Screens.SelectV2
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
                                     Size = new Vector2(128f, 32f),
-                                    Scale = new Vector2(0.875f),
+                                    Scale = new Vector2(0.7f),
                                     Child = selectedModsToggle = new ShearedToggleButton
                                     {
                                         Anchor = Anchor.Centre,
@@ -103,7 +104,7 @@ namespace osu.Game.Screens.SelectV2
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
                                     Size = new Vector2(160f, 32f),
-                                    Scale = new Vector2(0.875f),
+                                    Scale = new Vector2(0.7f),
                                     Child = scopeDropdown = new ScopeDropdown
                                     {
                                         Width = 160f,

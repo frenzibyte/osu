@@ -172,10 +172,10 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                             {
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
-                                Font = OsuFont.Torus.With(size: 10f, weight: FontWeight.SemiBold),
+                                Font = OsuFont.Torus.With(size: 11f, weight: FontWeight.SemiBold),
                                 UseFullGlyphHeight = false,
                             },
-                            relativeDate = new DrawableDate(default, 10f)
+                            relativeDate = new DrawableDate(default, 11f)
                             {
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
@@ -226,7 +226,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                     {
                         Text = label,
                         Colour = labelColour,
-                        Font = OsuFont.Torus.With(size: 10, weight: FontWeight.SemiBold),
+                        Font = OsuFont.Torus.With(size: 11, weight: FontWeight.SemiBold),
                     },
                     new OsuSpriteText
                     {
@@ -234,7 +234,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         Origin = Anchor.TopRight,
                         Text = value,
                         Colour = Color4.White,
-                        Font = OsuFont.Torus.With(size: 10, weight: FontWeight.Bold),
+                        Font = OsuFont.Torus.With(size: 11, weight: FontWeight.Regular),
                     },
                 };
             }
@@ -312,6 +312,9 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
             private Container<DrawableRank> rankContainer = null!;
             private OsuSpriteText totalScore = null!;
 
+            [Resolved]
+            private ScoreManager scoreManager { get; set; } = null!;
+
             public ScoreInfo Score
             {
                 set
@@ -320,7 +323,7 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         OsuColour.ForRank(value.Rank).Opacity(0f),
                         OsuColour.ForRank(value.Rank).Opacity(0.5f));
                     rankContainer.Child = new DrawableRank(value.Rank);
-                    totalScore.Text = value.TotalScore.ToLocalisableString("N0");
+                    totalScore.Current = scoreManager.GetBindableTotalScoreString(value);
                 }
             }
 
@@ -362,7 +365,8 @@ namespace osu.Game.Screens.SelectV2.Leaderboards
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.BottomCentre,
                         Margin = new MarginPadding { Bottom = 25f, Top = 10f + spacing },
-                        Font = OsuFont.Torus.With(size: 32f, weight: FontWeight.Light),
+                        Font = OsuFont.Torus.With(size: 24f, weight: FontWeight.Light, fixedWidth: true),
+                        Spacing = new Vector2(-1.5f),
                         UseFullGlyphHeight = false,
                     },
                 };
