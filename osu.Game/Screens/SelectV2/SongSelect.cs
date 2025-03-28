@@ -95,7 +95,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.Both,
                                 ColumnDimensions = new[]
                                 {
-                                    new Dimension(GridSizeMode.Relative, 0.5f),
+                                    new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 650),
                                     new Dimension(),
                                     new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
                                 },
@@ -119,12 +119,21 @@ namespace osu.Game.Screens.SelectV2
                                         new Container
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Child = carousel = new BeatmapCarousel
+                                            Children = new CompositeDrawable[]
                                             {
-                                                RequestSelectBeatmap = b => Beatmap.Value = beatmaps.GetWorkingBeatmap(b),
-                                                RequestPresentBeatmap = _ => OnStart(),
-                                                RelativeSizeAxes = Axes.Both
-                                            },
+                                                carousel = new BeatmapCarousel
+                                                {
+                                                    RequestSelectBeatmap = b => Beatmap.Value = beatmaps.GetWorkingBeatmap(b),
+                                                    RequestPresentBeatmap = _ => OnStart(),
+                                                    RelativeSizeAxes = Axes.Both
+                                                },
+                                                new BeatmapFilterControl
+                                                {
+                                                    Anchor = Anchor.TopRight,
+                                                    Origin = Anchor.TopRight,
+                                                    Width = 700f,
+                                                },
+                                            }
                                         },
                                     },
                                 }
@@ -134,6 +143,8 @@ namespace osu.Game.Screens.SelectV2
                 },
                 modSelectOverlay,
             });
+
+            AddInternal(wedgesContainer.CreateProxy());
         }
 
         /// <summary>

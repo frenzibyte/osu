@@ -98,7 +98,7 @@ namespace osu.Game.Graphics.UserInterface
         [BackgroundDependencyLoader]
         private void load(OverlayColourProvider colourProvider)
         {
-            background.Colour = colourProvider.Background3;
+            background.Colour = colourProvider.Background5;
         }
 
         public override bool HandleNonPositionalInput => textBox.HandleNonPositionalInput;
@@ -108,8 +108,8 @@ namespace osu.Game.Graphics.UserInterface
             [BackgroundDependencyLoader]
             private void load(OverlayColourProvider colourProvider)
             {
-                BackgroundFocused = colourProvider.Background4;
-                BackgroundUnfocused = colourProvider.Background4;
+                BackgroundFocused = colourProvider.Background5;
+                BackgroundUnfocused = colourProvider.Background5;
 
                 Placeholder.Font = OsuFont.GetFont(size: FontSize, weight: FontWeight.SemiBold);
                 PlaceholderText = CommonStrings.InputSearch;
