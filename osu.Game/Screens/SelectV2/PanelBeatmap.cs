@@ -99,7 +99,7 @@ namespace osu.Game.Screens.SelectV2
                                 {
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
-                                    Scale = new Vector2(0.83f),
+                                    Scale = new Vector2(OsuFont.Caption.Size / OsuFont.Body.Size),
                                 },
                                 difficultyRank = new TopLocalRank
                                 {
@@ -123,14 +123,14 @@ namespace osu.Game.Screens.SelectV2
                             {
                                 keyCountText = new OsuSpriteText
                                 {
-                                    Font = OsuFont.GetFont(size: 14, weight: FontWeight.SemiBold),
+                                    Font = OsuFont.Body.With(weight: FontWeight.SemiBold),
                                     Anchor = Anchor.BottomLeft,
                                     Origin = Anchor.BottomLeft,
                                     Alpha = 0,
                                 },
                                 difficultyText = new OsuSpriteText
                                 {
-                                    Font = OsuFont.GetFont(size: 14, weight: FontWeight.SemiBold),
+                                    Font = OsuFont.Body.With(weight: FontWeight.SemiBold),
                                     Anchor = Anchor.BottomLeft,
                                     Origin = Anchor.BottomLeft,
                                     Margin = new MarginPadding { Right = 5f },
@@ -138,7 +138,7 @@ namespace osu.Game.Screens.SelectV2
                                 authorText = new OsuSpriteText
                                 {
                                     Colour = colourProvider.Content2,
-                                    Font = OsuFont.GetFont(size: 12, weight: FontWeight.SemiBold),
+                                    Font = OsuFont.Caption.With(weight: FontWeight.SemiBold),
                                     Anchor = Anchor.BottomLeft,
                                     Origin = Anchor.BottomLeft
                                 }

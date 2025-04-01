@@ -76,11 +76,11 @@ namespace osu.Game.Screens.SelectV2
                     {
                         titleText = new OsuSpriteText
                         {
-                            Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 18, italics: true),
+                            Font = OsuFont.Heading,
                         },
                         artistText = new OsuSpriteText
                         {
-                            Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 14, italics: true),
+                            Font = OsuFont.Body.With(weight: FontWeight.SemiBold),
                         },
                         new FillFlowContainer
                         {
@@ -100,7 +100,7 @@ namespace osu.Game.Screens.SelectV2
                                     AutoSizeAxes = Axes.Both,
                                     Origin = Anchor.CentreLeft,
                                     Anchor = Anchor.CentreLeft,
-                                    TextSize = 11,
+                                    TextSize = OsuFont.Tiny.Size,
                                     Margin = new MarginPadding { Right = 5f },
                                 },
                                 difficultiesDisplay = new DifficultySpectrumDisplay

@@ -9,6 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Localisation;
+using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Overlays;
@@ -63,7 +64,7 @@ namespace osu.Game.Screens.SelectV2
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                             Width = 200,
-                            Height = 20,
+                            Height = 22,
                             Margin = new MarginPadding { Top = 2f },
                         },
                         leaderboardControls = new FillFlowContainer
@@ -79,7 +80,7 @@ namespace osu.Game.Screens.SelectV2
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
                                     Size = new Vector2(128f, 32f),
-                                    Scale = new Vector2(0.7f),
+                                    Scale = new Vector2(OsuFont.Body.Size / 17f),
                                     Child = selectedModsToggle = new ShearedToggleButton
                                     {
                                         Anchor = Anchor.Centre,
@@ -92,7 +93,8 @@ namespace osu.Game.Screens.SelectV2
                                 // {
                                 //     Anchor = Anchor.CentreRight,
                                 //     Origin = Anchor.CentreRight,
-                                //     Size = new Vector2(150f, 33f),
+                                //     Size = new Vector2(150f, 32f),
+                                //     Scale = new Vector2(OsuFont.Body.Size / 17f),
                                 //     Child = new ShearedDropdown<RankingsSort>(@"Sort")
                                 //     {
                                 //         Width = 150f,
@@ -104,7 +106,7 @@ namespace osu.Game.Screens.SelectV2
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
                                     Size = new Vector2(160f, 32f),
-                                    Scale = new Vector2(0.7f),
+                                    Scale = new Vector2(OsuFont.Body.Size / 16f),
                                     Child = scopeDropdown = new ScopeDropdown
                                     {
                                         Width = 160f,

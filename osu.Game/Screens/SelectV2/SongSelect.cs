@@ -75,12 +75,12 @@ namespace osu.Game.Screens.SelectV2
         {
             AddRangeInternal(new Drawable[]
             {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = ColourInfo.GradientVertical(Color4.Black, Color4.Black.Opacity(0f)),
-                    Height = (float)Math.Sqrt(0.5f),
-                },
+                // new Box
+                // {
+                //     RelativeSizeAxes = Axes.Both,
+                //     Colour = ColourInfo.GradientVertical(Color4.Black, Color4.Black.Opacity(0f)),
+                //     Height = (float)Math.Sqrt(0.5f),
+                // },
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -95,7 +95,7 @@ namespace osu.Game.Screens.SelectV2
                                 RelativeSizeAxes = Axes.Both,
                                 ColumnDimensions = new[]
                                 {
-                                    new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 650),
+                                    new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 675),
                                     new Dimension(),
                                     new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
                                 },

@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Configuration;
+using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Overlays;
@@ -71,8 +72,8 @@ namespace osu.Game.Screens.SelectV2
                             Child = new ShearedSearchTextBox
                             {
                                 RelativeSizeAxes = Axes.X,
-                                Scale = new Vector2(0.7f),
-                                Width = 1 / 0.7f,
+                                Scale = new Vector2(OsuFont.Body.Size / 16),
+                                Width = 1 / (OsuFont.Body.Size / 16),
                             },
                         },
                         new ShearedDifficultyRangeSlider
@@ -82,8 +83,8 @@ namespace osu.Game.Screens.SelectV2
                             UpperBound = config.GetBindable<double>(OsuSetting.DisplayStarsMaximum),
                             MinRange = 0.1f,
                             Shear = -new Vector2(OsuGame.SHEAR, 0),
-                            Scale = new Vector2(0.7f),
-                            Width = 1 / 0.7f,
+                            Scale = new Vector2(OsuFont.Body.Size / 16),
+                            Width = 1 / (OsuFont.Body.Size / 16),
                         },
                         new GridContainer
                         {
@@ -106,7 +107,7 @@ namespace osu.Game.Screens.SelectV2
                                     new Container
                                     {
                                         Size = new Vector2(210, 30),
-                                        Scale = new Vector2(0.7f),
+                                        Scale = new Vector2(OsuFont.Body.Size / 16),
                                         Child = new ShearedDropdown<SortMode>("Sort by")
                                         {
                                             RelativeSizeAxes = Axes.X,
@@ -117,7 +118,7 @@ namespace osu.Game.Screens.SelectV2
                                     new Container
                                     {
                                         Size = new Vector2(220, 30),
-                                        Scale = new Vector2(0.7f),
+                                        Scale = new Vector2(OsuFont.Body.Size / 16),
                                         Child = new ShearedDropdown<GroupMode>("Group by")
                                         {
                                             RelativeSizeAxes = Axes.X,
@@ -128,9 +129,9 @@ namespace osu.Game.Screens.SelectV2
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.X,
-                                        Width = 1 / 0.7f,
+                                        Width = 1 / (OsuFont.Body.Size / 16),
                                         Height = 30f,
-                                        Scale = new Vector2(0.7f),
+                                        Scale = new Vector2(OsuFont.Body.Size / 16),
                                         Child = new ShearedDropdown<string>("Collection")
                                         {
                                             RelativeSizeAxes = Axes.X,

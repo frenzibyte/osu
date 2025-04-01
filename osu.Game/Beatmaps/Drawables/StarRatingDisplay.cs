@@ -80,7 +80,7 @@ namespace osu.Game.Beatmaps.Drawables
                     break;
 
                 case StarRatingDisplaySize.Regular:
-                    margin = new MarginPadding { Horizontal = 8f, Vertical = 2f };
+                    margin = new MarginPadding { Horizontal = 8f, Vertical = 1f };
                     break;
             }
 
@@ -129,7 +129,7 @@ namespace osu.Game.Beatmaps.Drawables
                                         Margin = new MarginPadding { Bottom = 1.5f },
                                         // todo: this should be size: 12f, but to match up with the design, it needs to be 14.4f
                                         // see https://github.com/ppy/osu-framework/issues/3271.
-                                        Font = OsuFont.Torus.With(size: 14.4f, weight: FontWeight.Bold),
+                                        Font = OsuFont.Body.With(weight: FontWeight.Bold),
                                         Shadow = false,
                                     },
                                 },

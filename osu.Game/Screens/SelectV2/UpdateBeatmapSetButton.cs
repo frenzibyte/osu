@@ -110,7 +110,7 @@ namespace osu.Game.Screens.SelectV2
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Font = OsuFont.Default.With(size: 14, weight: FontWeight.SemiBold),
+                            Font = OsuFont.Body.With(weight: FontWeight.SemiBold),
                             Text = "Update",
                         }
                     }

@@ -94,19 +94,16 @@ namespace osu.Game.Screens.SelectV2
                 {
                     titleText = new OsuSpriteText
                     {
-                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 18, italics: true),
-                        Shadow = true,
+                        Font = OsuFont.Heading,
                     },
                     artistText = new OsuSpriteText
                     {
-                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold, size: 14, italics: true),
-                        Shadow = true,
+                        Font = OsuFont.Body.With(weight: FontWeight.SemiBold),
                     },
                     new FillFlowContainer
                     {
                         Direction = FillDirection.Horizontal,
                         AutoSizeAxes = Axes.Both,
-                        Margin = new MarginPadding { Top = 5f },
                         Children = new Drawable[]
                         {
                             updateButton = new UpdateBeatmapSetButton
@@ -120,8 +117,7 @@ namespace osu.Game.Screens.SelectV2
                                 AutoSizeAxes = Axes.Both,
                                 Origin = Anchor.CentreLeft,
                                 Anchor = Anchor.CentreLeft,
-                                TextSize = 11,
-                                TextPadding = new MarginPadding { Horizontal = 8, Vertical = 2 },
+                                TextSize = OsuFont.Caption.Size,
                                 Margin = new MarginPadding { Right = 5f },
                             },
                             difficultyLine = new FillFlowContainer
@@ -146,7 +142,7 @@ namespace osu.Game.Screens.SelectV2
                                     },
                                     difficultyKeyCountText = new OsuSpriteText
                                     {
-                                        Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
+                                        Font = OsuFont.Subheading,
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
                                         Alpha = 0,
@@ -154,7 +150,7 @@ namespace osu.Game.Screens.SelectV2
                                     },
                                     difficultyName = new OsuSpriteText
                                     {
-                                        Font = OsuFont.GetFont(size: 18, weight: FontWeight.SemiBold),
+                                        Font = OsuFont.Subheading,
                                         Origin = Anchor.BottomLeft,
                                         Anchor = Anchor.BottomLeft,
                                         Margin = new MarginPadding { Right = 5f, Bottom = 2f },
@@ -162,7 +158,7 @@ namespace osu.Game.Screens.SelectV2
                                     difficultyAuthor = new OsuSpriteText
                                     {
                                         Colour = colourProvider.Content2,
-                                        Font = OsuFont.GetFont(weight: FontWeight.SemiBold),
+                                        Font = OsuFont.Subheading,
                                         Origin = Anchor.BottomLeft,
                                         Anchor = Anchor.BottomLeft,
                                         Margin = new MarginPadding { Right = 5f, Bottom = 2f },

@@ -105,8 +105,10 @@ namespace osu.Game.Screens.SelectV2
                         {
                             AlwaysPresent = true,
                             RelativeSizeAxes = Axes.X,
-                            Height = 28f,
+                            AutoSizeAxes = Axes.Y,
+                            Margin = new MarginPadding { Vertical = 5f },
                             Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN },
+                            RowDimensions = new[] { new Dimension(GridSizeMode.AutoSize) },
                             ColumnDimensions = new[]
                             {
                                 new Dimension(GridSizeMode.AutoSize),
@@ -121,7 +123,6 @@ namespace osu.Game.Screens.SelectV2
                                     {
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
-                                        Scale = new Vector2(0.97f),
                                     },
                                     Empty(),
                                     nameLine = new FillFlowContainer
@@ -138,26 +139,24 @@ namespace osu.Game.Screens.SelectV2
                                             {
                                                 Anchor = Anchor.BottomLeft,
                                                 Origin = Anchor.BottomLeft,
-                                                Font = OsuFont.Torus.With(size: 14f, weight: FontWeight.SemiBold),
+                                                Font = OsuFont.Body.With(weight: FontWeight.SemiBold),
                                             },
                                             mappedByText = new OsuSpriteText
                                             {
                                                 Anchor = Anchor.BottomLeft,
                                                 Origin = Anchor.BottomLeft,
                                                 Text = " mapped by ",
-                                                Font = OsuFont.Torus.With(size: 11f, weight: FontWeight.SemiBold),
-                                                Margin = new MarginPadding { Left = 0.5f, Bottom = 0.5f },
+                                                Font = OsuFont.Body,
                                             },
                                             mapperLink = new MapperLinkContainer
                                             {
                                                 AutoSizeAxes = Axes.Both,
                                                 Anchor = Anchor.BottomLeft,
                                                 Origin = Anchor.BottomLeft,
-                                                Margin = new MarginPadding { Bottom = 0.5f },
                                                 Child = mapperText = new TruncatingSpriteText
                                                 {
                                                     Shadow = true,
-                                                    Font = OsuFont.Torus.With(size: 11f, weight: FontWeight.SemiBold),
+                                                    Font = OsuFont.Body.With(weight: FontWeight.SemiBold),
                                                 },
                                             },
                                         },
@@ -188,7 +187,7 @@ namespace osu.Game.Screens.SelectV2
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         AutoSizeAxes = Axes.Y,
-                                        Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 20f, Top = 7.5f, Bottom = 5f },
+                                        Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 20f, Vertical = 7.5f },
                                         Shear = -shear,
                                         RowDimensions = new[] { new Dimension(GridSizeMode.AutoSize) },
                                         ColumnDimensions = new[]
