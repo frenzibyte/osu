@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -9,13 +10,13 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
 using osu.Game.Overlays;
-using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
 {
     public partial class BeatmapSetPanelBackground : ModelBackedDrawable<WorkingBeatmap>
     {
+        public readonly Bindable<float> AverageHue = new Bindable<float>();
+
         protected override double TransformDuration => 400;
 
         public WorkingBeatmap? Beatmap
@@ -24,11 +25,16 @@ namespace osu.Game.Screens.SelectV2
             set => Model = value;
         }
 
-        protected override Drawable CreateDrawable(WorkingBeatmap? model) => new BackgroundSprite(model);
+        protected override Drawable CreateDrawable(WorkingBeatmap? model) => new BackgroundSprite(model)
+        {
+            AverageHue = { BindTarget = AverageHue },
+        };
 
         private partial class BackgroundSprite : CompositeDrawable
         {
             private readonly WorkingBeatmap? working;
+
+            public readonly Bindable<float> AverageHue = new Bindable<float>();
 
             public BackgroundSprite(WorkingBeatmap? working)
             {
@@ -44,6 +50,11 @@ namespace osu.Game.Screens.SelectV2
 
                 if (texture != null)
                 {
+                    float hue = texture.Average.ToHSL().X;
+                    AverageHue.Value = hue;
+
+                    Colour4 colour = Colour4.FromHSL(hue, 0.3f, 0.3f);
+
                     InternalChildren = new Drawable[]
                     {
                         new Sprite
@@ -54,43 +65,10 @@ namespace osu.Game.Screens.SelectV2
                             FillMode = FillMode.Fill,
                             Texture = texture,
                         },
-                        new FillFlowContainer
+                        new Box
                         {
-                            Depth = -1,
                             RelativeSizeAxes = Axes.Both,
-                            Direction = FillDirection.Horizontal,
-                            // This makes the gradient not be perfectly horizontal, but diagonal at a ~40° angle
-                            Shear = new Vector2(0.8f, 0),
-                            Alpha = 0.5f,
-                            Children = new[]
-                            {
-                                // The left half with no gradient applied
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = Color4.Black,
-                                    Width = 0.4f,
-                                },
-                                // Piecewise-linear gradient with 3 segments to make it appear smoother
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = ColourInfo.GradientHorizontal(Color4.Black, new Color4(0f, 0f, 0f, 0.9f)),
-                                    Width = 0.05f,
-                                },
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = ColourInfo.GradientHorizontal(new Color4(0f, 0f, 0f, 0.9f), new Color4(0f, 0f, 0f, 0.1f)),
-                                    Width = 0.2f,
-                                },
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = ColourInfo.GradientHorizontal(new Color4(0f, 0f, 0f, 0.1f), new Color4(0, 0, 0, 0)),
-                                    Width = 0.05f,
-                                },
-                            }
+                            Colour = ColourInfo.GradientHorizontal(colour, colour.Opacity(0.25f)),
                         },
                     };
                 }

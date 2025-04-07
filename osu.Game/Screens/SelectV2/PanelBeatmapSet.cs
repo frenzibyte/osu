@@ -49,6 +49,7 @@ namespace osu.Game.Screens.SelectV2
             Icon = chevronIcon = new Container
             {
                 Size = new Vector2(0, 22),
+                AlwaysPresent = true,
                 Child = new SpriteIcon
                 {
                     Anchor = Anchor.Centre,
@@ -119,6 +120,7 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
+            background.AverageHue.BindValueChanged(_ => Scheduler.AddOnce(updateBorderColour), true);
             Expanded.BindValueChanged(_ => onExpanded(), true);
             KeyboardSelected.BindValueChanged(k => KeyboardSelected.Value = k.NewValue, true);
         }
@@ -132,9 +134,11 @@ namespace osu.Game.Screens.SelectV2
             }
             else
             {
-                chevronIcon.ResizeWidthTo(0f, DURATION, Easing.OutQuint);
+                chevronIcon.ResizeWidthTo(8f, DURATION, Easing.OutQuint);
                 chevronIcon.FadeTo(0f, DURATION, Easing.OutQuint);
             }
+
+            updateBorderColour();
         }
 
         protected override void PrepareForUse()
@@ -153,6 +157,13 @@ namespace osu.Game.Screens.SelectV2
             updateButton.BeatmapSet = beatmapSet;
             statusPill.Status = beatmapSet.Status;
             difficultiesDisplay.BeatmapSet = beatmapSet;
+        }
+
+        private void updateBorderColour()
+        {
+            BackgroundBorderColour = Expanded.Value
+                ? Colour4.White
+                : Colour4.FromHSV(background.AverageHue.Value, 0.3f, 0.25f);
         }
 
         protected override void FreeAfterUse()

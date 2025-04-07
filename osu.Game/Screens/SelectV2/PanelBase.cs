@@ -48,6 +48,18 @@ namespace osu.Game.Screens.SelectV2
 
         public Drawable Icon { set => iconContainer.Child = value; }
 
+        private Color4 backgroundBorderColour = Color4.White;
+
+        public Color4 BackgroundBorderColour
+        {
+            get => backgroundBorderColour;
+            set
+            {
+                backgroundBorderColour = value;
+                updateDisplay();
+            }
+        }
+
         private Color4? accentColour;
 
         public Color4? AccentColour
@@ -202,6 +214,8 @@ namespace osu.Game.Screens.SelectV2
 
                 updateXOffset();
             }, true);
+
+            FinishTransforms(true);
         }
 
         protected override void PrepareForUse()
@@ -222,7 +236,7 @@ namespace osu.Game.Screens.SelectV2
             var edgeEffectColour = accentColour ?? Color4Extensions.FromHex(@"4EBFFF");
 
             backgroundAccentGradient.FadeColour(ColourInfo.GradientHorizontal(backgroundColour.Opacity(0.25f), backgroundColour.Opacity(0f)), DURATION, Easing.OutQuint);
-            backgroundBorder.FadeColour(backgroundColour, DURATION, Easing.OutQuint);
+            backgroundBorder.FadeColour(accentColour ?? backgroundBorderColour, DURATION, Easing.OutQuint);
 
             TopLevelContent.FadeEdgeEffectTo(Expanded.Value ? edgeEffectColour.Opacity(0.5f) : Color4.Black.Opacity(0.4f), DURATION, Easing.OutQuint);
 

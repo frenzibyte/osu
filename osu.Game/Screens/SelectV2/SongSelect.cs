@@ -276,7 +276,7 @@ namespace osu.Game.Screens.SelectV2
             ApplyToBackground(backgroundModeBeatmap =>
             {
                 backgroundModeBeatmap.Beatmap = Beatmap.Value;
-                backgroundModeBeatmap.DimWhenUserSettingsIgnored.Value = 0.25f;
+                backgroundModeBeatmap.DimWhenUserSettingsIgnored.Value = 0.4f;
                 backgroundModeBeatmap.BlurAmount.Value = 0f;
                 backgroundModeBeatmap.IgnoreUserSettings.Value = true;
                 backgroundModeBeatmap.FadeColour(Color4.White, 250);
