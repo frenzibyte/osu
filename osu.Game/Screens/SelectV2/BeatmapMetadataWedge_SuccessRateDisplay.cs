@@ -42,7 +42,7 @@ namespace osu.Game.Screens.SelectV2
                 }
             }
 
-            public LocalisableString TooltipText => $"{data.passes:N0} / {data.plays:N0}";
+            public LocalisableString TooltipText => data.passes < 0 ? "0 / 0" : $"{data.passes:N0} / {data.plays:N0}";
 
             public SuccessRateDisplay()
             {
