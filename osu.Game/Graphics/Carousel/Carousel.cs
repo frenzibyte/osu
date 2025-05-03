@@ -163,6 +163,11 @@ namespace osu.Game.Graphics.Carousel
         protected readonly BindableList<T> Items = new BindableList<T>();
 
         /// <summary>
+        /// Invoked when the carousel has completed a filter operation.
+        /// </summary>
+        public event Action? FilterCompleted;
+
+        /// <summary>
         /// Queue an asynchronous filter operation.
         /// </summary>
         protected virtual Task FilterAsync() => filterTask = performFilter();
@@ -300,6 +305,8 @@ namespace osu.Game.Graphics.Carousel
                 HandleItemSelected(currentSelection.Model);
 
                 refreshAfterSelection();
+
+                FilterCompleted?.Invoke();
             });
 
             void log(string text) => Logger.Log($"Carousel[op {cts.GetHashCode().ToString()}] {stopwatch.ElapsedMilliseconds} ms: {text}");

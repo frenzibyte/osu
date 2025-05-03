@@ -30,7 +30,6 @@ using osu.Game.Screens.Menu;
 using osu.Game.Screens.Select.Filter;
 using osu.Game.Screens.SelectV2;
 using osu.Game.Tests.Resources;
-using osuTK.Input;
 
 namespace osu.Game.Tests.Visual.SongSelectV2
 {
@@ -41,11 +40,12 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         private MusicController music = null!;
         private OsuConfigManager config = null!;
 
-        private TestSongSelect songSelect = null!;
+        private SoloSongSelect songSelect = null!;
         private BeatmapCarousel carousel => songSelect.ChildrenOfType<BeatmapCarousel>().Single();
 
         private FilterControl filter => songSelect.ChildrenOfType<FilterControl>().Single();
         private ShearedFilterTextBox filterTextBox => songSelect.ChildrenOfType<ShearedFilterTextBox>().Single();
+        private int filterOperationsCount;
 
         [Cached]
         private readonly ScreenFooter screenFooter;
@@ -125,6 +125,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 SelectedMods.SetDefault();
 
                 songSelect = null!;
+                filterOperationsCount = 0;
             });
 
             AddStep("delete all beatmaps", () => manager.Delete());
@@ -138,7 +139,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             loadSongSelect();
 
-            AddAssert("filter count is 0", () => songSelect.FilterOperationCount, () => Is.EqualTo(0));
+            AddAssert("filter count is 0", () => filterOperationsCount, () => Is.EqualTo(0));
         }
 
         [Test]
@@ -154,7 +155,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             AddStep("return", () => songSelect.MakeCurrent());
             AddUntilStep("wait for current", () => songSelect.IsCurrentScreen());
-            AddAssert("filter count is 0", () => songSelect.FilterOperationCount, () => Is.EqualTo(0));
+            AddAssert("filter count is 0", () => filterOperationsCount, () => Is.EqualTo(0));
         }
 
         [Test]
@@ -174,7 +175,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             AddStep("return", () => songSelect.MakeCurrent());
             AddUntilStep("wait for current", () => songSelect.IsCurrentScreen());
-            AddAssert("filter count is 1", () => songSelect.FilterOperationCount, () => Is.EqualTo(1));
+            AddAssert("filter count is 1", () => filterOperationsCount, () => Is.EqualTo(1));
         }
 
         [Test]
@@ -214,6 +215,8 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             // TODO: this is different from old test, old test relies on current beatmap selection instead.
             AddUntilStep("osu beatmap not visible", () => carousel.DisplayableItems.All(b => b.Ruleset.OnlineID == 1));
+
+            AddStep("allow convert display", () => config.SetValue(OsuSetting.ShowConvertedBeatmaps, true));
         }
 
         [Test]
@@ -236,12 +239,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             AddStep("set filter text", () => filterTextBox.Current.Value = "nonono");
             AddStep("select all", () => InputManager.Keys(PlatformAction.SelectAll));
-            AddStep("press ctrl-x", () =>
-            {
-                InputManager.PressKey(Key.ControlLeft);
-                InputManager.Key(Key.X);
-                InputManager.ReleaseKey(Key.ControlLeft);
-            });
+            AddStep("press ctrl/cmd-x", () => InputManager.Keys(PlatformAction.Cut));
 
             AddAssert("filter text cleared", () => filterTextBox.Current.Value, () => Is.Empty);
         }
@@ -255,11 +253,11 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             // Mod that is guaranteed to never re-filter.
             AddStep("add non-filterable mod", () => SelectedMods.Value = new Mod[] { new OsuModCinema() });
-            AddAssert("filter count is 0", () => songSelect.FilterOperationCount, () => Is.EqualTo(0));
+            AddAssert("filter count is 0", () => filterOperationsCount, () => Is.EqualTo(0));
 
             // Removing the mod should still not re-filter.
             AddStep("remove non-filterable mod", () => SelectedMods.Value = Array.Empty<Mod>());
-            AddAssert("filter count is 0", () => songSelect.FilterOperationCount, () => Is.EqualTo(0));
+            AddAssert("filter count is 0", () => filterOperationsCount, () => Is.EqualTo(0));
         }
 
         [Test]
@@ -271,41 +269,46 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             // Change to mania ruleset.
             AddStep("filter to mania ruleset", () => Ruleset.Value = rulesets.AvailableRulesets.First(r => r.OnlineID == 3));
-            AddAssert("filter count is 2", () => songSelect.FilterOperationCount, () => Is.EqualTo(1));
+            AddAssert("filter count is 1", () => filterOperationsCount, () => Is.EqualTo(1));
 
             // Apply a mod, but this should NOT re-filter because there's no search text.
             AddStep("add filterable mod", () => SelectedMods.Value = new Mod[] { new ManiaModKey3() });
-            AddAssert("filter count is 1", () => songSelect.FilterOperationCount, () => Is.EqualTo(1));
+            AddAssert("filter count is 1", () => filterOperationsCount, () => Is.EqualTo(1));
 
             // Set search text. Should re-filter.
             AddStep("set search text to match mods", () => filterTextBox.Current.Value = "keys=3");
-            AddAssert("filter count is 2", () => songSelect.FilterOperationCount, () => Is.EqualTo(2));
+            AddAssert("filter count is 2", () => filterOperationsCount, () => Is.EqualTo(2));
 
             // Change filterable mod. Should re-filter.
             AddStep("change new filterable mod", () => SelectedMods.Value = new Mod[] { new ManiaModKey5() });
-            AddAssert("filter count is 3", () => songSelect.FilterOperationCount, () => Is.EqualTo(3));
+            AddAssert("filter count is 3", () => filterOperationsCount, () => Is.EqualTo(3));
 
             // Add non-filterable mod. Should NOT re-filter.
             AddStep("apply non-filterable mod", () => SelectedMods.Value = new Mod[] { new ManiaModNoFail(), new ManiaModKey5() });
-            AddAssert("filter count is 3", () => songSelect.FilterOperationCount, () => Is.EqualTo(3));
+            AddAssert("filter count is 3", () => filterOperationsCount, () => Is.EqualTo(3));
 
             // Remove filterable mod. Should re-filter.
             AddStep("remove filterable mod", () => SelectedMods.Value = new Mod[] { new ManiaModNoFail() });
-            AddAssert("filter count is 4", () => songSelect.FilterOperationCount, () => Is.EqualTo(4));
+            AddAssert("filter count is 4", () => filterOperationsCount, () => Is.EqualTo(4));
 
             // Remove non-filterable mod. Should NOT re-filter.
-            AddStep("remove filterable mod", () => SelectedMods.Value = Array.Empty<Mod>());
-            AddAssert("filter count is 4", () => songSelect.FilterOperationCount, () => Is.EqualTo(4));
+            AddStep("remove non-filterable mod", () => SelectedMods.Value = Array.Empty<Mod>());
+            AddAssert("filter count is 4", () => filterOperationsCount, () => Is.EqualTo(4));
 
             // Add filterable mod. Should re-filter.
             AddStep("add filterable mod", () => SelectedMods.Value = new Mod[] { new ManiaModKey3() });
-            AddAssert("filter count is 5", () => songSelect.FilterOperationCount, () => Is.EqualTo(5));
+            AddAssert("filter count is 5", () => filterOperationsCount, () => Is.EqualTo(5));
         }
 
         private void loadSongSelect()
         {
-            AddStep("load screen", () => Stack.Push(songSelect = new TestSongSelect()));
+            AddStep("load screen", () => Stack.Push(songSelect = new SoloSongSelect()));
             AddUntilStep("wait for load", () => Stack.CurrentScreen == songSelect && songSelect.IsLoaded);
+            AddStep("hook events", () =>
+            {
+                filterOperationsCount = 0;
+                filter.CriteriaChanged += _ => filterOperationsCount++;
+            });
         }
 
         private void importBeatmapForRuleset(int rulesetId)
@@ -359,11 +362,6 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 screenFooter.Hide();
                 screenFooter.SetButtons(Array.Empty<ScreenFooterButton>());
             }
-        }
-
-        private partial class TestSongSelect : SoloSongSelect
-        {
-            public int FilterOperationCount { get; private set; }
         }
     }
 }
