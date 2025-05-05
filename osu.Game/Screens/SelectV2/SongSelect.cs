@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -10,6 +11,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
+using osu.Framework.Threading;
 using osu.Game.Graphics.Containers;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
@@ -158,6 +160,9 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
+            filterControl.CriteriaChanged += criteriaChanged;
+            carousel.FilterCompleted += carouselFilterCompleted;
+
             modSelectOverlay.State.BindValueChanged(v =>
             {
                 logo?.ScaleTo(v.NewValue == Visibility.Visible ? 0f : logo_scale, 400, Easing.OutQuint)
@@ -264,18 +269,27 @@ namespace osu.Game.Screens.SelectV2
             logo.FadeOut(120, Easing.Out);
         }
 
+        #region Filtering
+
+        private const double filter_delay = 250;
+
+        private ScheduledDelegate? filterDebounce;
+
         /// <summary>
         /// Set the query to the search text box.
         /// </summary>
         /// <param name="query">The string to search.</param>
-        public void Search(string query)
+        public void Search(string query) => filterControl.Search(query);
+
+        private void criteriaChanged(FilterCriteria criteria)
         {
-            carousel.Filter(new FilterCriteria
-            {
-                // TODO: this should only set the text of the current criteria, not use a completely new criteria.
-                SearchText = query,
-            });
+            filterDebounce?.Cancel();
+            filterDebounce = Scheduler.AddDelayed(() => carousel.Filter(criteria), filter_delay);
         }
+
+        private void carouselFilterCompleted() => filterControl.InformationalNote = $@"{carousel.DisplayableItems.Count()} matches";
+
+        #endregion
 
         protected override void Update()
         {

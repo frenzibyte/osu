@@ -301,7 +301,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             stats.AddParagraph($"""
                                 sorting: {Carousel.IsFiltering}
                                 tracked: {Carousel.ItemsTracked}
-                                displayable: {Carousel.DisplayableItems}
+                                displayable: {Carousel.DisplayableItems.Count()}
                                 displayed: {Carousel.VisibleItems}
                                 selected: {Carousel.CurrentSelection}
                                 """);

@@ -68,9 +68,10 @@ namespace osu.Game.Graphics.Carousel
         public int ItemsTracked => Models.Count;
 
         /// <summary>
-        /// The number of carousel items currently in rotation for display.
+        /// The items currently in rotation for display.
         /// </summary>
-        public int DisplayableItems => carouselItems?.Count ?? 0;
+        // TODO: I don't think anyone will like this.
+        public IEnumerable<T> DisplayableItems => carouselItems?.Select(i => i.Model).OfType<T>() ?? Enumerable.Empty<T>();
 
         /// <summary>
         /// The number of items currently actualised into drawables.
@@ -165,6 +166,11 @@ namespace osu.Game.Graphics.Carousel
         /// The list of carousel items currently displayed.
         /// </summary>
         protected IReadOnlyList<CarouselItem> Items => carouselItems ?? (IReadOnlyList<CarouselItem>)Array.Empty<CarouselItem>();
+
+        /// <summary>
+        /// Invoked when the carousel has completed a filter operation.
+        /// </summary>
+        public event Action? FilterCompleted;
 
         /// <summary>
         /// Queue an asynchronous filter operation.
@@ -315,6 +321,8 @@ namespace osu.Game.Graphics.Carousel
 
                 refreshAfterSelection();
                 HandleItemsChanged(previousItems);
+
+                FilterCompleted?.Invoke();
             });
 
             void log(string text) => Logger.Log($"Carousel[op {cts.GetHashCode().ToString()}] {stopwatch.ElapsedMilliseconds} ms: {text}");
