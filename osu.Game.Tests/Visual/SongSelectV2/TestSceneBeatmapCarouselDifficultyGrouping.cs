@@ -1,6 +1,8 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Testing;
@@ -191,6 +193,94 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             ClickVisiblePanelWithOffset<PanelBeatmap>(1, new Vector2(0, (CarouselItem.DEFAULT_HEIGHT / 2 + 1)));
             WaitForGroupSelection(0, 1);
+        }
+
+        [Test]
+        public void TestBasicFiltering()
+        {
+            WaitForDrawablePanels();
+
+            SelectNextPanel();
+            Select();
+
+            ApplyToFilter("filter", c => c.SearchText = BeatmapSets[2].Metadata.Title);
+            WaitForFiltering();
+
+            CheckVisibleGroupsCount(3);
+            CheckVisibleBeatmapsCount(3);
+            WaitForSelection(2, 1);
+
+            for (int i = 0; i < 5; i++)
+                SelectNextPanel();
+
+            Select();
+            SelectNextPanel();
+            Select();
+
+            WaitForSelection(2, 2);
+
+            ApplyToFilter("remove filter", c => c.SearchText = string.Empty);
+            WaitForFiltering();
+
+            CheckVisibleGroupsCount(3);
+            CheckVisibleBeatmapsCount(30);
+        }
+
+        [Test]
+        public void TestSelectionChangesWithFiltering()
+        {
+            SelectNextPanel();
+
+            ApplyToFilter("filter some difficulties", c => c.SearchText = "Normal");
+            WaitForSelection(0, 0);
+
+            ApplyToFilter("remove filter", c => c.SearchText = string.Empty);
+            WaitForSelection(0, 0);
+
+            ApplyToFilter("filter all", c => c.SearchText = "Dingo");
+
+            CheckVisibleBeatmapsCount(0);
+            AddAssert("no sets displayed", () => Carousel.BeatmapSetsCount == 0);
+            AddAssert("selection is null", () => Carousel.CurrentSelection == null);
+
+            SelectNextPanel();
+            AddAssert("selection is null", () => Carousel.CurrentSelection == null);
+
+            SelectNextGroup();
+            AddAssert("selection is null", () => Carousel.CurrentSelection == null);
+
+            ApplyToFilter("remove filter", c => c.SearchText = string.Empty);
+
+            AddUntilStep("selection is not null", () => Carousel.CurrentSelection != null);
+        }
+
+        [Test]
+        public void TestCarouselRemembersSelectionWithFiltering()
+        {
+            HashSet<Guid> eagerSelectedIDs = null!;
+
+            RemoveAllBeatmaps();
+            AddBeatmaps(50, 3);
+            WaitForDrawablePanels();
+
+            SelectNextGroup();
+
+            AddStep("record selection", () =>
+            {
+                eagerSelectedIDs = new HashSet<Guid> { ((BeatmapInfo)Carousel.CurrentSelection!).ID };
+            });
+
+            for (int i = 0; i < 5; i++)
+            {
+                ApplyToFilter("filter all", c => c.SearchText = Guid.NewGuid().ToString());
+                AddUntilStep("selection cleared", () => Carousel.CurrentSelection == null);
+                ApplyToFilter("remove filter", c => c.SearchText = string.Empty);
+                AddUntilStep("wait for any selection", () => Carousel.CurrentSelection != null);
+                AddStep("record selection", () => eagerSelectedIDs.Add(((BeatmapInfo)Carousel.CurrentSelection!).ID));
+            }
+
+            // always returns to same selection as long as it's available.
+            AddAssert("selection was remembered", () => eagerSelectedIDs.Count == 1);
         }
     }
 }

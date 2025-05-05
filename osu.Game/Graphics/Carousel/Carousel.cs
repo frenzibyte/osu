@@ -65,7 +65,7 @@ namespace osu.Game.Graphics.Carousel
         /// <summary>
         /// The number of displayable items currently being tracked (before filtering).
         /// </summary>
-        public int ItemsTracked => Items.Count;
+        public int ItemsTracked => Models.Count;
 
         /// <summary>
         /// The number of carousel items currently in rotation for display.
@@ -159,7 +159,12 @@ namespace osu.Game.Graphics.Carousel
         /// <remarks>
         /// Note that an <see cref="ICarouselFilter"/> may add new items which are displayed but not tracked in this list.
         /// </remarks>
-        protected readonly BindableList<T> Items = new BindableList<T>();
+        protected readonly BindableList<T> Models = new BindableList<T>();
+
+        /// <summary>
+        /// The list of carousel items currently displayed.
+        /// </summary>
+        protected IReadOnlyList<CarouselItem> Items => carouselItems ?? (IReadOnlyList<CarouselItem>)Array.Empty<CarouselItem>();
 
         /// <summary>
         /// Queue an asynchronous filter operation.
@@ -169,7 +174,7 @@ namespace osu.Game.Graphics.Carousel
         /// <summary>
         /// Check whether two models are the same for display purposes.
         /// </summary>
-        protected virtual bool CheckModelEquality(object x, object y) => ReferenceEquals(x, y);
+        protected virtual bool CheckModelEquality(object? x, object? y) => ReferenceEquals(x, y);
 
         /// <summary>
         /// Create a drawable for the given carousel item so it can be displayed.
@@ -223,6 +228,13 @@ namespace osu.Game.Graphics.Carousel
         /// <param name="item">The carousel item which was activated.</param>
         protected virtual void HandleItemActivated(CarouselItem item) { }
 
+        /// <summary>
+        /// Called when the list of carousel items have changed as a result of a filter operation or change in <see cref="Models"/> bindable.
+        /// The new list of carousel items can be accessed through <see cref="Items"/>.
+        /// </summary>
+        /// <param name="previousItems">The list of carousel items displayed prior to the filter operation or change in <see cref="Models"/> bindable.</param>
+        protected virtual void HandleItemsChanged(IReadOnlyList<CarouselItem> previousItems) { }
+
         #endregion
 
         #region Initialisation
@@ -237,7 +249,7 @@ namespace osu.Game.Graphics.Carousel
                 RelativeSizeAxes = Axes.Both,
             };
 
-            Items.BindCollectionChanged((_, _) => FilterAsync());
+            Models.BindCollectionChanged((_, _) => FilterAsync());
         }
 
         #endregion
@@ -265,7 +277,7 @@ namespace osu.Game.Graphics.Carousel
 
             // Copy must be performed on update thread for now (see ConfigureAwait above).
             // Could potentially be optimised in the future if it becomes an issue.
-            IEnumerable<CarouselItem> items = new List<CarouselItem>(Items.Select(m => new CarouselItem(m)));
+            IEnumerable<CarouselItem> items = new List<CarouselItem>(Models.Select(m => new CarouselItem(m)));
 
             await Task.Run(async () =>
             {
@@ -292,6 +304,9 @@ namespace osu.Game.Graphics.Carousel
             Schedule(() =>
             {
                 log("Items ready for display");
+
+                var previousItems = carouselItems ?? (IReadOnlyList<CarouselItem>)Array.Empty<CarouselItem>();
+
                 carouselItems = items.ToList();
                 displayedRange = null;
 
@@ -299,6 +314,7 @@ namespace osu.Game.Graphics.Carousel
                 HandleItemSelected(currentSelection.Model);
 
                 refreshAfterSelection();
+                HandleItemsChanged(previousItems);
             });
 
             void log(string text) => Logger.Log($"Carousel[op {cts.GetHashCode().ToString()}] {stopwatch.ElapsedMilliseconds} ms: {text}");
