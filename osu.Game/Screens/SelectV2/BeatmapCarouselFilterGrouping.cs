@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using osu.Game.Beatmaps;
@@ -124,13 +125,43 @@ namespace osu.Game.Screens.SelectV2
         {
             switch (criteria.Group)
             {
+                case GroupMode.NoGrouping:
+                    return null;
+
                 case GroupMode.Artist:
-                    char groupChar = lastGroup?.Data as char? ?? (char)0;
-                    char beatmapFirstChar = char.ToUpperInvariant(beatmap.Metadata.Artist[0]);
+                    return groupFromFirstLetter(beatmap.Metadata.Artist, lastGroup);
 
-                    if (beatmapFirstChar > groupChar)
-                        return new GroupDefinition(beatmapFirstChar, $"{beatmapFirstChar}");
+                case GroupMode.Author:
+                    return groupFromFirstLetter(beatmap.Metadata.Author.Username, lastGroup);
 
+                case GroupMode.Title:
+                    return groupFromFirstLetter(beatmap.Metadata.Title, lastGroup);
+
+                case GroupMode.BPM:
+                    break;
+
+                case GroupMode.Collections:
+                    break;
+
+                case GroupMode.DateAdded:
+                    break;
+
+                case GroupMode.Favourites:
+                    break;
+
+                case GroupMode.Length:
+                    break;
+
+                case GroupMode.MyMaps:
+                    break;
+
+                case GroupMode.RankAchieved:
+                    break;
+
+                case GroupMode.RankedStatus:
+                    break;
+
+                case GroupMode.RecentlyPlayed:
                     break;
 
                 case GroupMode.Difficulty:
@@ -144,6 +175,17 @@ namespace osu.Game.Screens.SelectV2
 
                     break;
             }
+
+            return null;
+        }
+
+        private GroupDefinition? groupFromFirstLetter(string name, GroupDefinition? lastGroup)
+        {
+            char lastFirstChar = lastGroup?.Data as char? ?? (char)0;
+            char firstChar = char.ToUpperInvariant(name[0]);
+
+            if (firstChar > lastFirstChar)
+                return new GroupDefinition(firstChar, $"{firstChar}");
 
             return null;
         }
