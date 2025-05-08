@@ -18,92 +18,129 @@ namespace osu.Game.Screens.SelectV2
     {
         private readonly Func<FilterCriteria> getCriteria;
 
+        public IEnumerable<BeatmapInfo> SortedBeatmaps => sortedItems?.Select(i => i.Model).Cast<BeatmapInfo>() ?? Enumerable.Empty<BeatmapInfo>();
+
+        private List<CarouselItem>? sortedItems;
+
         public BeatmapCarouselFilterSorting(Func<FilterCriteria> getCriteria)
         {
             this.getCriteria = getCriteria;
         }
 
-        public async Task<List<CarouselItem>> Run(IEnumerable<CarouselItem> items, CancellationToken cancellationToken) => await Task.Run(() =>
+        public async Task<List<CarouselItem>> Run(List<CarouselItem> items, CancellationToken cancellationToken) => await Task.Run(() =>
         {
             var criteria = getCriteria();
 
-            return items.Order(Comparer<CarouselItem>.Create((a, b) =>
+            return sortedItems = items.Order(Comparer<CarouselItem>.Create((a, b) =>
             {
-                int comparison;
-
                 var ab = (BeatmapInfo)a.Model;
                 var bb = (BeatmapInfo)b.Model;
 
-                // TODO: beatmaps with variable metadata are gonna play funnily here.
-                switch (criteria.Sort)
-                {
-                    case SortMode.Artist:
-                        comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(ab.Metadata.Artist, bb.Metadata.Artist);
-                        if (comparison == 0)
-                            goto case SortMode.Title;
-                        break;
+                if (ab.BeatmapSet!.Equals(bb.BeatmapSet))
+                    return compareSameBeatmapSet(ab, bb);
 
-                    case SortMode.Title:
-                        comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(ab.Metadata.Title, bb.Metadata.Title);
-                        break;
-
-                    case SortMode.Author:
-                        comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(ab.Metadata.Author.Username, bb.Metadata.Author.Username);
-                        break;
-
-                    case SortMode.Source:
-                        comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(ab.Metadata.Source, bb.Metadata.Source);
-                        break;
-
-                    case SortMode.Difficulty:
-                        comparison = ab.StarRating.CompareTo(bb.StarRating);
-                        break;
-
-                    case SortMode.DateAdded:
-                        comparison = bb.BeatmapSet!.DateAdded.CompareTo(ab.BeatmapSet!.DateAdded);
-                        break;
-
-                    case SortMode.DateRanked:
-                        comparison = Nullable.Compare(bb.BeatmapSet!.DateRanked, ab.BeatmapSet!.DateRanked);
-                        break;
-
-                    case SortMode.DateSubmitted:
-                        comparison = Nullable.Compare(bb.BeatmapSet!.DateSubmitted, ab.BeatmapSet!.DateSubmitted);
-                        break;
-
-                    case SortMode.LastPlayed:
-                        comparison = -compareUsingAggregateMax(ab, bb, items, static b => (b.LastPlayed ?? DateTimeOffset.MinValue).ToUnixTimeSeconds());
-                        break;
-
-                    case SortMode.BPM:
-                        comparison = compareUsingAggregateMax(ab, bb, items, static b => b.BPM);
-                        break;
-
-                    case SortMode.Length:
-                        comparison = compareUsingAggregateMax(ab, bb, items, static b => b.Length);
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                return comparison;
+                return compare(ab, bb, items, criteria.Sort);
             })).ToList();
         }, cancellationToken).ConfigureAwait(false);
 
-        private int compareUsingAggregateMax(BeatmapInfo a, BeatmapInfo b, IEnumerable<CarouselItem> items, Func<BeatmapInfo, double> func)
+        private int compare(BeatmapInfo a, BeatmapInfo b, List<CarouselItem> items, SortMode sort)
         {
-            var aBeatmaps = items.Select(i => i.Model).Cast<BeatmapInfo>().Where(beatmap => beatmap.BeatmapSet!.Equals(a.BeatmapSet));
-            var bBeatmaps = items.Select(i => i.Model).Cast<BeatmapInfo>().Where(beatmap => beatmap.BeatmapSet!.Equals(b.BeatmapSet));
+            int comparison;
 
-            bool aAny = aBeatmaps.Any();
-            bool bAny = bBeatmaps.Any();
+            // TODO: beatmaps with variable metadata are gonna play funnily here.
+            switch (sort)
+            {
+                case SortMode.Artist:
+                    comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(a.BeatmapSet!.Metadata.Artist, b.BeatmapSet!.Metadata.Artist);
+                    if (comparison == 0)
+                        goto case SortMode.Title;
+                    break;
+
+                case SortMode.Title:
+                    comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(a.BeatmapSet!.Metadata.Title, b.BeatmapSet!.Metadata.Title);
+                    break;
+
+                case SortMode.Author:
+                    comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(a.BeatmapSet!.Metadata.Author.Username, b.BeatmapSet!.Metadata.Author.Username);
+                    break;
+
+                case SortMode.Source:
+                    comparison = OrdinalSortByCaseStringComparer.DEFAULT.Compare(a.BeatmapSet!.Metadata.Source, b.BeatmapSet!.Metadata.Source);
+                    break;
+
+                case SortMode.Difficulty:
+                    comparison = a.StarRating.CompareTo(b.StarRating);
+                    break;
+
+                case SortMode.DateAdded:
+                    comparison = b.BeatmapSet!.DateAdded.CompareTo(a.BeatmapSet!.DateAdded);
+                    break;
+
+                case SortMode.DateRanked:
+                    comparison = Nullable.Compare(b.BeatmapSet!.DateRanked, a.BeatmapSet!.DateRanked);
+                    break;
+
+                case SortMode.DateSubmitted:
+                    comparison = Nullable.Compare(b.BeatmapSet!.DateSubmitted, a.BeatmapSet!.DateSubmitted);
+                    break;
+
+                case SortMode.LastPlayed:
+                    comparison = -compareUsingAggregateMax(a, b, items, static b => (b.LastPlayed ?? DateTimeOffset.MinValue).ToUnixTimeSeconds());
+                    break;
+
+                case SortMode.BPM:
+                    comparison = compareUsingAggregateMax(a, b, items, static b => b.BPM);
+                    break;
+
+                case SortMode.Length:
+                    comparison = compareUsingAggregateMax(a, b, items, static b => b.Length);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            // If the initial sort could not differentiate, attempt to use DateAdded to order sets in a stable fashion.
+            // The directionality of this matches the current SortMode.DateAdded, but we may want to reconsider if that becomes a user decision (ie. asc / desc).
+            if (comparison == 0)
+                comparison = b.BeatmapSet!.DateAdded.CompareTo(a.BeatmapSet!.DateAdded);
+
+            // If DateAdded fails to break the tie, fallback to our internal GUID for stability.
+            // This basically means it's a stable random sort.
+            if (comparison == 0)
+                comparison = b.BeatmapSet!.ID.CompareTo(a.BeatmapSet!.ID);
+
+            return comparison;
+        }
+
+        private int compareSameBeatmapSet(BeatmapInfo a, BeatmapInfo b)
+        {
+            int comparison = a.Ruleset.CompareTo(b.Ruleset);
+
+            if (comparison == 0)
+                comparison = a.StarRating.CompareTo(b.StarRating);
+
+            // todo: I came up with this but it makes sense for stability purposes.
+            if (comparison == 0)
+                comparison = a.ID.CompareTo(b.ID);
+
+            return comparison;
+        }
+
+        // todo: I need to understand this or I'll get fired.
+        private int compareUsingAggregateMax(BeatmapInfo a, BeatmapInfo b, List<CarouselItem> items, Func<BeatmapInfo, double> func)
+        {
+            var aSetBeatmaps = items.Select(i => i.Model).Cast<BeatmapInfo>().Where(beatmap => beatmap.BeatmapSet!.Equals(a.BeatmapSet));
+            var bSetBeatmaps = items.Select(i => i.Model).Cast<BeatmapInfo>().Where(beatmap => beatmap.BeatmapSet!.Equals(b.BeatmapSet));
+
+            bool aAny = aSetBeatmaps.Any();
+            bool bAny = bSetBeatmaps.Any();
 
             if (!aAny && !bAny) return 0;
             if (!aAny) return -1;
             if (!bAny) return 1;
 
-            return aBeatmaps.Max(func).CompareTo(bBeatmaps.Max(func));
+            return aSetBeatmaps.Max(func).CompareTo(bSetBeatmaps.Max(func));
         }
     }
 }

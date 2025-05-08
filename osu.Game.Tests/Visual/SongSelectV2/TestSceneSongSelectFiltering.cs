@@ -121,7 +121,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 SelectedMods.SetDefault();
 
                 config.SetValue(OsuSetting.SongSelectSortingMode, SortMode.Title);
-                config.SetValue(OsuSetting.SongSelectGroupingMode, GroupMode.All);
+                config.SetValue(OsuSetting.SongSelectGroupingMode, GroupMode.NoGrouping);
 
                 songSelect = null!;
                 filterOperationsCount = 0;

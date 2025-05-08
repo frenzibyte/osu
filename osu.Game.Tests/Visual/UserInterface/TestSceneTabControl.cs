@@ -30,7 +30,7 @@ namespace osu.Game.Tests.Visual.UserInterface
                 Position = new Vector2(275, 5)
             });
 
-            filter.PinItem(GroupMode.All);
+            filter.PinItem(GroupMode.NoGrouping);
             filter.PinItem(GroupMode.RecentlyPlayed);
 
             filter.Current.ValueChanged += grouping =>

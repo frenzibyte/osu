@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using osu.Game.Beatmaps;
 
 namespace osu.Game.Graphics.Carousel
 {
@@ -60,5 +61,12 @@ namespace osu.Game.Graphics.Carousel
 
             return CarouselYPosition.CompareTo(other.CarouselYPosition);
         }
+    }
+
+    public static class CarouselItemExtensions
+    {
+        public static BeatmapInfo GetBeatmapModel(this CarouselItem item) => (BeatmapInfo)item.Model;
+
+        public static T GetModel<T>(this CarouselItem item) => (T)item.Model;
     }
 }

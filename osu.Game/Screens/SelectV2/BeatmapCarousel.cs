@@ -14,10 +14,12 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Threading;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
+using osu.Game.Collections;
 using osu.Game.Database;
 using osu.Game.Graphics.Carousel;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Screens.Select;
+using Realms;
 
 namespace osu.Game.Screens.SelectV2
 {
@@ -41,6 +43,13 @@ namespace osu.Game.Screens.SelectV2
         /// </summary>
         public int MatchedBeatmapsCount => matching.BeatmapItemsCount;
 
+        private readonly List<Live<BeatmapCollection>> collections = new List<Live<BeatmapCollection>>();
+
+        private IDisposable? collectionsRealmSubscription;
+
+        [Resolved]
+        private RealmAccess realm { get; set; } = null!;
+
         protected override float GetSpacingBetweenPanels(CarouselItem top, CarouselItem bottom)
         {
             if (top.Model is BeatmapInfo || bottom.Model is BeatmapInfo)
@@ -59,7 +68,7 @@ namespace osu.Game.Screens.SelectV2
             {
                 matching = new BeatmapCarouselFilterMatching(() => Criteria),
                 new BeatmapCarouselFilterSorting(() => Criteria),
-                grouping = new BeatmapCarouselFilterGrouping(() => Criteria),
+                grouping = new BeatmapCarouselFilterGrouping(() => Criteria, () => collections),
             };
 
             AddInternal(loading = new LoadingLayer(dimBackground: true));
@@ -70,6 +79,19 @@ namespace osu.Game.Screens.SelectV2
         {
             setupPools();
             setupBeatmaps(beatmapStore, cancellationToken);
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            collectionsRealmSubscription = realm.RegisterForNotifications(r => r.All<BeatmapCollection>().OrderBy(c => c.Name), collectionsChanged);
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            collectionsRealmSubscription?.Dispose();
         }
 
         #region Beatmap source hookup
@@ -151,6 +173,33 @@ namespace osu.Game.Screens.SelectV2
                 case NotifyCollectionChangedAction.Reset:
                     Items.Clear();
                     break;
+            }
+        }
+
+        #endregion
+
+        #region Collections source hookup
+
+        private void collectionsChanged(IRealmCollection<BeatmapCollection> sender, ChangeSet? changes)
+        {
+            if (changes == null)
+            {
+                collections.AddRange(sender.AsEnumerable().Select(c => c.ToLive(realm)));
+                return;
+            }
+
+            foreach (int i in changes.DeletedIndices.OrderDescending())
+                collections.RemoveAt(i);
+
+            foreach (int i in changes.InsertedIndices)
+                collections.Insert(i, sender[i].ToLive(realm));
+
+            foreach (int i in changes.NewModifiedIndices)
+            {
+                var updatedItem = sender[i];
+
+                collections.RemoveAt(i);
+                collections.Insert(i, updatedItem.ToLive(realm));
             }
         }
 
@@ -414,5 +463,6 @@ namespace osu.Game.Screens.SelectV2
         #endregion
     }
 
+    // todo: this structure is shit.
     public record GroupDefinition(object Data, string Title);
 }
