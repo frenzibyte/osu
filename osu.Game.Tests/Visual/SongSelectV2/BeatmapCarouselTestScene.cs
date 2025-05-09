@@ -38,6 +38,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         protected BeatmapCarousel Carousel = null!;
 
         protected OsuScrollContainer<Drawable> Scroll => Carousel.ChildrenOfType<OsuScrollContainer<Drawable>>().Single();
+        protected BeatmapCarouselFilterGrouping Grouping => Carousel.Filters.OfType<BeatmapCarouselFilterGrouping>().Single();
 
         [Cached(typeof(BeatmapStore))]
         private BeatmapStore store;

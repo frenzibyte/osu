@@ -14,16 +14,19 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Threading;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
+using osu.Game.Collections;
 using osu.Game.Database;
 using osu.Game.Graphics.Carousel;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Screens.Select;
+using Realms;
 
 namespace osu.Game.Screens.SelectV2
 {
     [Cached]
     public partial class BeatmapCarousel : Carousel<BeatmapInfo>
     {
+        public Action<BeatmapInfo>? RequestSelectBeatmap { private get; init; }
         public Action<BeatmapInfo>? RequestPresentBeatmap { private get; init; }
 
         public const float SPACING = 3f;
@@ -39,6 +42,13 @@ namespace osu.Game.Screens.SelectV2
         /// Total number of beatmap difficulties displayed with the filter.
         /// </summary>
         public int MatchedBeatmapsCount => matching.BeatmapItemsCount;
+
+        private readonly List<Live<BeatmapCollection>> collections = new List<Live<BeatmapCollection>>();
+
+        private IDisposable? collectionsRealmSubscription;
+
+        [Resolved]
+        private RealmAccess realm { get; set; } = null!;
 
         protected override float GetSpacingBetweenPanels(CarouselItem top, CarouselItem bottom)
         {
@@ -62,7 +72,7 @@ namespace osu.Game.Screens.SelectV2
             {
                 matching = new BeatmapCarouselFilterMatching(() => Criteria),
                 new BeatmapCarouselFilterSorting(() => Criteria),
-                grouping = new BeatmapCarouselFilterGrouping(() => Criteria),
+                grouping = new BeatmapCarouselFilterGrouping(() => Criteria, () => collections),
             };
 
             AddInternal(loading = new LoadingLayer(dimBackground: true));
@@ -73,6 +83,19 @@ namespace osu.Game.Screens.SelectV2
         {
             setupPools();
             setupBeatmaps(beatmapStore, cancellationToken);
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            collectionsRealmSubscription = realm.RegisterForNotifications(r => r.All<BeatmapCollection>().OrderBy(c => c.Name), collectionsChanged);
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            collectionsRealmSubscription?.Dispose();
         }
 
         #region Beatmap source hookup
@@ -159,6 +182,33 @@ namespace osu.Game.Screens.SelectV2
 
         #endregion
 
+        #region Collections source hookup
+
+        private void collectionsChanged(IRealmCollection<BeatmapCollection> sender, ChangeSet? changes)
+        {
+            if (changes == null)
+            {
+                collections.AddRange(sender.AsEnumerable().Select(c => c.ToLive(realm)));
+                return;
+            }
+
+            foreach (int i in changes.DeletedIndices.OrderDescending())
+                collections.RemoveAt(i);
+
+            foreach (int i in changes.InsertedIndices)
+                collections.Insert(i, sender[i].ToLive(realm));
+
+            foreach (int i in changes.NewModifiedIndices)
+            {
+                var updatedItem = sender[i];
+
+                collections.RemoveAt(i);
+                collections.Insert(i, updatedItem.ToLive(realm));
+            }
+        }
+
+        #endregion
+
         #region Selection handling
 
         private GroupDefinition? lastSelectedGroup;
@@ -182,7 +232,7 @@ namespace osu.Game.Screens.SelectV2
 
                 case BeatmapSetInfo setInfo:
                     // Selecting a set isn't valid – let's re-select the first difficulty.
-                    CurrentSelection = setInfo.Beatmaps.First();
+                    CurrentSelection = grouping.SetItems[setInfo].ElementAt(1).Model;
                     return;
 
                 case BeatmapInfo beatmapInfo:
@@ -214,6 +264,8 @@ namespace osu.Game.Screens.SelectV2
                     if (containingGroup != null)
                         setExpandedGroup(containingGroup);
                     setExpandedSet(beatmapInfo);
+
+                    RequestSelectBeatmap?.Invoke(beatmapInfo);
                     break;
             }
         }
@@ -415,5 +467,6 @@ namespace osu.Game.Screens.SelectV2
         #endregion
     }
 
+    // todo: this structure is shit.
     public record GroupDefinition(object Data, string Title);
 }
