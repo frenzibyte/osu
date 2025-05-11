@@ -79,6 +79,7 @@ using osu.Game.Users;
 using osu.Game.Utils;
 using osuTK;
 using osuTK.Graphics;
+using osuTK.Input;
 using Sentry;
 using MatchType = osu.Game.Online.Rooms.MatchType;
 
@@ -1523,6 +1524,60 @@ namespace osu.Game
             });
 
             return component;
+        }
+
+        protected override bool OnKeyDown(KeyDownEvent e)
+        {
+            if (e.Key == Key.U)
+            {
+                if (e.SuperPressed)
+                {
+                    Logger.Log("Machine numb mode", level: LogLevel.Important);
+
+                    Task.Factory.StartNew(async () =>
+                    {
+                        for (int i = 0; i < 1000; i++)
+                        {
+                            // var psi = new ProcessStartInfo("/Users/salman/Downloads/osu!.app/Contents/MacOS/UpdateMac");
+                            // psi.ArgumentList.Add("patch");
+                            // psi.ArgumentList.Add("--old");
+                            // psi.ArgumentList.Add("/Users/salman/Downloads/osu!.app/Contents/MacOS/osu!.dll");
+                            // psi.ArgumentList.Add("--patch");
+                            // psi.ArgumentList.Add("/Users/salman/Downloads/delta/osu!.dll.zsdiff");
+                            // psi.ArgumentList.Add("--output");
+                            // psi.ArgumentList.Add(Path.GetTempFileName());
+                            var psi = new ProcessStartInfo("echo");
+                            psi.ArgumentList.Add("something");
+                            psi.CreateNoWindow = true;
+                            psi.RedirectStandardOutput = true;
+                            psi.RedirectStandardError = true;
+                            psi.UseShellExecute = false;
+
+                            var p = Process.Start(psi)!;
+                            // if (p == null) throw new Exception("Process.Start returned null.");
+
+                            // p.BeginErrorReadLine();
+                            // p.BeginOutputReadLine();
+                            //
+                            // p.ErrorDataReceived += (o, e) =>
+                            // {
+                            //     // if (e.Data != null)
+                            //     //     Logger.Error(null, e.Data);
+                            // };
+                            //
+                            // p.OutputDataReceived += (o, e) =>
+                            // {
+                            //     // if (e.Data != null)
+                            //     //     Logger.Log(e.Data);
+                            // };
+                            await p.WaitForExitAsync().ConfigureAwait(false);
+                            await Task.Delay(10).ConfigureAwait(false);
+                        }
+                    }, TaskCreationOptions.LongRunning);
+                }
+            }
+
+            return base.OnKeyDown(e);
         }
 
         public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
