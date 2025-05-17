@@ -122,7 +122,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 SelectedMods.SetDefault();
 
                 Config.SetValue(OsuSetting.SongSelectSortingMode, SortMode.Title);
-                Config.SetValue(OsuSetting.SongSelectGroupingMode, GroupMode.All);
+                Config.SetValue(OsuSetting.SongSelectGroupingMode, GroupMode.NoGrouping);
 
                 Screen = null!;
             });
