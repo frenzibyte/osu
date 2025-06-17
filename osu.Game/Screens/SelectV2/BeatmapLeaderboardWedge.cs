@@ -390,7 +390,8 @@ namespace osu.Game.Screens.SelectV2
             float fadeTop = (float)(scoresScroll.Current);
 
             if (!scoresScroll.IsScrolledToStart())
-                fadeTop += height;
+                // Gently push the "top fade" threshold as the user begins to scroll down.
+                fadeTop += Math.Min((float)scoresScroll.Current * 2, height);
 
             foreach (var c in scoresContainer)
             {
