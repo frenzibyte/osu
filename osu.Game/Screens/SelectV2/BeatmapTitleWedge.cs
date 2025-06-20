@@ -1,7 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,7 +14,6 @@ using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
 using osu.Game.Configuration;
-using osu.Game.Extensions;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
@@ -25,7 +23,6 @@ using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Utils;
 using osuTK;
 
 namespace osu.Game.Screens.SelectV2
@@ -59,9 +56,10 @@ namespace osu.Game.Screens.SelectV2
         internal string DisplayedArtist => artistLabel.Text.ToString();
 
         private StatisticPlayCount playCount = null!;
+
         private Statistic favouritesStatistic = null!;
-        private Statistic lengthStatistic = null!;
-        private Statistic bpmStatistic = null!;
+        // private Statistic lengthStatistic = null!;
+        // private Statistic bpmStatistic = null!;
 
         [Resolved]
         private ISongSelect? songSelect { get; set; }
@@ -102,97 +100,124 @@ namespace osu.Game.Screens.SelectV2
                         Top = SongSelect.WEDGE_CONTENT_MARGIN,
                         Left = SongSelect.WEDGE_CONTENT_MARGIN
                     },
-                    Spacing = new Vector2(0f, 4f),
+                    Spacing = new Vector2(0f, 10f),
                     Children = new Drawable[]
                     {
-                        new ShearAligningWrapper(statusPill = new BeatmapSetOnlineStatusPill
-                        {
-                            Shear = -OsuGame.SHEAR,
-                            ShowUnknownStatus = true,
-                            TextSize = OsuFont.Style.Caption1.Size,
-                            TextPadding = new MarginPadding { Horizontal = 6, Vertical = 1 },
-                        })
-                        {
-                            Alpha = 0f,
-                        },
-                        new ShearAligningWrapper(new FillFlowContainer
+                        new ShearAligningWrapper(new GridContainer
                         {
                             RelativeSizeAxes = Axes.X,
                             Height = OsuFont.Style.Heading2.Size,
-                            Direction = FillDirection.Horizontal,
                             Shear = -OsuGame.SHEAR,
-                            Spacing = new Vector2(4f, 0f),
-                            Children = new Drawable[]
+                            ColumnDimensions = new[]
                             {
-                                titleContainer = new Container
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    AutoSizeAxes = Axes.X,
-                                    Height = OsuFont.Style.Heading2.Size,
-                                    Child = titleLink = new OsuHoverContainer
-                                    {
-                                        AutoSizeAxes = Axes.Both,
-                                        Child = titleLabel = new TruncatingSpriteText
-                                        {
-                                            Shadow = true,
-                                            Font = OsuFont.Style.Heading2.With(weight: FontWeight.SemiBold),
-                                            MaxWidth = 200,
-                                        },
-                                    }
-                                },
-                                new OsuSpriteText
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Text = "-",
-                                },
-                                artistContainer = new Container
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    AutoSizeAxes = Axes.X,
-                                    Height = OsuFont.Style.Heading2.Size,
-                                    Child = artistLink = new OsuHoverContainer
-                                    {
-                                        AutoSizeAxes = Axes.Both,
-                                        Child = artistLabel = new TruncatingSpriteText
-                                        {
-                                            Shadow = true,
-                                            Font = OsuFont.Style.Heading2,
-                                            MaxWidth = 150,
-                                        },
-                                    }
-                                },
-                                playCount = new StatisticPlayCount(background: true, minSize: 50f)
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Margin = new MarginPadding { Left = 10 },
-                                    Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
-                                },
-                                favouritesStatistic = new Statistic(OsuIcon.Heart, background: true, minSize: 25f)
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    TooltipText = BeatmapsStrings.StatusFavourites,
-                                    Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
-                                },
-                                lengthStatistic = new Statistic(OsuIcon.Clock)
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
-                                },
-                                bpmStatistic = new Statistic(OsuIcon.Metronome)
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    TooltipText = BeatmapsetsStrings.ShowStatsBpm,
-                                    Margin = new MarginPadding { Left = 5f },
-                                    Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
-                                },
+                                new Dimension(),
+                                new Dimension(GridSizeMode.Absolute, 5),
+                                new Dimension(GridSizeMode.AutoSize),
                             },
+                            Content = new[]
+                            {
+                                new[]
+                                {
+                                    new FillFlowContainer
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Direction = FillDirection.Horizontal,
+                                        Spacing = new Vector2(4f, 0f),
+                                        Children = new Drawable[]
+                                        {
+                                            statusPill = new BeatmapSetOnlineStatusPill
+                                            {
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                ShowUnknownStatus = true,
+                                                TextSize = OsuFont.Style.Caption1.Size,
+                                                TextPadding = new MarginPadding { Horizontal = 6, Vertical = 1 },
+                                            },
+                                            titleContainer = new Container
+                                            {
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                AutoSizeAxes = Axes.X,
+                                                Margin = new MarginPadding { Bottom = 1, Left = 4 },
+                                                Height = OsuFont.Style.Heading2.Size,
+                                                Child = titleLink = new OsuHoverContainer
+                                                {
+                                                    AutoSizeAxes = Axes.Both,
+                                                    Child = titleLabel = new TruncatingSpriteText
+                                                    {
+                                                        Shadow = true,
+                                                        Font = OsuFont.Style.Heading2.With(weight: FontWeight.SemiBold),
+                                                        MaxWidth = 200,
+                                                    },
+                                                }
+                                            },
+                                            new OsuSpriteText
+                                            {
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                Text = "-",
+                                            },
+                                            artistContainer = new Container
+                                            {
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                AutoSizeAxes = Axes.X,
+                                                Height = OsuFont.Style.Heading2.Size,
+                                                Margin = new MarginPadding { Bottom = 1 },
+                                                Child = artistLink = new OsuHoverContainer
+                                                {
+                                                    AutoSizeAxes = Axes.Both,
+                                                    Child = artistLabel = new TruncatingSpriteText
+                                                    {
+                                                        Shadow = true,
+                                                        Font = OsuFont.Style.Heading2,
+                                                        MaxWidth = 150,
+                                                    },
+                                                }
+                                            },
+                                            // lengthStatistic = new Statistic(OsuIcon.Clock)
+                                            // {
+                                            //     Anchor = Anchor.CentreLeft,
+                                            //     Origin = Anchor.CentreLeft,
+                                            //     Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
+                                            // },
+                                            // bpmStatistic = new Statistic(OsuIcon.Metronome)
+                                            // {
+                                            //     Anchor = Anchor.CentreLeft,
+                                            //     Origin = Anchor.CentreLeft,
+                                            //     TooltipText = BeatmapsetsStrings.ShowStatsBpm,
+                                            //     Margin = new MarginPadding { Left = 5f },
+                                            //     Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
+                                            // },
+                                        },
+                                    },
+                                    Empty(),
+                                    new FillFlowContainer
+                                    {
+                                        AutoSizeAxes = Axes.X,
+                                        RelativeSizeAxes = Axes.Y,
+                                        Direction = FillDirection.Horizontal,
+                                        Spacing = new Vector2(4f, 0f),
+                                        Children = new[]
+                                        {
+                                            favouritesStatistic = new Statistic(OsuIcon.Heart, background: true, minSize: 25f)
+                                            {
+                                                Anchor = Anchor.CentreRight,
+                                                Origin = Anchor.CentreRight,
+                                                TooltipText = BeatmapsStrings.StatusFavourites,
+                                                Margin = new MarginPadding { Right = 10 },
+                                                Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
+                                            },
+                                            playCount = new StatisticPlayCount(background: true, minSize: 50f)
+                                            {
+                                                Anchor = Anchor.CentreRight,
+                                                Origin = Anchor.CentreRight,
+                                                Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
+                                            },
+                                        }
+                                    }
+                                },
+                            }
                         }),
                         new ShearAligningWrapper(new Container
                         {
@@ -285,30 +310,17 @@ namespace osu.Game.Screens.SelectV2
 
             Task.Run(() =>
             {
-                var beatmapInfo = working.Value.BeatmapInfo;
-                // This can take time as it is a synchronous task.
-                var beatmap = working.Value.Beatmap;
-
-                double rate = ModUtils.CalculateRateWithMods(mods.Value);
-
-                int bpmMax = FormatUtils.RoundBPM(beatmap.ControlPointInfo.BPMMaximum, rate);
-                int bpmMin = FormatUtils.RoundBPM(beatmap.ControlPointInfo.BPMMinimum, rate);
-                int mostCommonBPM = FormatUtils.RoundBPM(60000 / beatmap.GetMostCommonBeatLength(), rate);
-
-                double drainLength = Math.Round(beatmap.CalculateDrainLength() / rate);
-                double hitLength = Math.Round(beatmapInfo.Length / rate);
-
                 Schedule(() =>
                 {
                     if (token.IsCancellationRequested)
                         return;
 
-                    lengthStatistic.Text = hitLength.ToFormattedDuration();
-                    lengthStatistic.TooltipText = BeatmapsetsStrings.ShowStatsTotalLength(drainLength.ToFormattedDuration());
-
-                    bpmStatistic.Text = bpmMin == bpmMax
-                        ? $"{bpmMin}"
-                        : $"{bpmMin}-{bpmMax} (mostly {mostCommonBPM})";
+                    // lengthStatistic.Text = hitLength.ToFormattedDuration();
+                    // lengthStatistic.TooltipText = BeatmapsetsStrings.ShowStatsTotalLength(drainLength.ToFormattedDuration());
+                    //
+                    // bpmStatistic.Text = bpmMin == bpmMax
+                    //     ? $"{bpmMin}"
+                    //     : $"{bpmMin}-{bpmMax} (mostly {mostCommonBPM})";
                 });
             }, token);
         }

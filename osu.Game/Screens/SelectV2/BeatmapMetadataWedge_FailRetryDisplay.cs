@@ -41,32 +41,23 @@ namespace osu.Game.Screens.SelectV2
 
             public FailRetryDisplay()
             {
-                RelativeSizeAxes = Axes.X;
-                AutoSizeAxes = Axes.Y;
+                RelativeSizeAxes = Axes.Both;
 
-                InternalChild = new FillFlowContainer
+                InternalChildren = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Direction = FillDirection.Vertical,
-                    Spacing = new Vector2(0f, 4f),
-                    Children = new Drawable[]
+                    new OsuSpriteText
                     {
-                        new OsuSpriteText
+                        Text = BeatmapsetsStrings.ShowInfoPointsOfFailure,
+                        Font = OsuFont.Style.Caption1.With(weight: FontWeight.SemiBold),
+                    },
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Padding = new MarginPadding { Top = 22 },
+                        Children = new[]
                         {
-                            Text = BeatmapsetsStrings.ShowInfoPointsOfFailure,
-                            Font = OsuFont.Style.Caption1.With(weight: FontWeight.SemiBold),
-                            Margin = new MarginPadding { Bottom = 4f },
-                        },
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.X,
-                            Height = 65f,
-                            Children = new[]
-                            {
-                                retriesGraph = new GraphDrawable { RelativeSizeAxes = Axes.Both, Y = -1f },
-                                failsGraph = new GraphDrawable { RelativeSizeAxes = Axes.Both },
-                            },
+                            retriesGraph = new GraphDrawable { RelativeSizeAxes = Axes.Both, Y = -1f },
+                            failsGraph = new GraphDrawable { RelativeSizeAxes = Axes.Both },
                         },
                     },
                 };

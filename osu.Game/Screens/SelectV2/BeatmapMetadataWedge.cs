@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -29,7 +30,9 @@ namespace osu.Game.Screens.SelectV2
         private MetadataDisplay submitted = null!;
         private MetadataDisplay ranked = null!;
 
-        private Drawable ratingsWedge = null!;
+        private FillFlowContainer wedgesFlow = null!;
+        private Container detailsWedge = null!;
+        private Container ratingsWedge = null!;
         private SuccessRateDisplay successRateDisplay = null!;
         private UserRatingDisplay userRatingDisplay = null!;
         private RatingSpreadDisplay ratingSpreadDisplay = null!;
@@ -59,22 +62,20 @@ namespace osu.Game.Screens.SelectV2
         [BackgroundDependencyLoader]
         private void load()
         {
-            RelativeSizeAxes = Axes.X;
-            AutoSizeAxes = Axes.Y;
-            Padding = new MarginPadding { Top = 4f };
+            RelativeSizeAxes = Axes.Both;
+            Padding = new MarginPadding { Top = 4f, Bottom = 16 };
 
             Width = 0.9f;
 
-            InternalChild = new FillFlowContainer
+            InternalChild = wedgesFlow = new FillFlowContainer
             {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
+                RelativeSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
                 Spacing = new Vector2(0f, 4f),
                 Shear = OsuGame.SHEAR,
                 Children = new[]
                 {
-                    new ShearAligningWrapper(new Container
+                    new ShearAligningWrapper(detailsWedge = new Container
                     {
                         CornerRadius = 10,
                         Masking = true,
@@ -159,7 +160,10 @@ namespace osu.Game.Screens.SelectV2
                                             {
                                                 Alpha = 0,
                                             },
-                                            mapperTags = new MetadataDisplay("Mapper Tags"),
+                                            mapperTags = new MetadataDisplay("Mapper Tags")
+                                            {
+                                                Alpha = 0,
+                                            },
                                         },
                                     },
                                 },
@@ -211,14 +215,12 @@ namespace osu.Game.Screens.SelectV2
                         CornerRadius = 10,
                         Masking = true,
                         RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
                         Children = new Drawable[]
                         {
                             new WedgeBackground(),
                             new Container
                             {
-                                RelativeSizeAxes = Axes.X,
-                                AutoSizeAxes = Axes.Y,
+                                RelativeSizeAxes = Axes.Both,
                                 Shear = -OsuGame.SHEAR,
                                 Padding = new MarginPadding { Left = SongSelect.WEDGE_CONTENT_MARGIN, Right = 40f, Vertical = 16 },
                                 Child = failRetryDisplay = new FailRetryDisplay(),
@@ -236,6 +238,14 @@ namespace osu.Game.Screens.SelectV2
 
             apiState = api.State.GetBoundCopy();
             apiState.BindValueChanged(_ => Scheduler.AddOnce(updateDisplay), true);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            float availableHeight = wedgesFlow.DrawHeight - failRetryWedge.Parent!.Y;
+            failRetryWedge.Height = Math.Min(availableHeight, 120);
         }
 
         private const double transition_duration = 300;

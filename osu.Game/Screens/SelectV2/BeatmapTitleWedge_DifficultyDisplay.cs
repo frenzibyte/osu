@@ -16,6 +16,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.Drawables;
 using osu.Game.Configuration;
+using osu.Game.Extensions;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
@@ -28,6 +29,7 @@ using osu.Game.Resources.Localisation.Web;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Utils;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
@@ -65,6 +67,9 @@ namespace osu.Game.Screens.SelectV2
             private GridContainer ratingAndNameContainer = null!;
             private DifficultyStatisticsDisplay countStatisticsDisplay = null!;
             private AdjustableDifficultyStatisticsDisplay difficultyStatisticsDisplay = null!;
+
+            private Statistic lengthStatistic = null!;
+            private Statistic bpmStatistic = null!;
 
             private CancellationTokenSource? cancellationSource;
 
@@ -105,6 +110,8 @@ namespace osu.Game.Screens.SelectV2
                                     new Dimension(GridSizeMode.AutoSize),
                                     new Dimension(GridSizeMode.Absolute, 6),
                                     new Dimension(),
+                                    new Dimension(GridSizeMode.Absolute, 6),
+                                    new Dimension(GridSizeMode.AutoSize),
                                 },
                                 Content = new[]
                                 {
@@ -152,6 +159,32 @@ namespace osu.Game.Screens.SelectV2
                                                 },
                                             },
                                         },
+                                        Empty(),
+                                        new FillFlowContainer
+                                        {
+                                            Anchor = Anchor.CentreRight,
+                                            Origin = Anchor.CentreRight,
+                                            AutoSizeAxes = Axes.Both,
+                                            Spacing = new Vector2(4, 0),
+                                            Y = -2,
+                                            Children = new Drawable[]
+                                            {
+                                                bpmStatistic = new Statistic(OsuIcon.Metronome)
+                                                {
+                                                    Anchor = Anchor.CentreRight,
+                                                    Origin = Anchor.CentreRight,
+                                                    TooltipText = BeatmapsetsStrings.ShowStatsBpm,
+                                                    Margin = new MarginPadding { Right = 15f },
+                                                    Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
+                                                },
+                                                lengthStatistic = new Statistic(OsuIcon.Clock)
+                                                {
+                                                    Anchor = Anchor.CentreRight,
+                                                    Origin = Anchor.CentreRight,
+                                                    Scale = new Vector2(OsuFont.Style.Body.Size / OsuFont.Style.Heading2.Size),
+                                                },
+                                            }
+                                        }
                                     }
                                 },
                             }),
@@ -233,7 +266,12 @@ namespace osu.Game.Screens.SelectV2
             }
 
             [Resolved]
-            private ILinkHandler? linkHandler { get; set; }
+            private ILinkHandler? linkHandler
+
+            {
+                get;
+                set;
+            }
 
             private void updateDisplay()
             {
@@ -276,12 +314,28 @@ namespace osu.Game.Screens.SelectV2
                                                     .Select(s => new StatisticDifficulty.Data(s.Name, s.BarDisplayLength ?? 0, s.BarDisplayLength ?? 0, 1, s.Content))
                                                     .ToList();
 
+                    double rate = ModUtils.CalculateRateWithMods(mods.Value);
+
+                    int bpmMax = FormatUtils.RoundBPM(playableBeatmap.ControlPointInfo.BPMMaximum, rate);
+                    int bpmMin = FormatUtils.RoundBPM(playableBeatmap.ControlPointInfo.BPMMinimum, rate);
+                    int mostCommonBPM = FormatUtils.RoundBPM(60000 / playableBeatmap.GetMostCommonBeatLength(), rate);
+
+                    double drainLength = Math.Round(playableBeatmap.CalculateDrainLength() / rate);
+                    double hitLength = Math.Round(playableBeatmap.BeatmapInfo.Length / rate);
+
                     Schedule(() =>
                     {
                         if (cancellationToken.IsCancellationRequested)
                             return;
 
                         countStatisticsDisplay.Statistics = statistics;
+
+                        lengthStatistic.Text = hitLength.ToFormattedDuration();
+                        lengthStatistic.TooltipText = BeatmapsetsStrings.ShowStatsTotalLength(drainLength.ToFormattedDuration());
+
+                        bpmStatistic.Text = bpmMin == bpmMax
+                            ? $"{bpmMin}"
+                            : $"{bpmMin}-{bpmMax} (mostly {mostCommonBPM})";
                     });
                 }, cancellationToken);
             }
