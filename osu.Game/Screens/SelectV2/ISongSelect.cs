@@ -1,8 +1,10 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using System.Collections.Generic;
 using osu.Game.Beatmaps;
+using osu.Game.Collections;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Scoring;
 
@@ -22,6 +24,11 @@ namespace osu.Game.Screens.SelectV2
         /// Immediately restores any hidden beatmaps in the provided beatmap set.
         /// </summary>
         void RestoreAllHidden(BeatmapSetInfo beatmapSet);
+
+        /// <summary>
+        /// Provides access to all collections stored in the user's database.
+        /// </summary>
+        T ReadUserCollections<T>(Func<IEnumerable<BeatmapCollection>, T> func);
 
         /// <summary>
         /// Opens the manage collections dialog.

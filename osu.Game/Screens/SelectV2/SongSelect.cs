@@ -331,6 +331,8 @@ namespace osu.Game.Screens.SelectV2
         {
             base.LoadComplete();
 
+            // todo: force a refetch when a collection is changed.
+
             filterControl.CriteriaChanged += criteriaChanged;
 
             modSelectOverlay.State.BindValueChanged(v =>
@@ -980,15 +982,19 @@ namespace osu.Game.Screens.SelectV2
 
         protected IEnumerable<OsuMenuItem> CreateCollectionMenuActions(BeatmapInfo beatmap)
         {
-            var collectionItems = realm.Realm.All<BeatmapCollection>()
-                                       .OrderBy(c => c.Name)
-                                       .AsEnumerable()
-                                       .Select(c => new CollectionToggleMenuItem(c.ToLive(realm), beatmap)).Cast<OsuMenuItem>().ToList();
-
-            collectionItems.Add(new OsuMenuItem("Manage...", MenuItemType.Standard, () => manageCollectionsDialog?.Show()));
-
-            yield return new OsuMenuItem(CommonStrings.Collections) { Items = collectionItems };
+            return ReadUserCollections(collections =>
+            {
+                var collectionItems = collections.Select(c => new CollectionToggleMenuItem(c.ToLive(realm), beatmap)).Cast<OsuMenuItem>().ToList();
+                collectionItems.Add(new OsuMenuItem("Manage...", MenuItemType.Standard, () => manageCollectionsDialog?.Show()));
+                return new[] { new OsuMenuItem(CommonStrings.Collections) { Items = collectionItems } };
+            });
         }
+
+        public T ReadUserCollections<T>(Func<IEnumerable<BeatmapCollection>, T> func) => realm.Run(r =>
+        {
+            var collections = r.All<BeatmapCollection>().OrderBy(c => c.Name);
+            return func(collections);
+        });
 
         public void ManageCollections() => collectionsDialog?.Show();
 

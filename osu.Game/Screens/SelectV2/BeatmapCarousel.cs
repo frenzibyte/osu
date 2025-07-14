@@ -18,6 +18,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Threading;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
+using osu.Game.Collections;
 using osu.Game.Configuration;
 using osu.Game.Database;
 using osu.Game.Graphics;
@@ -55,6 +56,9 @@ namespace osu.Game.Screens.SelectV2
         /// Total number of beatmap difficulties displayed with the filter.
         /// </summary>
         public int MatchedBeatmapsCount => matching.BeatmapItemsCount;
+
+        [Resolved]
+        private ISongSelect? songSelect { get; set; }
 
         protected override float GetSpacingBetweenPanels(CarouselItem top, CarouselItem bottom)
         {
@@ -98,7 +102,10 @@ namespace osu.Game.Screens.SelectV2
             {
                 matching = new BeatmapCarouselFilterMatching(() => Criteria!),
                 new BeatmapCarouselFilterSorting(() => Criteria!),
-                grouping = new BeatmapCarouselFilterGrouping(() => Criteria!),
+                grouping = new BeatmapCarouselFilterGrouping(() => Criteria!)
+                {
+                    ReadUserCollections = readUserCollections,
+                },
             };
 
             AddInternal(loading = new LoadingLayer());
@@ -881,6 +888,18 @@ namespace osu.Game.Screens.SelectV2
             }
 
             randomSelectSample?.Play();
+        }
+
+        #endregion
+
+        #region Grouping
+
+        private T readUserCollections<T>(Func<IEnumerable<BeatmapCollection>, T> func)
+        {
+            if (songSelect == null)
+                return func(Enumerable.Empty<BeatmapCollection>());
+
+            return songSelect.ReadUserCollections(func);
         }
 
         #endregion
