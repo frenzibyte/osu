@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Edit.Checks
         private const int delay_threshold = 5;
         private const int delay_threshold_negligible = 1;
 
-        public CheckMetadata Metadata => new CheckMetadata(CheckCategory.Audio, "Delayed hit sounds.");
+        public CheckMetadata Metadata => new CheckMetadata(CheckCategory.Audio, "Delayed hit sounds.", CheckScope.BeatmapSet);
 
         public IEnumerable<IssueTemplate> PossibleTemplates => new IssueTemplate[]
         {
@@ -119,8 +119,8 @@ namespace osu.Game.Rulesets.Edit.Checks
             string bank = parts[0];
             string sampleSet = parts[1];
 
-            return HitSampleInfo.AllBanks.Contains(bank)
-                   && HitSampleInfo.AllAdditions.Append(HitSampleInfo.HIT_NORMAL).Any(sampleSet.StartsWith);
+            return HitSampleInfo.ALL_BANKS.Contains(bank)
+                   && HitSampleInfo.ALL_ADDITIONS.Append(HitSampleInfo.HIT_NORMAL).Any(sampleSet.StartsWith);
         }
 
         public class IssueTemplateConsequentDelay : IssueTemplate

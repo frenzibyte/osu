@@ -20,11 +20,6 @@ namespace osu.Game.Screens.Select
         public GroupMode Group;
         public SortMode Sort;
 
-        /// <summary>
-        /// Whether the display of beatmap sets should be split apart per-difficulty for the current criteria.
-        /// </summary>
-        public bool SplitOutDifficulties => Sort == SortMode.Difficulty;
-
         public BeatmapSetInfo? SelectedBeatmapSet;
 
         public OptionalRange<double> StarDifficulty;
@@ -37,10 +32,14 @@ namespace osu.Game.Screens.Select
         public OptionalRange<int> BeatDivisor;
         public OptionalSet<BeatmapOnlineStatus> OnlineStatus = new OptionalSet<BeatmapOnlineStatus>();
         public OptionalRange<DateTimeOffset> LastPlayed;
+        public OptionalRange<DateTimeOffset> DateRanked;
+        public OptionalRange<DateTimeOffset> DateSubmitted;
         public OptionalTextFilter Creator;
         public OptionalTextFilter Artist;
         public OptionalTextFilter Title;
         public OptionalTextFilter DifficultyName;
+        public OptionalTextFilter Source;
+        public OptionalTextFilter UserTag;
 
         public OptionalRange<double> UserStarDifficulty = new OptionalRange<double>
         {
@@ -53,6 +52,9 @@ namespace osu.Game.Screens.Select
         public RulesetInfo? Ruleset;
         public IReadOnlyList<Mod>? Mods;
         public bool AllowConvertedBeatmaps;
+        public int? BeatmapSetId;
+
+        public bool? HasOnlineID;
 
         private string searchText = string.Empty;
 
@@ -115,6 +117,18 @@ namespace osu.Game.Screens.Select
         public IEnumerable<string>? CollectionBeatmapMD5Hashes { get; set; }
 
         public IRulesetFilterCriteria? RulesetCriteria { get; set; }
+
+        /// <summary>
+        /// The user ID of the current local user, used to filter to own maps when <see cref="GroupMode.MyMaps"/> is selected.
+        /// Or null if the user is not logged in.
+        /// </summary>
+        public int? LocalUserId { get; set; }
+
+        /// <summary>
+        /// The username of the current local user, used to filter to own maps when <see cref="GroupMode.MyMaps"/> is selected.
+        /// Or null if the user is not logged in.
+        /// </summary>
+        public string? LocalUserUsername { get; set; }
 
         public readonly struct OptionalSet<T> : IEquatable<OptionalSet<T>>
             where T : struct, Enum
