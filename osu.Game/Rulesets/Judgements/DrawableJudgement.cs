@@ -60,10 +60,6 @@ namespace osu.Game.Rulesets.Judgements
         /// Apply top-level animations to the current judgement when successfully hit.
         /// If displaying components which require lifetime extensions, manually adjusting <see cref="Drawable.LifetimeEnd"/> is required.
         /// </summary>
-        /// <remarks>
-        /// For animating the actual "default skin" judgement itself, it is recommended to use <see cref="CreateDefaultJudgement"/>.
-        /// This allows applying animations which don't affect custom skins.
-        /// </remarks>
         protected virtual void ApplyHitAnimations()
         {
         }
@@ -72,10 +68,6 @@ namespace osu.Game.Rulesets.Judgements
         /// Apply top-level animations to the current judgement when missed.
         /// If displaying components which require lifetime extensions, manually adjusting <see cref="Drawable.LifetimeEnd"/> is required.
         /// </summary>
-        /// <remarks>
-        /// For animating the actual "default skin" judgement itself, it is recommended to use <see cref="CreateDefaultJudgement"/>.
-        /// This allows applying animations which don't affect custom skins.
-        /// </remarks>
         protected virtual void ApplyMissAnimations()
         {
         }
@@ -164,7 +156,7 @@ namespace osu.Game.Rulesets.Judgements
                 RemoveInternal(JudgementBody, true);
 
             AddInternal(JudgementBody = new SkinnableDrawable(new SkinComponentLookup<HitResult>(type), _ =>
-                CreateDefaultJudgement(type), confineMode: ConfineMode.NoScaling));
+                Empty(), confineMode: ConfineMode.NoScaling));
 
             JudgementBody.OnSkinChanged += () =>
             {
@@ -190,7 +182,5 @@ namespace osu.Game.Rulesets.Judgements
                 }
             }
         }
-
-        protected virtual Drawable CreateDefaultJudgement(HitResult result) => new DefaultJudgementPiece(result);
     }
 }

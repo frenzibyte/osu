@@ -9,9 +9,9 @@ using osu.Framework.Testing;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mania.Scoring;
 using osu.Game.Rulesets.Mania.Skinning.Legacy;
-using osu.Game.Rulesets.Mania.UI;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Scoring;
+using osuTK;
 
 namespace osu.Game.Rulesets.Mania.Tests.Skinning
 {
@@ -29,10 +29,12 @@ namespace osu.Game.Rulesets.Mania.Tests.Skinning
                     {
                         SetContents(_ =>
                         {
-                            var drawableManiaJudgement = new DrawableManiaJudgement
+                            var drawableManiaJudgement = new DrawableJudgement
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
+                                RelativeSizeAxes = Axes.Both,
+                                Size = Vector2.One,
                             };
 
                             drawableManiaJudgement.Apply(new JudgementResult(new HitObject { StartTime = Time.Current }, new Judgement())

@@ -3,12 +3,13 @@
 
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Skinning.Triangles;
 
 namespace osu.Game.Rulesets.Taiko.Skinning.Default
 {
-    public partial class DefaultJudgementPiece : Rulesets.Judgements.DefaultJudgementPiece
+    public partial class TrianglesTaikoJudgementPiece : TrianglesJudgementPiece
     {
-        public DefaultJudgementPiece(HitResult result)
+        public TrianglesTaikoJudgementPiece(HitResult result)
             : base(result)
         {
             RelativePositionAxes = Axes.Both;

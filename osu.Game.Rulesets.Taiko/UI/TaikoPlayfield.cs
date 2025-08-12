@@ -19,6 +19,7 @@ using osu.Game.Rulesets.Taiko.Judgements;
 using osu.Game.Rulesets.Taiko.Objects;
 using osu.Game.Rulesets.Taiko.Scoring;
 using osu.Game.Skinning;
+using osuTK;
 
 namespace osu.Game.Rulesets.Taiko.UI
 {
@@ -35,11 +36,11 @@ namespace osu.Game.Rulesets.Taiko.UI
 
         private Container<HitExplosion> hitExplosionContainer = null!;
         private Container<KiaiHitExplosion> kiaiExplosionContainer = null!;
-        private JudgementContainer<DrawableTaikoJudgement> judgementContainer = null!;
+        private JudgementContainer<DrawableJudgement> judgementContainer = null!;
         private ScrollingHitObjectContainer drumRollHitContainer = null!;
         internal Drawable HitTarget = null!;
 
-        private JudgementPooler<DrawableTaikoJudgement> judgementPooler = null!;
+        private JudgementPooler<DrawableJudgement> judgementPooler = null!;
         private readonly IDictionary<HitResult, HitExplosionPool> explosionPools = new Dictionary<HitResult, HitExplosionPool>();
 
         private ProxyContainer topLevelHitContainer = null!;
@@ -154,7 +155,7 @@ namespace osu.Game.Rulesets.Taiko.UI
                                     RelativeSizeAxes = Axes.Both,
                                     FillMode = FillMode.Fit,
                                 },
-                                judgementContainer = new JudgementContainer<DrawableTaikoJudgement>
+                                judgementContainer = new JudgementContainer<DrawableJudgement>
                                 {
                                     Name = "Judgements",
                                     Origin = Anchor.TopCentre,
@@ -196,7 +197,7 @@ namespace osu.Game.Rulesets.Taiko.UI
 
             HitResult[] usableHitResults = Enum.GetValues<HitResult>().Where(r => hitWindows.IsHitResultAllowed(r)).ToArray();
 
-            AddInternal(judgementPooler = new JudgementPooler<DrawableTaikoJudgement>(usableHitResults));
+            AddInternal(judgementPooler = new JudgementPooler<DrawableJudgement>(usableHitResults));
 
             foreach (var result in usableHitResults)
                 explosionPools.Add(result, new HitExplosionPool(result));
@@ -316,7 +317,14 @@ namespace osu.Game.Rulesets.Taiko.UI
                     if (!result.Type.IsScorable())
                         break;
 
-                    var judgement = judgementPooler.Get(result.Type, j => j.Apply(result, judgedObject));
+                    var judgement = judgementPooler.Get(result.Type, j =>
+                    {
+                        j.Anchor = Anchor.Centre;
+                        j.Origin = Anchor.Centre;
+                        j.RelativeSizeAxes = Axes.Both;
+                        j.Size = Vector2.One;
+                        j.Apply(result, judgedObject);
+                    });
 
                     if (judgement == null)
                         return;

@@ -4,20 +4,20 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI.Scrolling;
+using osu.Game.Skinning.Triangles;
 using osuTK;
 
-namespace osu.Game.Rulesets.Mania.UI
+namespace osu.Game.Rulesets.Mania.Skinning.Default
 {
-    public partial class DefaultManiaJudgementPiece : DefaultJudgementPiece
+    public partial class TrianglesManiaJudgementPiece : TrianglesJudgementPiece
     {
         private const float judgement_y_position = -180f;
 
         private IBindable<ScrollingDirection> direction = null!;
 
-        public DefaultManiaJudgementPiece(HitResult result)
+        public TrianglesManiaJudgementPiece(HitResult result)
             : base(result)
         {
         }

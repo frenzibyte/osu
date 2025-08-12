@@ -3,8 +3,10 @@
 
 using System;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mania.Beatmaps;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Skinning;
 using osuTK.Graphics;
 
@@ -23,6 +25,17 @@ namespace osu.Game.Rulesets.Mania.Skinning.Default
         private readonly Color4 colourEven = new Color4(6, 84, 0, 255);
         private readonly Color4 colourOdd = new Color4(94, 0, 57, 255);
         private readonly Color4 colourSpecial = new Color4(0, 48, 63, 255);
+
+        public override Drawable? GetDrawableComponent(ISkinComponentLookup lookup)
+        {
+            switch (lookup)
+            {
+                case SkinComponentLookup<HitResult> resultComponent:
+                    return new TrianglesManiaJudgementPiece(resultComponent.Component);
+            }
+
+            return base.GetDrawableComponent(lookup);
+        }
 
         public override IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
         {

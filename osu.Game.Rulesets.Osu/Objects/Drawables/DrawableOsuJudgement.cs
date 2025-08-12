@@ -6,7 +6,6 @@ using osu.Framework.Graphics;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
 
@@ -85,28 +84,6 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             }
 
             base.ApplyHitAnimations();
-        }
-
-        protected override Drawable CreateDefaultJudgement(HitResult result) => new OsuJudgementPiece(result);
-
-        private partial class OsuJudgementPiece : DefaultJudgementPiece
-        {
-            public OsuJudgementPiece(HitResult result)
-                : base(result)
-            {
-            }
-
-            public override void PlayAnimation()
-            {
-                if (Result != HitResult.Miss)
-                {
-                    JudgementText
-                        .ScaleTo(new Vector2(0.8f, 1))
-                        .ScaleTo(new Vector2(1.2f, 1), 1800, Easing.OutQuint);
-                }
-
-                base.PlayAnimation();
-            }
         }
     }
 }

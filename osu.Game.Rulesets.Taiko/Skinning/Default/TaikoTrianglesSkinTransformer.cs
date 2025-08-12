@@ -4,6 +4,7 @@
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Graphics;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Skinning;
 using osuTK;
@@ -68,6 +69,9 @@ namespace osu.Game.Rulesets.Taiko.Skinning.Default
 
                     return null;
                 }
+
+                case SkinComponentLookup<HitResult> resultComponent:
+                    return new TrianglesTaikoJudgementPiece(resultComponent.Component);
             }
 
             return base.GetDrawableComponent(lookup);

@@ -40,8 +40,8 @@ namespace osu.Game.Rulesets.Mania.UI
         public Column[] Columns => columnFlow.Content;
         private readonly ColumnFlow<Column> columnFlow;
 
-        private readonly JudgementContainer<DrawableManiaJudgement> judgements;
-        private readonly JudgementPooler<DrawableManiaJudgement> judgementPooler;
+        private readonly JudgementContainer<DrawableJudgement> judgements;
+        private readonly JudgementPooler<DrawableJudgement> judgementPooler;
 
         private readonly Drawable barLineContainer;
 
@@ -123,7 +123,7 @@ namespace osu.Game.Rulesets.Mania.UI
                         new HitPositionPaddedContainer
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Child = judgements = new JudgementContainer<DrawableManiaJudgement>
+                            Child = judgements = new JudgementContainer<DrawableJudgement>
                             {
                                 RelativeSizeAxes = Axes.Both,
                             },
@@ -154,7 +154,7 @@ namespace osu.Game.Rulesets.Mania.UI
 
             var hitWindows = new ManiaHitWindows();
 
-            AddInternal(judgementPooler = new JudgementPooler<DrawableManiaJudgement>(Enum.GetValues<HitResult>().Where(r => hitWindows.IsHitResultAllowed(r))));
+            AddInternal(judgementPooler = new JudgementPooler<DrawableJudgement>(Enum.GetValues<HitResult>().Where(r => hitWindows.IsHitResultAllowed(r))));
 
             RegisterPool<BarLine, DrawableBarLine>(50, 200);
         }
@@ -216,7 +216,16 @@ namespace osu.Game.Rulesets.Mania.UI
                 return;
 
             judgements.Clear(false);
-            judgements.Add(judgementPooler.Get(result.Type, j => j.Apply(result, judgedObject))!);
+            judgements.Add(judgementPooler.Get(result.Type, j =>
+            {
+                // Extend the dimensions of this drawable to the entire parenting container.
+                // This allows skin implementations (i.e. LegacyManiaJudgementPiece) to freely choose the anchor based on skin settings.
+                j.Anchor = Anchor.TopLeft;
+                j.Origin = Anchor.TopLeft;
+                j.RelativeSizeAxes = Axes.Both;
+                j.Size = new Vector2(1f);
+                j.Apply(result, judgedObject);
+            })!);
         }
 
         protected override void Update()

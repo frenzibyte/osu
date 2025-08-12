@@ -27,9 +27,10 @@ namespace osu.Game.Rulesets.Osu.Skinning.Default
                         case HitResult.LargeTickMiss:
                             // use argon judgement piece for new tick misses because i don't want to design another one for triangles.
                             return new DefaultJudgementPieceSliderTickMiss(result);
-                    }
 
-                    break;
+                        default:
+                            return new TrianglesOsuJudgementPiece(result);
+                    }
             }
 
             return base.GetDrawableComponent(lookup);
