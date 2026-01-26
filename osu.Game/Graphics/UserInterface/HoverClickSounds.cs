@@ -23,6 +23,12 @@ namespace osu.Game.Graphics.UserInterface
     {
         public Bindable<bool> Enabled = new Bindable<bool>(true);
 
+        /// <summary>
+        /// When <see cref="Enabled"/> is set to false, this controls whether hover sounds should still be played.
+        /// By default, hover sounds will not be played.
+        /// </summary>
+        public bool PlayHoverWhenDisabled { get; set; } = false;
+
         private Sample sampleClick;
         private Sample sampleClickDisabled;
 
@@ -62,7 +68,7 @@ namespace osu.Game.Graphics.UserInterface
 
         public override void PlayHoverSample()
         {
-            if (!Enabled.Value)
+            if (!Enabled.Value && !PlayHoverWhenDisabled)
                 return;
 
             base.PlayHoverSample();

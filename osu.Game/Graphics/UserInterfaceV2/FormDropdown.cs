@@ -194,6 +194,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
                 AddInternal(new HoverClickSounds
                 {
                     Enabled = { BindTarget = Enabled },
+                    PlayHoverWhenDisabled = true,
                 });
             }
 

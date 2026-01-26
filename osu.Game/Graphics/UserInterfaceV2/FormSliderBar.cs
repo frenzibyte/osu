@@ -282,6 +282,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
                         })
                     },
                 },
+                new HoverSounds(),
             };
 
             if (game != null)

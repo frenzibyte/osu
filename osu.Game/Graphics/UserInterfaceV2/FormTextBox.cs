@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -149,6 +151,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
                         }),
                     },
                 },
+                new HoverSounds(),
             };
         }
 
@@ -179,7 +182,9 @@ namespace osu.Game.Graphics.UserInterfaceV2
 
         protected override bool OnClick(ClickEvent e)
         {
-            focusManager.ChangeFocus(textBox);
+            if (!Current.Disabled && !ReadOnly)
+                focusManager.ChangeFocus(textBox);
+
             return true;
         }
 

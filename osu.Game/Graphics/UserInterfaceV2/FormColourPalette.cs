@@ -86,6 +86,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
                         }
                     },
                 },
+                new HoverSounds(),
             };
 
             flow.SetLayoutPosition(addButton, float.MaxValue);

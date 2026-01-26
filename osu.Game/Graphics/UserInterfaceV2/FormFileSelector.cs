@@ -22,6 +22,7 @@ using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osu.Game.Database;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osuTK;
 using osuTK.Graphics;
@@ -168,6 +169,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
                         }
                     },
                 },
+                new HoverSounds(),
             };
         }
 

@@ -101,9 +101,10 @@ namespace osu.Game.Graphics.UserInterfaceV2
                         RelativeSizeAxes = Axes.Both,
                         Colour = ColourInfo.GradientVertical(colourProvider.Background4, colourProvider.Background5),
                     },
-                    new HoverClickSounds(HoverSampleSet.Button)
+                    new HoverClickSounds(HoverSampleSet.Default)
                     {
                         Enabled = { BindTarget = Enabled },
+                        PlayHoverWhenDisabled = true,
                     },
                     new Container
                     {

@@ -16,6 +16,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Localisation;
 using osu.Game.Overlays;
 using osuTK;
@@ -45,10 +46,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         private Box background = null!;
         private FormFieldCaption caption = null!;
         private OsuSpriteText text = null!;
-
-        private Sample? sampleChecked;
-        private Sample? sampleUnchecked;
-        private Sample? sampleDisabled;
+        private SwitchButton switchButton = null!;
 
         [Resolved]
         private OverlayColourProvider colourProvider { get; set; } = null!;
@@ -97,7 +95,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
                                 },
                             },
                         },
-                        new SwitchButton
+                        switchButton = new SwitchButton
                         {
                             Anchor = Anchor.CentreRight,
                             Origin = Anchor.CentreRight,
@@ -105,10 +103,8 @@ namespace osu.Game.Graphics.UserInterfaceV2
                         },
                     },
                 },
+                new HoverSounds(),
             };
-            sampleChecked = audio.Samples.Get(@"UI/check-on");
-            sampleUnchecked = audio.Samples.Get(@"UI/check-off");
-            sampleDisabled = audio.Samples.Get(@"UI/default-select-disabled");
         }
 
         protected override void LoadComplete()
@@ -118,20 +114,11 @@ namespace osu.Game.Graphics.UserInterfaceV2
             current.BindValueChanged(_ =>
             {
                 updateState();
-                playSamples();
                 background.FlashColour(ColourInfo.GradientVertical(colourProvider.Background5, colourProvider.Dark2), 800, Easing.OutQuint);
 
                 ValueChanged?.Invoke();
             });
             current.BindDisabledChanged(_ => updateState(), true);
-        }
-
-        private void playSamples()
-        {
-            if (Current.Value)
-                sampleChecked?.Play();
-            else
-                sampleUnchecked?.Play();
         }
 
         protected override bool OnHover(HoverEvent e)
@@ -148,11 +135,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
 
         protected override bool OnClick(ClickEvent e)
         {
-            if (!Current.Disabled)
-                Current.Value = !Current.Value;
-            else
-                sampleDisabled?.Play();
-
+            switchButton.TriggerClick();
             return true;
         }
 

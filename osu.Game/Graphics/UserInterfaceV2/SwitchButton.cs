@@ -11,6 +11,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osuTK;
 using osuTK.Graphics;
@@ -34,6 +35,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
 
         private Sample? sampleChecked;
         private Sample? sampleUnchecked;
+        private Sample? sampleDisabled;
 
         public SwitchButton()
         {
@@ -66,7 +68,8 @@ namespace osu.Game.Graphics.UserInterfaceV2
                                 Masking = true,
                             }
                         }
-                    }
+                    },
+                    new HoverSounds(),
                 }
             };
         }
@@ -76,6 +79,7 @@ namespace osu.Game.Graphics.UserInterfaceV2
         {
             sampleChecked = audio.Samples.Get(@"UI/check-on");
             sampleUnchecked = audio.Samples.Get(@"UI/check-off");
+            sampleDisabled = audio.Samples.Get(@"UI/default-select-disabled");
         }
 
         protected override void LoadComplete()
@@ -105,6 +109,17 @@ namespace osu.Game.Graphics.UserInterfaceV2
         {
             updateColours();
             base.OnHoverLost(e);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            if (Current.Disabled)
+            {
+                sampleDisabled?.Play();
+                return true;
+            }
+
+            return base.OnClick(e);
         }
 
         protected override void OnUserChange(bool value)
